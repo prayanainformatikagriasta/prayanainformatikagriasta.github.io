@@ -195,8 +195,8 @@
 <body>
     <div class="container" id="main-container">
         <div id="name-entry-screen" class="screen text-center">
-            <h2 class="mb-4">✨ SPILL TAKDIR VIII.6 - GLITCH EDITION ✨</h2>
-            <p class="mb-4">Satu nama untuk menentukan nasib sekelompok. **Ketik nama lengkap atau nama panggilanmu.**</p>
+            <h2 class="mb-4">✨ SPILL TAKDIR VIII.6 - INFORMATIKA ✨</h2>
+            <p class="mb-4">Satu nama untuk menentukan nasib sekelompok. Ketik nama lengkap atau nama panggilanmu.</p>
             <input type="text" id="name-input" class="form-control form-control-lg" placeholder="Contoh: Putu, Diego, Edell, dll...">
             <button id="submit-name-btn" class="btn btn-lg mt-4 w-50">SPILL TAKDIRKU!</button>
             <p id="error-message" class="mt-3 text-uppercase"></p>
@@ -269,7 +269,7 @@
             const userDetails = findUserDetails(userName); // DIUBAH
             
             if (!userDetails) { // DIUBAH
-                document.getElementById('error-message').textContent = "NAMA INI TIDAK TERDAFTAR! Coba nama panggilan/lengkap yang benar.";
+                document.getElementById('error-message').textContent = "NAMA INI TIDAK TERDAFTAR! Siape lu kok gak kedaftar dikelas ini?.";
                 document.getElementById('name-entry-screen').classList.remove('hidden');
                 return;
             }
