@@ -3,474 +3,783 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spill Takdir Kelompok VIII.4 - SISTEM KOMPUTER</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Sistem Pengecekan Nilai Interaktif</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=VT323&display=swap');
-
+        /* ====================================================================== */
+        /* BAGIAN 1: CSS (Gaya, Responsif, dan Animasi) */
+        /* ====================================================================== */
         :root {
-            --bg-dark: #0a0a0a;
-            --text-light: #f0f0f0;
-            --neon-pink: #ff0099;
-            --neon-blue: #00e5ff;
-            --neon-green: #39FF14;
-            --border-radius: 20px;
+            --color-primary: #007bff;
+            --color-secondary: #6c757d;
+            --color-success: #28a745;
+            --color-danger: #dc3545;
+            --color-warning: #ffc107;
+            --color-highlight: #ff8c00;
+            --bg-light: #f4f7f9;
         }
 
-        /* Tampilan Dasar */
         body {
             font-family: 'Poppins', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-light);
-            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
-            background-size: 20px 20px;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
+            background-color: var(--bg-light);
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             min-height: 100vh;
         }
 
-        /* Custom Scrollbar */
-        body::-webkit-scrollbar { width: 10px; }
-        body::-webkit-scrollbar-track { background: var(--bg-dark); }
-        body::-webkit-scrollbar-thumb { background: var(--neon-pink); border-radius: 5px; border: 1px solid var(--neon-blue); }
-
-        .screen {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 2.5rem;
-            border-radius: var(--border-radius);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            animation: fadeIn 0.8s ease-out;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 650px;
+            margin-top: 30px;
         }
-        h2 { font-size: 2.5rem; font-weight: 800; margin-top: 0; }
-        .hidden { display: none !important; }
 
-        /* --- LAYAR 1: INPUT NAMA --- */
-        #name-entry-screen h2 {
-            text-shadow: 0 0 15px var(--neon-pink), 0 0 25px var(--neon-pink);
-            animation: flicker 1.5s infinite alternate;
-        }
-        #name-input {
+        header {
             text-align: center;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid var(--neon-blue);
-            color: var(--text-light);
-            font-size: 1.5rem;
-            transition: all 0.3s;
+            margin-bottom: 30px;
         }
-        #submit-name-btn {
-            background: var(--neon-pink);
-            color: var(--bg-dark);
+        
+        header h1 {
+            color: var(--color-primary);
             font-weight: 700;
-            box-shadow: 0 0 20px var(--neon-pink), 0 0 40px rgba(255, 0, 153, 0.5);
-            border: none;
+            font-size: 2em;
+            margin-bottom: 5px;
         }
-        #error-message { color: var(--neon-pink); font-weight: 700; height: 20px; animation: glitch 0.3s infinite; }
+        
+        header p {
+            font-size: 0.9em;
+            color: var(--color-secondary);
+        }
 
-        /* --- LAYAR LOADING & PRANK KUCING --- */
-        #loading-header { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
-        .progress-bar { background-color: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); }
-        #cat-prank-screen { background: #000; border-color: var(--neon-green); box-shadow: 0 0 20px var(--neon-green); }
-
-        /* --- JUMPSCARE HANTU --- */
-        #jumpscare-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #000;
-            color: var(--neon-pink);
-            z-index: 99999;
+        .search-area {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: 'VT323', monospace;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.1s ease-in-out;
-        }
-        #jumpscare-screen h1 {
-            font-size: 8vw; 
-            text-shadow: 0 0 40px var(--neon-pink); 
-            animation: flicker 0.1s infinite;
+            gap: 10px;
+            margin-bottom: 30px;
         }
 
-        /* --- ANIMASI ROULETTE & HASIL --- */
-        #roulette-display { border-bottom: 3px dashed var(--neon-pink); }
-        .roulette-winner {
-            color: var(--neon-green);
-            text-shadow: 0 0 20px var(--neon-green), 0 0 40px rgba(57, 255, 20, 0.8);
-            border-bottom: 3px solid var(--neon-green) !important;
+        #searchInput {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        #show-all-button {
-            background: var(--neon-blue);
-            color: var(--bg-dark);
-            font-weight: 700;
-            box-shadow: 0 0 20px var(--neon-blue);
+
+        #searchInput:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: var(--color-primary);
+            color: white;
             border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.1s;
         }
 
-        /* --- KARTU KELOMPOK --- */
-        .group-card { transition: all 0.3s ease; }
-        .personal-card { border: 3px solid var(--neon-blue); box-shadow: 0 0 40px var(--neon-blue); animation: bounceIn 1s ease-out; }
-        /* Warna Grup (6 Grup) */
-        .group-1{--group-color:#E91E63}.group-2{--group-color:#FFC107}.group-3{--group-color:#00BCD4}.group-4{--group-color:#4CAF50}.group-5{--group-color:#9C27B0}.group-6{--group-color:#F44336}
-        .card-header, .task-assignment { background-color: var(--group-color); }
+        button:hover {
+            background-color: #0056b3;
+        }
 
-        /* --- KEYFRAMES --- */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes bounceIn { 0%{transform:scale(0.5);opacity:0} 60%{transform:scale(1.1);opacity:1} 100%{transform:scale(1)} }
-        @keyframes flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 15px var(--neon-pink), 0 0 25px var(--neon-pink); opacity: 1; } 20%, 24%, 55% { text-shadow: none; opacity: 0.8; } }
-        @keyframes glitch { 0%,100%{transform:translate(0,0)} 20%{transform:translate(-3px,3px)} 40%{transform:translate(3px,-3px)} 60%{transform:translate(-3px,-3px)} 80%{transform:translate(3px,3px)} }
-        .glitch-active { animation: glitch 0.2s infinite; }
+        /* --- Result Card --- */
+        .result-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            min-height: 120px;
+            opacity: 0; 
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            border-left: 5px solid var(--color-primary);
+        }
+        
+        .result-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 20px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .info-grid div {
+            padding: 5px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .info-grid strong {
+            color: #333;
+            font-weight: 600;
+            display: block;
+        }
+
+        /* --- Nilai Utama --- */
+        .main-score {
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background: var(--bg-light);
+        }
+
+        .main-score .label {
+            color: var(--color-secondary);
+            font-size: 0.9em;
+        }
+
+        .main-score .value {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--color-primary);
+            line-height: 1;
+        }
+
+        /* --- Badges & Alerts --- */
+        .alert-badge {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1em;
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        .top-scorer-alert {
+            background-color: var(--color-highlight);
+            color: white;
+            animation: fadeInOut 2s infinite alternate;
+        }
+        
+        .top-class-alert {
+             background-color: #00bcd4;
+             color: white;
+             box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: var(--color-success);
+        }
+
+        .status-fail {
+            background-color: #f8d7da;
+            color: var(--color-danger);
+        }
+
+        /* --- Tabel Perbaikan --- */
+        .perbaikan-table-container {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .perbaikan-table-container h4 {
+            color: var(--color-danger);
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .perbaikan-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        
+        .perbaikan-table th, .perbaikan-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .perbaikan-table th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* --- Loading Animation --- */
+        @keyframes loading-pulse {
+            0% { background-color: #e9ecef; }
+            50% { background-color: #dee2e6; }
+            100% { background-color: #e9ecef; }
+        }
+        
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.8; box-shadow: 0 0 10px rgba(255, 140, 0, 0.7); }
+            100% { opacity: 1; box-shadow: none; }
+        }
+        
+        /* --- Responsiveness --- */
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px 15px;
+            }
+            header h1 {
+                font-size: 1.5em;
+            }
+            .search-area {
+                flex-direction: column;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .main-score .value {
+                font-size: 2.5em;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container" id="main-container">
-        <div id="name-entry-screen" class="screen text-center">
-            <h2 class="mb-4">✨ SPILL TAKDIR VIII.4 - SISTEM KOMPUTER ✨</h2>
-            <p class="mb-4">Ketik nama lengkap atau nama panggilanmu, dan rasakan takdir kelompok SimKom-mu!</p>
-            <input type="text" id="name-input" class="form-control form-control-lg" placeholder="Contoh: Kadek, Tyci, Rafa...">
-            <button id="submit-name-btn" class="btn btn-lg mt-4 w-50">SPILL TAKDIRKU!</button>
-            <p id="error-message" class="mt-3 text-uppercase"></p>
+    <div class="container" id="mainContainer">
+        <header>
+            <h1>Sistem Pengecekan Nilai 📚</h1>
+            <p>Informatika Kelas 7 | KKM: <span style="font-weight: 700;">74</span></p>
+        </header>
+        
+        <div class="search-area">
+            <input type="text" id="searchInput" placeholder="Masukkan Nama, NIS, atau No. Peserta..." onkeyup="checkEnter(event)" autofocus>
+            <button onclick="cariNilai()"><i class="fas fa-search"></i> Cari</button>
         </div>
+
+        <div id="result" class="result-card">
+            <p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>
+        </div>
+        
+        <div id="confetti" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100;"></div>
     </div>
     
-    <audio id="heartbeat-sound" preload="auto" src="https://github.com/google-gemini-demo/audios/raw/main/heartbeat.mp3"></audio>
-    <audio id="glitch-sound" preload="auto" src="https://github.com/google-gemini-demo/audios/raw/main/glitch.wav"></audio>
-    <audio id="typing-sound" preload="auto" src="https://github.com/google-gemini-demo/audios/raw/main/typing.mp3"></audio>
-
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- DATA KELAS VIII.4 (DIACAK TOTAL) ---
-        const groupData = [
-            { id: 1, name: "The CPU Core", colorEmoji: "🔴", members: ["Tio Aditya Prayoga", "Ni Made Jagadhita Dyah Maharani", "Alwanissya Aurelia Sheva Wilhemina", "Kadek Bening Amora", "Dewa Made Rama Adi Putra", "Teguh Wijayanto", "I Kadek Agus Ega Radika Adnyana"], task: "Pengertian & Fungsi CPU (Processor)" },
-            { id: 2, name: "RAM Squad", colorEmoji: "🟡", members: ["Ni Made Candrika Ismawardani", "I Wayan Artha Wijaya", "Cantika Putri Oktaviani", "I Kadek Revan Adikayana", "Ni Ketut Sri Yulantari", "Qyovano Alzaqy Susilo", "Jason Ferdynata"], task: "Memori Komputer (RAM & ROM)" },
-            { id: 3, name: "Hardware Heroes", colorEmoji: "🔵", members: ["Zahira Putri Juwita", "Alano Zakir Naik", "Bagastya Ramadhanni Putera Arieta", "Desak Made Lina Kusuma Wandari", "Ni Kadek Widya Purnama Sari", "Rafa Junior Hidayat", "Ayub Stalone Manikari"], task: "Perangkat Keras Input & Output" },
-            { id: 4, name: "Software Sorcerers", colorEmoji: "🟢", members: ["Angelyna Salsabila", "I Nyoman Ksatria Wibawa", "Ni Putu Kherin Putri Cahyani", "Putu Trisna Dewi Wijayanti", "Cinta Kirana Oktaviani", "Syahla Husna Arrafi", "Alvaro Azka Avriliano L. Tobing"], task: "Sistem Operasi (OS) & Aplikasi" },
-            { id: 5, name: "Binary Brigade", colorEmoji: "🟣", members: ["Amel Liyana Putri", "Zel Asqi Akbar", "I Putu Adi Santika", "Ni Putu Ayuda Cantika Putri", "Komang Indra Darma Putra", "A.A. Ayu Devi Paramitha Putri Deannatha", "Tychi Regina Gayatry"], task: "Sistem Bilangan Biner (Dasar Komputer)" },
-            { id: 6, name: "Network Knights", colorEmoji: "🟠", members: ["Ni Wayan Ristya Widiaswari", "Daniel Andreas Oentoro", "Neola Grasya Darma", "Putu Pebi Ananta", "Irfan Ronny Junior", "Akhamad Arifqi"], task: "Dasar Jaringan Komputer" }
+        const rawDataSiswa = [
+            // Format: { nis: "...", nama: "...", kelas: "...", no_peserta: "...", nilai: N, perbaikan: [{tgl: "...", nilai_lama: N, nilai_baru: N}]}
+            
+            // Data EC 7.1
+            { nis: "6531", nama: "Andrea Victoria Kaunang", kelas: "EC 7.1", no_peserta: "01-019-001-7", nilai: 88, perbaikan: [] },
+            { nis: "6532", nama: "Anindya Destyarani Sihaloho", kelas: "EC 7.1", no_peserta: "01-019-002-7", nilai: 68, perbaikan: [] },
+            { nis: "6533", nama: "Ararya Bagus Abhinandya Putra", kelas: "EC 7.1", no_peserta: "01-019-003-7", nilai: 70, perbaikan: [] },
+            { nis: "6534", nama: "Auraliana Kimi Athena Candra", kelas: "EC 7.1", no_peserta: "01-019-004-7", nilai: 68, perbaikan: [] },
+            { nis: "6535", nama: "Baiq Femigisya Az Zahra", kelas: "EC 7.1", no_peserta: "01-019-005-7", nilai: 66, perbaikan: [] },
+            { nis: "6536", nama: "Boby Setya Mahendra", kelas: "EC 7.1", no_peserta: "01-019-006-7", nilai: 62, perbaikan: [] },
+            { nis: "6537", nama: "Dewa Gede Rangga Sahitya Dalem", kelas: "EC 7.1", no_peserta: "01-019-007-7", nilai: 64, perbaikan: [] },
+            { nis: "6538", nama: "Fholand Aditya Pramana", kelas: "EC 7.1", no_peserta: "01-019-008-7", nilai: 40, perbaikan: [] },
+            { nis: "6539", nama: "Gede Angga Arya Wardana", kelas: "EC 7.1", no_peserta: "01-019-009-7", nilai: 54, perbaikan: [] },
+            { nis: "6540", nama: "I Dewa Ayu Ganita Parwati", kelas: "EC 7.1", no_peserta: "01-019-010-7", nilai: 68, perbaikan: [] },
+            { nis: "6541", nama: "I Made Bagus Panji Ari Yasa", kelas: "EC 7.1", no_peserta: "01-019-011-7", nilai: 34, perbaikan: [] },
+            { nis: "6542", nama: "I Putu Aditya Kesawa", kelas: "EC 7.1", no_peserta: "01-019-012-7", nilai: 70, perbaikan: [] },
+            { nis: "6543", nama: "Ketut Mico Prarama Suputra", kelas: "EC 7.1", no_peserta: "01-019-013-7", nilai: 44, perbaikan: [] },
+            { nis: "6544", nama: "Lusiana Safara", kelas: "EC 7.1", no_peserta: "01-019-014-7", nilai: 44, perbaikan: [] },
+            { nis: "6545", nama: "Ni Komang Aura Diah Gayatri", kelas: "EC 7.1", no_peserta: "01-019-015-7", nilai: 76, perbaikan: [] },
+            { nis: "6546", nama: "Ni Putu Ayu Candra Winasaputri", kelas: "EC 7.1", no_peserta: "01-019-016-7", nilai: 44, perbaikan: [] },
+            { nis: "6548", nama: "Putu Arya Prama Wibawa", kelas: "EC 7.1", no_peserta: "01-019-017-7", nilai: 60, perbaikan: [] },
+            { nis: "6549", nama: "Putu Deni Indriani", kelas: "EC 7.1", no_peserta: "01-019-018-7", nilai: 64, perbaikan: [] },
+            { nis: "6550", nama: "Putu Kiandra Kirana Prisha", kelas: "EC 7.1", no_peserta: "01-019-019-7", nilai: 78, perbaikan: [] },
+            { nis: "6551", nama: "Riski Valerie Putri", kelas: "EC 7.1", no_peserta: "01-019-020-7", nilai: 74, perbaikan: [] },
+            { nis: "6552", nama: "Rubbi Ina Pui Kenetty", kelas: "EC 7.1", no_peserta: "01-019-021-7", nilai: 64, perbaikan: [] },
+            { nis: "6553", nama: "Serafim Adonai Willson Ludji", kelas: "EC 7.1", no_peserta: "01-019-022-7", nilai: 66, perbaikan: [] },
+            { nis: "6554", nama: "Sheina Adara Yumi Anzita", kelas: "EC 7.1", no_peserta: "01-019-023-7", nilai: 64, perbaikan: [] },
+            { nis: "6807", nama: "Jeslyn Felicia Vivalona Walelangi", kelas: "EC 7.1", no_peserta: "01-019-024-7", nilai: 62, perbaikan: [] },
+
+            // Data EC 7.2
+            { nis: "6555", nama: "Anasyalia Zevalian Syakeela", kelas: "EC 7.2", no_peserta: "01-019-025", nilai: 80, perbaikan: [] },
+            { nis: "6556", nama: "Ayu Dewi Septiani", kelas: "EC 7.2", no_peserta: "01-019-026", nilai: 68, perbaikan: [] },
+            { nis: "6557", nama: "Cetta Anindita Saraswati", kelas: "EC 7.2", no_peserta: "01-019-027", nilai: 88, perbaikan: [] },
+            { nis: "6558", nama: "Chiyo Anaya Tjong", kelas: "EC 7.2", no_peserta: "01-019-028", nilai: 74, perbaikan: [] },
+            { nis: "6559", nama: "Denayya Syarifaqilla Ramadhan", kelas: "EC 7.2", no_peserta: "01-019-029", nilai: 78, perbaikan: [] },
+            { nis: "6560", nama: "I Gusti Ayu Nindya Putri Kania", kelas: "EC 7.2", no_peserta: "01-019-030", nilai: 68, perbaikan: [] },
+            { nis: "6561", nama: "I Kadek Aditya Nagata", kelas: "EC 7.2", no_peserta: "01-019-031", nilai: 80, perbaikan: [] },
+            { nis: "6562", nama: "I Putu Angga Narendra", kelas: "EC 7.2", no_peserta: "01-019-032", nilai: 90, perbaikan: [] },
+            { nis: "6563", nama: "I Wayan Giri Sastra", kelas: "EC 7.2", no_peserta: "01-019-033", nilai: 66, perbaikan: [] },
+            { nis: "6564", nama: "Jimmy Setiawan Prasetyo", kelas: "EC 7.2", no_peserta: "01-019-034", nilai: 46, perbaikan: [] },
+            { nis: "6565", nama: "Kadek Aira Dewina Indah", kelas: "EC 7.2", no_peserta: "01-019-035", nilai: 78, perbaikan: [] },
+            { nis: "6566", nama: "Ni Kadek Vidya Pramesvari Yoga", kelas: "EC 7.2", no_peserta: "01-019-036", nilai: 78, perbaikan: [] },
+            { nis: "6567", nama: "Keisha Ayundya Nugroho", kelas: "EC 7.2", no_peserta: "01-019-037", nilai: 72, perbaikan: [] },
+            { nis: "6568", nama: "Kevin Aprilio Iswanto", kelas: "EC 7.2", no_peserta: "01-019-038", nilai: 64, perbaikan: [] },
+            { nis: "6569", nama: "Komang Wina Meliani", kelas: "EC 7.2", no_peserta: "01-019-039", nilai: 56, perbaikan: [] },
+            { nis: "6570", nama: "Leon Elysium Basuki", kelas: "EC 7.2", no_peserta: "01-019-040", nilai: 78, perbaikan: [] },
+            { nis: "6571", nama: "Made Jati Putra Wiryawan", kelas: "EC 7.2", no_peserta: "01-019-041", nilai: 68, perbaikan: [] },
+            { nis: "6572", nama: "Ni Ketut Kirsty Kinanti Sanjaya", kelas: "EC 7.2", no_peserta: "01-019-042", nilai: 80, perbaikan: [] },
+            { nis: "6573", nama: "Ni Luh Devina Mulia", kelas: "EC 7.2", no_peserta: "01-019-043", nilai: 64, perbaikan: [] },
+            { nis: "6574", nama: "Ni Made Ayu Widya Atalia Dewi", kelas: "EC 7.2", no_peserta: "01-019-044", nilai: 68, perbaikan: [] },
+            { nis: "6575", nama: "Putu Keanu Nathano Yodha", kelas: "EC 7.2", no_peserta: "01-019-045", nilai: 64, perbaikan: [] },
+            { nis: "6576", nama: "Rheananda Amora Ilham", kelas: "EC 7.2", no_peserta: "01-019-046", nilai: 82, perbaikan: [] },
+            { nis: "6577", nama: "Ni Luh Nandita Widiantari", kelas: "EC 7.2", no_peserta: "01-019-047", nilai: 56, perbaikan: [] },
+            { nis: "6578", nama: "Theratama Nagata Pradna Dika Prasetya", kelas: "EC 7.2", no_peserta: "01-019-048", nilai: 78, perbaikan: [] },
+
+            // Data EC 7.3
+            { nis: "6579", nama: "Aghitsni Maulaya", kelas: "EC 7.3", no_peserta: "01-019-049", nilai: 66, perbaikan: [] },
+            { nis: "6580", nama: "Aqiyla Qadisah Febrian", kelas: "EC 7.3", no_peserta: "01-019-050", nilai: 42, perbaikan: [] },
+            { nis: "6581", nama: "Christyano Arthanugraha Sukarsa", kelas: "EC 7.3", no_peserta: "01-019-051", nilai: 64, perbaikan: [] },
+            { nis: "6582", nama: "I Gede Narendra Ananda Putra", kelas: "EC 7.3", no_peserta: "01-019-052", nilai: 56, perbaikan: [] },
+            { nis: "6583", nama: "I Gusti Ayu Agung Manik Mas Swaridewi", kelas: "EC 7.3", no_peserta: "01-019-053", nilai: 70, perbaikan: [] },
+            { nis: "6584", nama: "I Gusti Putu Radheya Saguna Nugraha", kelas: "EC 7.3", no_peserta: "01-019-054", nilai: 72, perbaikan: [] },
+            { nis: "6719", nama: "Putu Gavana Kresna Widha", kelas: "EC 7.3", no_peserta: "01-019-055", nilai: 60, perbaikan: [] },
+            { nis: "6586", nama: "I Made Dhanez Khadira Putra", kelas: "EC 7.3", no_peserta: "01-019-056", nilai: 70, perbaikan: [] },
+            { nis: "6587", nama: "I Putu Satria Paramarta Putra", kelas: "EC 7.3", no_peserta: "01-019-057", nilai: 28, perbaikan: [] },
+            { nis: "6588", nama: "Jonathan Elbert Immanuel Liandhy", kelas: "EC 7.3", no_peserta: "01-019-058", nilai: 64, perbaikan: [] },
+            { nis: "6589", nama: "Jonathan Imanuel", kelas: "EC 7.3", no_peserta: "01-019-059", nilai: 60, perbaikan: [] },
+            { nis: "6590", nama: "Kadek Novia Asti Diantari", kelas: "EC 7.3", no_peserta: "01-019-060", nilai: 90, perbaikan: [] },
+            { nis: "6591", nama: "Made Anindha Oceania", kelas: "EC 7.3", no_peserta: "01-019-061", nilai: 54, perbaikan: [] },
+            { nis: "6592", nama: "Made Callista Felycia Wibawa", kelas: "EC 7.3", no_peserta: "01-019-062", nilai: 84, perbaikan: [] },
+            { nis: "6593", nama: "Made Yodha Ryusandi", kelas: "EC 7.3", no_peserta: "01-019-063", nilai: 76, perbaikan: [] },
+            { nis: "6594", nama: "Ni Kadek Candra Stiti Dewi", kelas: "EC 7.3", no_peserta: "01-019-064", nilai: 80, perbaikan: [] },
+            { nis: "6595", nama: "Kadek Hira Amanda Putri", kelas: "EC 7.3", no_peserta: "01-019-065", nilai: 64, perbaikan: [] },
+            { nis: "6596", nama: "Ni Putu Diah Pradnya Paramitha", kelas: "EC 7.3", no_peserta: "01-019-066", nilai: 44, perbaikan: [] },
+            { nis: "6597", nama: "Ni Putu Meylia Wirapramesti", kelas: "EC 7.3", no_peserta: "01-019-067", nilai: 76, perbaikan: [] },
+            { nis: "6598", nama: "Putu Angga Pratama Putra", kelas: "EC 7.3", no_peserta: "01-019-068", nilai: 56, perbaikan: [] },
+            { nis: "6599", nama: "Putu Ayu Tirtawati", kelas: "EC 7.3", no_peserta: "01-019-069", nilai: 90, perbaikan: [] },
+            { nis: "6600", nama: "Sang Ayu Komang Trisnadia Artika Dewi", kelas: "EC 7.3", no_peserta: "01-019-070", nilai: 88, perbaikan: [] },
+            { nis: "6601", nama: "Sang Putu Andhika Pradana", kelas: "EC 7.3", no_peserta: "01-019-071", nilai: 78, perbaikan: [] },
+            { nis: "6602", nama: "Zahraa Asrafunnissa De Nato", kelas: "EC 7.3", no_peserta: "01-019-072", nilai: 54, perbaikan: [] },
+            
+            // Data 7.4
+            { nis: "6603", nama: "A.A Gede Wedanandyaksa Putra", kelas: "7.4", no_peserta: "01-019-073", nilai: 70, perbaikan: [] },
+            { nis: "6604", nama: "A.A Ngurah Agung Aby Putra Samirana", kelas: "7.4", no_peserta: "01-019-074", nilai: 82, perbaikan: [] },
+            { nis: "6605", nama: "Aini Salsabila", kelas: "7.4", no_peserta: "01-019-075", nilai: 64, perbaikan: [] },
+            { nis: "6606", nama: "Alif Ismail", kelas: "7.4", no_peserta: "01-019-076", nilai: 58, perbaikan: [] },
+            { nis: "6607", nama: "Alvin Anantaka Mbura", kelas: "7.4", no_peserta: "01-019-077", nilai: 66, perbaikan: [] },
+            { nis: "6608", nama: "Farrel Aquino Dwi Putra Adrianto", kelas: "7.4", no_peserta: "01-019-078", nilai: 66, perbaikan: [] },
+            { nis: "6609", nama: "Gusti Putu Ananda Arya Putra", kelas: "7.4", no_peserta: "01-019-079", nilai: 34, perbaikan: [] },
+            { nis: "6610", nama: "Gracia Ananda Kasih", kelas: "7.4", no_peserta: "01-019-080", nilai: 56, perbaikan: [] },
+            { nis: "6611", nama: "Griffin Ananda Hugo Putra", kelas: "7.4", no_peserta: "01-019-081", nilai: 70, perbaikan: [] },
+            { nis: "6612", nama: "I Gede Ezra Pradhipta Ruspian", kelas: "7.4", no_peserta: "01-019-082", nilai: 30, perbaikan: [] },
+            { nis: "6613", nama: "I Gede Rama Setyawan", kelas: "7.4", no_peserta: "01-019-083", nilai: 60, perbaikan: [] },
+            { nis: "6614", nama: "I Gusti Made Dwi Anandha Putra", kelas: "7.4", no_peserta: "01-019-084", nilai: 74, perbaikan: [] },
+            { nis: "6615", nama: "I Kadek Ardhana Dharma Putra", kelas: "7.4", no_peserta: "01-019-085", nilai: 62, perbaikan: [] },
+            { nis: "6616", nama: "I Kadek Arya Dwi Putra", kelas: "7.4", no_peserta: "01-019-086", nilai: 58, perbaikan: [] },
+            { nis: "6617", nama: "I Komang Tristan Tara Putra Dinata", kelas: "7.4", no_peserta: "01-019-087", nilai: 68, perbaikan: [] },
+            { nis: "6618", nama: "Indra Jaya Saputra", kelas: "7.4", no_peserta: "01-019-088", nilai: 34, perbaikan: [] },
+            { nis: "6619", nama: "I Putu Eri Suwardiva Artha Pratama", kelas: "7.4", no_peserta: "01-019-089", nilai: 66, perbaikan: [] },
+            { nis: "6620", nama: "I Putu Raditya Yudhi Sinatra", kelas: "7.4", no_peserta: "01-019-090", nilai: 50, perbaikan: [] },
+            { nis: "6621", nama: "Kadek Dwi Adi Pradita", kelas: "7.4", no_peserta: "01-019-091", nilai: 56, perbaikan: [] },
+            { nis: "6622", nama: "Ni Kadek Sintya Sriningsih", kelas: "7.4", no_peserta: "01-019-092", nilai: 36, perbaikan: [] },
+            { nis: "6623", nama: "Kenrich Ambrosius Sugiharto", kelas: "7.4", no_peserta: "01-019-093", nilai: 82, perbaikan: [] },
+            { nis: "6624", nama: "Ketut Andhini Ardanaeswari Mahaparamitha", kelas: "7.4", no_peserta: "01-019-094", nilai: 70, perbaikan: [] },
+            { nis: "6625", nama: "Komang Nandha Maheswari", kelas: "7.4", no_peserta: "01-019-095", nilai: 68, perbaikan: [] },
+            { nis: "6626", nama: "Maria Gracia Alicia Dahu", kelas: "7.4", no_peserta: "01-019-096", nilai: 80, perbaikan: [] },
+            { nis: "6627", nama: "Mayrsa Anindita Putri", kelas: "7.4", no_peserta: "01-019-097", nilai: 56, perbaikan: [] },
+            { nis: "6628", nama: "Ni Luh Devi Wulandari Putri", kelas: "7.4", no_peserta: "01-019-098", nilai: 42, perbaikan: [] },
+            { nis: "6629", nama: "Ni Putu Ayu Meilika Permata Sari", kelas: "7.4", no_peserta: "01-019-099", nilai: 50, perbaikan: [] },
+            { nis: "6630", nama: "Ni Putu Ayutra Febby Santiani Putri", kelas: "7.4", no_peserta: "01-019-100", nilai: 52, perbaikan: [] },
+            { nis: "6631", nama: "Ni Putu Crishnayanti Purnama Sari", kelas: "7.4", no_peserta: "01-019-101", nilai: 66, perbaikan: [] },
+            { nis: "6632", nama: "Ni Putu Gita Aristya Devi", kelas: "7.4", no_peserta: "01-019-102", nilai: 60, perbaikan: [] },
+            { nis: "6633", nama: "Natasya Sabrina Salsabila", kelas: "7.4", no_peserta: "01-019-103", nilai: 68, perbaikan: [] },
+            { nis: "6634", nama: "Nur Maulidia Ayuningtyas", kelas: "7.4", no_peserta: "01-019-104", nilai: 50, perbaikan: [] },
+            { nis: "6635", nama: "Putu Agus Suastika", kelas: "7.4", no_peserta: "01-019-105", nilai: 22, perbaikan: [] },
+            { nis: "6636", nama: "Putu Anggun Wulani", kelas: "7.4", no_peserta: "01-019-106", nilai: 98, perbaikan: [] },
+            { nis: "6637", nama: "Putu Denandra Alvi Wirawan", kelas: "7.4", no_peserta: "01-019-107", nilai: 46, perbaikan: [] },
+            { nis: "6638", nama: "Putu Desta Pratama", kelas: "7.4", no_peserta: "01-019-108", nilai: 66, perbaikan: [] },
+            { nis: "6639", nama: "Putu Diandra Jessica Anastasya", kelas: "7.4", no_peserta: "01-019-109", nilai: 74, perbaikan: [] },
+            { nis: "6640", nama: "Samuel Gede Pratama", kelas: "7.4", no_peserta: "01-019-110", nilai: 50, perbaikan: [] },
+            { nis: "6641", nama: "Theresa Rizqy Putri Tristan", kelas: "7.4", no_peserta: "01-019-111", nilai: 62, perbaikan: [] },
+            { nis: "6642", nama: "Tirta Dwi Pratama", kelas: "7.4", no_peserta: "01-019-112", nilai: 50, perbaikan: [] },
+            { nis: "6204", nama: "Muh. Musalli Habizar", kelas: "7.4", no_peserta: "01-019-113", nilai: 46, perbaikan: [] },
+
+            // Data 7.5
+            { nis: "6643", nama: "Ahmad Riwaky Hasan", kelas: "7.5", no_peserta: "01-019-114", nilai: 60, perbaikan: [] },
+            { nis: "6644", nama: "Aline Candra Dewi", kelas: "7.5", no_peserta: "01-019-115", nilai: 72, perbaikan: [] },
+            { nis: "6645", nama: "Calista Az Zahra", kelas: "7.5", no_peserta: "01-019-116", nilai: 64, perbaikan: [] },
+            { nis: "6646", nama: "Chrisbyan Candra Amnaska", kelas: "7.5", no_peserta: "01-019-117", nilai: 58, perbaikan: [] },
+            { nis: "6647", nama: "Dzakaneza Abbasy Kaindra", kelas: "7.5", no_peserta: "01-019-118", nilai: 64, perbaikan: [] },
+            { nis: "6648", nama: "Erwan Rudi Sanjaya", kelas: "7.5", no_peserta: "01-019-119", nilai: 46, perbaikan: [] },
+            { nis: "6649", nama: "Felicia Metta Joana", kelas: "7.5", no_peserta: "01-019-120", nilai: 60, perbaikan: [] },
+            { nis: "6650", nama: "Gede Gheo Adrian Saputra", kelas: "7.5", no_peserta: "01-019-121", nilai: 60, perbaikan: [] },
+            { nis: "6651", nama: "Glory Permata Putri", kelas: "7.5", no_peserta: "01-019-122", nilai: 56, perbaikan: [] },
+            { nis: "6652", nama: "Ida Ayu Putu Avika Prameswari", kelas: "7.5", no_peserta: "01-019-123", nilai: 68, perbaikan: [] },
+            { nis: "6653", nama: "I Gede Christiano Marsev Pasang", kelas: "7.5", no_peserta: "01-019-124", nilai: 32, perbaikan: [] },
+            { nis: "6654", nama: "I Gede Yudana", kelas: "7.5", no_peserta: "01-019-125", nilai: 48, perbaikan: [] },
+            { nis: "6655", nama: "I Ketut Adi darmawan", kelas: "7.5", no_peserta: "01-019-126", nilai: 38, perbaikan: [] },
+            { nis: "6656", nama: "I Kadek Adnyana Suputra", kelas: "7.5", no_peserta: "01-019-127", nilai: 66, perbaikan: [] },
+            { nis: "6657", nama: "I Made Aditya Abimanyu", kelas: "7.5", no_peserta: "01-019-128", nilai: 60, perbaikan: [] },
+            { nis: "6658", nama: "I Made Jeremi Desta Sahdana", kelas: "7.5", no_peserta: "01-019-129", nilai: 52, perbaikan: [] },
+            { nis: "6659", nama: "I Made Ricky Nugraha", kelas: "7.5", no_peserta: "01-019-130", nilai: 76, perbaikan: [] },
+            { nis: "6660", nama: "I Nyoman Adimukti Putra Yasa", kelas: "7.5", no_peserta: "01-019-131", nilai: 62, perbaikan: [] },
+            { nis: "6661", nama: "I Nyoman Aditya Wistara", kelas: "7.5", no_peserta: "01-019-132", nilai: 54, perbaikan: [] },
+            { nis: "6662", nama: "Kadek Ayu Widiantari", kelas: "7.5", no_peserta: "01-019-133", nilai: 56, perbaikan: [] },
+            { nis: "6663", nama: "Kadek Chalista Dwi Cahyani", kelas: "7.5", no_peserta: "01-019-134", nilai: 48, perbaikan: [] },
+            { nis: "6664", nama: "Kadek Cahya Widiantari", kelas: "7.5", no_peserta: "01-019-135", nilai: 76, perbaikan: [] },
+            { nis: "6665", nama: "Maria Anindya Indah Kinara Carbonilla", kelas: "7.5", no_peserta: "01-019-136", nilai: 66, perbaikan: [] },
+            { nis: "6666", nama: "Maria Geressia Carolina Subu", kelas: "7.5", no_peserta: "01-019-137", nilai: 56, perbaikan: [] },
+            { nis: "6667", nama: "Micko Chandra Santosa", kelas: "7.5", no_peserta: "01-019-138", nilai: 50, perbaikan: [] },
+            { nis: "6668", nama: "Muchammad Gabriel Aji Alvino", kelas: "7.5", no_peserta: "01-019-139", nilai: 70, perbaikan: [] },
+            { nis: "6669", nama: "Ni Luh Eka Oktaviani", kelas: "7.5", no_peserta: "01-019-140", nilai: 58, perbaikan: [] },
+            { nis: "6670", nama: "Ni Made Amelia Maheswari", kelas: "7.5", no_peserta: "01-019-141", nilai: 78, perbaikan: [] },
+            { nis: "6671", nama: "Ni Putu Gista Pradnyandari", kelas: "7.5", no_peserta: "01-019-142", nilai: 66, perbaikan: [] },
+            { nis: "6672", nama: "Ni Putu Pranita Candra Dewi", kelas: "7.5", no_peserta: "01-019-143", nilai: 60, perbaikan: [] },
+            { nis: "6673", nama: "Ni Putu Tia Anggraeni", kelas: "7.5", no_peserta: "01-019-144", nilai: 54, perbaikan: [] },
+            { nis: "6674", nama: "Putri Putu Keysia Wiyono", kelas: "7.5", no_peserta: "01-019-145", nilai: 60, perbaikan: [] },
+            { nis: "6675", nama: "Putu Agus Juliana Putra", kelas: "7.5", no_peserta: "01-019-146", nilai: 72, perbaikan: [] },
+            { nis: "6676", nama: "Putu Ayana Prishagita Adnyani Putri", kelas: "7.5", no_peserta: "01-019-147", nilai: 70, perbaikan: [] },
+            { nis: "6677", nama: "Putu Candra Eka Nataly", kelas: "7.5", no_peserta: "01-019-148", nilai: 68, perbaikan: [] },
+            { nis: "6678", nama: "Putu Divina Maharani", kelas: "7.5", no_peserta: "01-019-149", nilai: 62, perbaikan: [] },
+            { nis: "6679", nama: "Putu Kayla Natania Wirawan", kelas: "7.5", no_peserta: "01-019-150", nilai: 76, perbaikan: [] },
+            { nis: "6680", nama: "Putu Okta Viona Ayunda", kelas: "7.5", no_peserta: "01-019-151", nilai: 76, perbaikan: [] },
+            { nis: "6681", nama: "Yohanes Rafael Unab", kelas: "7.5", no_peserta: "01-019-152", nilai: 44, perbaikan: [] },
+            { nis: "6682", nama: "Zefanya Lathisa Putri Widodo", kelas: "7.5", no_peserta: "01-019-153", nilai: 66, perbaikan: [] },
+            { nis: "6805", nama: "Hafijatun Nurul Huda", kelas: "7.5", no_peserta: "01-019-154", nilai: 66, perbaikan: [] },
+
+            // Data 7.6
+            { nis: "6684", nama: "Alaina Tias Putri Aorora", kelas: "7.6", no_peserta: "01-019-155", nilai: 46, perbaikan: [] },
+            { nis: "6685", nama: "Anak Agung Ary Intan Arya Dewi", kelas: "7.6", no_peserta: "01-019-156", nilai: 56, perbaikan: [] },
+            { nis: "6686", nama: "Almira Tungga Dewi", kelas: "7.6", no_peserta: "01-019-157", nilai: 60, perbaikan: [] },
+            { nis: "6687", nama: "Daffa Rifky Azzuhri", kelas: "7.6", no_peserta: "01-019-158", nilai: 56, perbaikan: [] },
+            { nis: "6688", nama: "Dewa Ayu Putu Santika Dewi", kelas: "7.6", no_peserta: "01-019-159", nilai: 58, perbaikan: [] },
+            { nis: "6689", nama: "Dyna Agnesia Putri", kelas: "7.6", no_peserta: "01-019-160", nilai: 64, perbaikan: [] },
+            { nis: "6690", nama: "Earlyta Kazue Ardita Putri", kelas: "7.6", no_peserta: "01-019-161", nilai: 92, perbaikan: [] },
+            { nis: "6691", nama: "Galang Kusuma Putra", kelas: "7.6", no_peserta: "01-019-162", nilai: 46, perbaikan: [] },
+            { nis: "6692", nama: "I Gede Eka Apriana Sadema", kelas: "7.6", no_peserta: "01-019-163", nilai: 56, perbaikan: [] },
+            { nis: "6693", nama: "I Gede Farendra Putra Deay", kelas: "7.6", no_peserta: "01-019-164", nilai: 32, perbaikan: [] },
+            { nis: "6694", nama: "I Kadek Hadi Davindra Pramana", kelas: "7.6", no_peserta: "01-019-165", nilai: 54, perbaikan: [] },
+            { nis: "6695", nama: "I Kadek Krisna Dwipayoga", kelas: "7.6", no_peserta: "01-019-166", nilai: 80, perbaikan: [] },
+            { nis: "6696", nama: "I Kadek Widhika Satya Ramawan", kelas: "7.6", no_peserta: "01-019-167", nilai: 52, perbaikan: [] },
+            { nis: "6697", nama: "I Komang Daiva Devara", kelas: "7.6", no_peserta: "01-019-168", nilai: null, perbaikan: [] },
+            { nis: "6698", nama: "I Made Dwi Putra Sedana Artha", kelas: "7.6", no_peserta: "01-019-169", nilai: 52, perbaikan: [] },
+            { nis: "6699", nama: "I Putu Bagus Prasetya Utama", kelas: "7.6", no_peserta: "01-019-170", nilai: 46, perbaikan: [] },
+            { nis: "6700", nama: "Kadek Bagus Willy Mahendras", kelas: "7.6", no_peserta: "01-019-171", nilai: 76, perbaikan: [] },
+            { nis: "6701", nama: "Kadek Kalyana Pradnya Dewi", kelas: "7.6", no_peserta: "01-019-172", nilai: 64, perbaikan: [] },
+            { nis: "6702", nama: "Kadek Rendra Pradana", kelas: "7.6", no_peserta: "01-019-173", nilai: 60, perbaikan: [] },
+            { nis: "6703", nama: "Kadek Ririn Diantari", kelas: "7.6", no_peserta: "01-019-174", nilai: 50, perbaikan: [] },
+            { nis: "6704", nama: "Komang Sintya Santi", kelas: "7.6", no_peserta: "01-019-175", nilai: 50, perbaikan: [] },
+            { nis: "6705", nama: "M. Amin Al-Kutbi", kelas: "7.6", no_peserta: "01-019-176", nilai: 70, perbaikan: [] },
+            { nis: "6706", nama: "Made Juanita", kelas: "7.6", no_peserta: "01-019-177", nilai: 48, perbaikan: [] },
+            { nis: "6707", nama: "Made Sambuca Raditya Pinatih", kelas: "7.6", no_peserta: "01-019-178", nilai: 80, perbaikan: [] },
+            { nis: "6708", nama: "Mochamad Iqbal Al Farisyi", kelas: "7.6", no_peserta: "01-019-179", nilai: 64, perbaikan: [] },
+            { nis: "6709", nama: "Muhammad Ja'far Shodiq", kelas: "7.6", no_peserta: "01-019-180", nilai: 72, perbaikan: [] },
+            { nis: "6710", nama: "Ngurah Putu David Kenji Dinata", kelas: "7.6", no_peserta: "01-019-181", nilai: 56, perbaikan: [] },
+            { nis: "6711", nama: "Ni Kadek Alya Aprilia Govardani", kelas: "7.6", no_peserta: "01-019-182", nilai: 74, perbaikan: [] },
+            { nis: "6712", nama: "Ni Made Sri Oktaviani Putri", kelas: "7.6", no_peserta: "01-019-183", nilai: 72, perbaikan: [] },
+            { nis: "6713", nama: "Ni Made Radhaswari Suputri", kelas: "7.6", no_peserta: "01-019-184", nilai: 98, perbaikan: [] },
+            { nis: "6714", nama: "Ni Putu Yuri Danisha Putri", kelas: "7.6", no_peserta: "01-019-185", nilai: 66, perbaikan: [] },
+            { nis: "6715", nama: "Noval Indra Syaputra", kelas: "7.6", no_peserta: "01-019-186", nilai: 44, perbaikan: [] },
+            { nis: "6716", nama: "Novan Rizki Setiawan", kelas: "7.6", no_peserta: "01-019-187", nilai: 48, perbaikan: [] },
+            { nis: "6717", nama: "Putri Ristalia Anggraeni", kelas: "7.6", no_peserta: "01-019-188", nilai: 48, perbaikan: [] },
+            { nis: "6718", nama: "Putu Ayu Mas Ratna Dewi", kelas: "7.6", no_peserta: "01-019-189", nilai: 70, perbaikan: [] },
+            { nis: "6804", nama: "Bagus Jaya Arjuna", kelas: "7.6", no_peserta: "01-019-190", nilai: 58, perbaikan: [] },
+            { nis: "6720", nama: "Putu Viana Putri Maharani", kelas: "7.6", no_peserta: "01-019-191", nilai: 76, perbaikan: [] },
+            { nis: "6721", nama: "Risqi Putra Al-Fatah", kelas: "7.6", no_peserta: "01-019-192", nilai: 76, perbaikan: [] },
+            { nis: "6722", nama: "Selvia Nur Viky Rahayu", kelas: "7.6", no_peserta: "01-019-193", nilai: 52, perbaikan: [] },
+            { nis: "6723", nama: "Waroh", kelas: "7.6", no_peserta: "01-019-194", nilai: 66, perbaikan: [] },
+
+            // Data 7.7
+            { nis: "6724", nama: "Adelia Ragil Clauriza", kelas: "7.7", no_peserta: "01-019-195", nilai: 76, perbaikan: [] },
+            { nis: "6725", nama: "Alvin Setya Pradana", kelas: "7.7", no_peserta: "01-019-196", nilai: 50, perbaikan: [] },
+            { nis: "6726", nama: "Arcelia Fahrotul Ulfania", kelas: "7.7", no_peserta: "01-019-197", nilai: 58, perbaikan: [] },
+            { nis: "6727", nama: "Dewa Ketut Hari Parama Nanda", kelas: "7.7", no_peserta: "01-019-198", nilai: 64, perbaikan: [] },
+            { nis: "6728", nama: "Dewa Ngakan Gede Diego Putra Darma Wisesa", kelas: "7.7", no_peserta: "01-019-199", nilai: 74, perbaikan: [] },
+            { nis: "6729", nama: "Gian Filanski Hendrik", kelas: "7.7", no_peserta: "01-019-200", nilai: 56, perbaikan: [] },
+            { nis: "6730", nama: "I Gusti Ayu Sri Kusuma Dewi", kelas: "7.7", no_peserta: "01-019-201", nilai: 40, perbaikan: [] },
+            { nis: "6731", nama: "I Gusti Ngurah Arjuna Agastya Natih Putra", kelas: "7.7", no_peserta: "01-019-202", nilai: 36, perbaikan: [] },
+            { nis: "6732", nama: "I Kadek Anantha Artha Wiguna", kelas: "7.7", no_peserta: "01-019-203", nilai: 56, perbaikan: [] },
+            { nis: "6733", nama: "I Kadek Agus Raditya Witama", kelas: "7.7", no_peserta: "01-019-204", nilai: 56, perbaikan: [] },
+            { nis: "6734", nama: "I Kadek Bagus Pramana Putra", kelas: "7.7", no_peserta: "01-019-205", nilai: 70, perbaikan: [] },
+            { nis: "6735", nama: "I Komang Deva Parwata", kelas: "7.7", no_peserta: "01-019-206", nilai: 62, perbaikan: [] },
+            { nis: "6736", nama: "I Komang Sutha Widya Sena", kelas: "7.7", no_peserta: "01-019-207", nilai: 72, perbaikan: [] },
+            { nis: "6737", nama: "I Made Gio Wira Mahatma", kelas: "7.7", no_peserta: "01-019-208", nilai: 62, perbaikan: [] },
+            { nis: "6738", nama: "I Putu Eka Erlangga Saputra", kelas: "7.7", no_peserta: "01-019-209", nilai: 62, perbaikan: [] },
+            { nis: "6739", nama: "I Putu Yudha Madhusudana", kelas: "7.7", no_peserta: "01-019-210", nilai: 74, perbaikan: [] },
+            { nis: "6740", nama: "Kadek Ningnata Mertayasa", kelas: "7.7", no_peserta: "01-019-211", nilai: 32, perbaikan: [] },
+            { nis: "6741", nama: "Komang Revan Palentio", kelas: "7.7", no_peserta: "01-019-212", nilai: 48, perbaikan: [] },
+            { nis: "6742", nama: "Krsna Karuna Shindu", kelas: "7.7", no_peserta: "01-019-213", nilai: 48, perbaikan: [] },
+            { nis: "6743", nama: "Muhamad Abib Firmansyah", kelas: "7.7", no_peserta: "01-019-214", nilai: 50, perbaikan: [] },
+            { nis: "6744", nama: "Muhammad Fatir Rifatullah", kelas: "7.7", no_peserta: "01-019-215", nilai: 70, perbaikan: [] },
+            { nis: "6745", nama: "Muhammad Mifathul Huda", kelas: "7.7", no_peserta: "01-019-216", nilai: 38, perbaikan: [] },
+            { nis: "6746", nama: "Ngurah Arya Mahendra Kadjar", kelas: "7.7", no_peserta: "01-019-217", nilai: 52, perbaikan: [] },
+            { nis: "6747", nama: "Ni Kadek Devi Kania Aprilia", kelas: "7.7", no_peserta: "01-019-218", nilai: 66, perbaikan: [] },
+            { nis: "6748", nama: "Ni Kadek Diva Felisha Padmaswari", kelas: "7.7", no_peserta: "01-019-219", nilai: 76, perbaikan: [] },
+            { nis: "6749", nama: "Ni Kadek Reisya Rikha Pradita", kelas: "7.7", no_peserta: "01-019-220", nilai: 66, perbaikan: [] },
+            { nis: "6750", nama: "Ni Kadek Santhi Aurelia", kelas: "7.7", no_peserta: "01-019-221", nilai: 54, perbaikan: [] },
+            { nis: "6751", nama: "Ni Ketut Jia Jasmine Pradnya Pramesty", kelas: "7.7", no_peserta: "01-019-222", nilai: 66, perbaikan: [] },
+            { nis: "6752", nama: "Ni Komang Riana Pujayanti", kelas: "7.7", no_peserta: "01-019-223", nilai: 54, perbaikan: [] },
+            { nis: "6753", nama: "Ni Putu Adistya Candra Pradita", kelas: "7.7", no_peserta: "01-019-224", nilai: 72, perbaikan: [] },
+            { nis: "6754", nama: "Ni Putu Dila Novita Sari", kelas: "7.7", no_peserta: "01-019-225", nilai: 44, perbaikan: [] },
+            { nis: "6755", nama: "Putri Abigail Meysha Reandra", kelas: "7.7", no_peserta: "01-019-226", nilai: null, perbaikan: [] },
+            { nis: "6756", nama: "Putu Devi Atika Pratiwi", kelas: "7.7", no_peserta: "01-019-227", nilai: 52, perbaikan: [] },
+            { nis: "6757", nama: "Putu Felina Dwijayanti", kelas: "7.7", no_peserta: "01-019-228", nilai: 56, perbaikan: [] },
+            { nis: "6758", nama: "Putu Susila Andyana", kelas: "7.7", no_peserta: "01-019-229", nilai: 22, perbaikan: [] },
+            { nis: "6759", nama: "Putu Wika Ananta Putra", kelas: "7.7", no_peserta: "01-019-230", nilai: 78, perbaikan: [] },
+            { nis: "6760", nama: "Qenzo Djazen Januarta", kelas: "7.7", no_peserta: "01-019-231", nilai: 68, perbaikan: [] },
+            { nis: "6761", nama: "Rifki Yoga Saputra", kelas: "7.7", no_peserta: "01-019-232", nilai: 50, perbaikan: [] },
+            { nis: "6762", nama: "Silvi Afifatus Sholihah", kelas: "7.7", no_peserta: "01-019-233", nilai: 70, perbaikan: [] },
+            { nis: "6763", nama: "Ucca Kusuma Wicitra", kelas: "7.7", no_peserta: "01-019-234", nilai: 82, perbaikan: [] },
+
+            // Data 7.8
+            { nis: "6764", nama: "A.A Gede Pandu Rajendra", kelas: "7.8", no_peserta: "01-019-235", nilai: 44, perbaikan: [] },
+            { nis: "6765", nama: "Abizar Misyari Winata", kelas: "7.8", no_peserta: "01-019-236", nilai: 48, perbaikan: [] },
+            { nis: "6766", nama: "Al Furqon Johan Prasetyo", kelas: "7.8", no_peserta: "01-019-237", nilai: 50, perbaikan: [] },
+            { nis: "6767", nama: "Almeera Safiqha Maritza Pami", kelas: "7.8", no_peserta: "01-019-238", nilai: 60, perbaikan: [] },
+            { nis: "6768", nama: "Assyfa Nur Khasanah", kelas: "7.8", no_peserta: "01-019-239", nilai: 64, perbaikan: [] },
+            { nis: "6769", nama: "Aun Hibatullah", kelas: "7.8", no_peserta: "01-019-240", nilai: 62, perbaikan: [] },
+            { nis: "6770", nama: "Dewa Ayu Made Indira Anindya Kusuma", kelas: "7.8", no_peserta: "01-019-241", nilai: 86, perbaikan: [] },
+            { nis: "6771", nama: "Firda Apriliyani", kelas: "7.8", no_peserta: "01-019-242", nilai: 48, perbaikan: [] },
+            { nis: "6772", nama: "Gede Marendra Wijaya", kelas: "7.8", no_peserta: "01-019-243", nilai: 76, perbaikan: [] },
+            { nis: "6773", nama: "I Dewa Putu Satya Wiguna", kelas: "7.8", no_peserta: "01-019-244", nilai: 48, perbaikan: [] },
+            { nis: "6774", nama: "I Gusti Agung Istri Gayatri", kelas: "7.8", no_peserta: "01-019-245", nilai: 48, perbaikan: [] },
+            { nis: "6775", nama: "I Gusti Ayu Septiani Putri", kelas: "7.8", no_peserta: "01-019-246", nilai: 74, perbaikan: [] },
+            { nis: "6776", nama: "I Gede Nengah Reynard Aditya", kelas: "7.8", no_peserta: "01-019-247", nilai: 56, perbaikan: [] },
+            { nis: "6777", nama: "I Kadek Adi Arya Putra", kelas: "7.8", no_peserta: "01-019-248", nilai: 70, perbaikan: [] },
+            { nis: "6778", nama: "I Kadek Bagus Krishna Dwipa Sanjaya", kelas: "7.8", no_peserta: "01-019-249", nilai: 38, perbaikan: [] },
+            { nis: "6779", nama: "I Komang Aditya Putra", kelas: "7.8", no_peserta: "01-019-250", nilai: 66, perbaikan: [] },
+            { nis: "6780", nama: "I Made Arta Wiguna", kelas: "7.8", no_peserta: "01-019-251", nilai: null, perbaikan: [] },
+            { nis: "6781", nama: "I Putu Rehan Arta Erlangga", kelas: "7.8", no_peserta: "01-019-252", nilai: 82, perbaikan: [] },
+            { nis: "6782", nama: "Kadek Dwi Paramita", kelas: "7.8", no_peserta: "01-019-253", nilai: 56, perbaikan: [] },
+            { nis: "6783", nama: "Kesya Yudya Saka", kelas: "7.8", no_peserta: "01-019-254", nilai: 52, perbaikan: [] },
+            { nis: "6784", nama: "Lucky Indra Perdana", kelas: "7.8", no_peserta: "01-019-255", nilai: 42, perbaikan: [] },
+            { nis: "6785", nama: "Ni Luh Pande Puspaningsih", kelas: "7.8", no_peserta: "01-019-256", nilai: 52, perbaikan: [] },
+            { nis: "6786", nama: "Muhammad Abizar", kelas: "7.8", no_peserta: "01-019-257", nilai: 36, perbaikan: [] },
+            { nis: "6787", nama: "Mohamad Arya Putra", kelas: "7.8", no_peserta: "01-019-258", nilai: 52, perbaikan: [] },
+            { nis: "6788", nama: "Ni Kadek Intan Kusuma Dewi", kelas: "7.8", no_peserta: "01-019-259", nilai: 52, perbaikan: [] },
+            { nis: "6789", nama: "Ni Kadek Dinda Dian Maharani", kelas: "7.8", no_peserta: "01-019-260", nilai: 60, perbaikan: [] },
+            { nis: "6790", nama: "Ni Ketut Kembar Alita Putri", kelas: "7.8", no_peserta: "01-019-261", nilai: null, perbaikan: [] },
+            { nis: "6791", nama: "Nikken Pritarini Widjayanti", kelas: "7.8", no_peserta: "01-019-262", nilai: 64, perbaikan: [] },
+            { nis: "6792", nama: "Ni Komang Kembar Alika Putri", kelas: "7.8", no_peserta: "01-019-263", nilai: 58, perbaikan: [] },
+            { nis: "6793", nama: "Ni Luh Sintya Dewi", kelas: "7.8", no_peserta: "01-019-264", nilai: 62, perbaikan: [] },
+            { nis: "6794", nama: "Ni Made Anggita Prame Swari", kelas: "7.8", no_peserta: "01-019-265", nilai: 60, perbaikan: [] },
+            { nis: "6795", nama: "Ni Putu Ayudya Paramitha Swari", kelas: "7.8", no_peserta: "01-019-266", nilai: 52, perbaikan: [] },
+            { nis: "6796", nama: "Putu Altaffian Panji Pranata", kelas: "7.8", no_peserta: "01-019-267", nilai: 48, perbaikan: [] },
+            { nis: "6797", nama: "Putu Deepika Purnama Dewi", kelas: "7.8", no_peserta: "01-019-268", nilai: 76, perbaikan: [] },
+            { nis: "6798", nama: "Putu Devan Adhitya Wicaksana", kelas: "7.8", no_peserta: "01-019-269", nilai: 68, perbaikan: [] },
+            { nis: "6799", nama: "Putu Dinda Indira Putri", kelas: "7.8", no_peserta: "01-019-270", nilai: 72, perbaikan: [] },
+            { nis: "6800", nama: "Putu Yuwanda Cahayanidta", kelas: "7.8", no_peserta: "01-019-271", nilai: 68, perbaikan: [] },
+            { nis: "6801", nama: "Rahen Zakyal Maizan", kelas: "7.8", no_peserta: "01-019-272", nilai: 46, perbaikan: [] },
+            { nis: "6802", nama: "Velynzha Gealova Sweetsherien Hanton", kelas: "7.8", no_peserta: "01-019-273", nilai: 88, perbaikan: [] },
+            { nis: "6803", nama: "Viola Octavia Putrie", kelas: "7.8", no_peserta: "01-019-274", nilai: 70, perbaikan: [] }
         ];
 
-        const funFacts = ["Keringat kuda nil warnanya pink. (Serius!)", "Gurita punya 3 jantung. (Dua buat insang, satu buat badan.)", "Madu adalah satu-satunya makanan yang gak bisa basi. (Rahasia alam!)", "Suara bebek tidak menggema, dan gak ada yang tau kenapa.", "Kalau kamu teriak 8 tahun, energi suaramu cuma cukup buat manasin secangkir kopi."];
-        const glitchTexts = ["Bentar, servernya lagi makan seblak...", "AI-nya lagi curhat, sabar ya...", "Mencari sinyal ke Pluto...", "Anjir nge-lag, pasti ada yg mikirin mantan...", "Menghubungi jin Qorin...", "Memperbarui patch 1.0.8.4..."];
-        const randomGroupNames = ["Kelompok Jomblo Estetika", "Divisi Rebahan Profesional", "Klub Anti Mandi Pagi", "Masterchef Gagal Move On", "Geng Mabar Sampai Subuh", "The Legendary Spongebob"];
-        const quizData = [ { question: "CPU itu singkatan dari apa hayo?", options: ["Central Processing Unit", "Computer Personal Unit", "Control Power Unit"], correctAnswer: 0 }, { question: "Yang BUKAN termasuk perangkat input komputer adalah...", options: ["Mouse", "Keyboard", "Monitor"], correctAnswer: 2 }, { question: "RAM gunanya buat apa sih?", options: ["Nyetak dokumen", "Menyimpan data sementara", "Nonton YouTube"], correctAnswer: 1 }, { question: "1 Kilobyte (KB) itu sekitar berapa Byte?", options: ["100 Byte", "1024 Byte", "1 Juta Byte"], correctAnswer: 1 } ];
+        // Filter data siswa yang nilainya valid untuk perhitungan KKM dan nilai tertinggi
+        const dataSiswaValid = rawDataSiswa.filter(siswa => siswa.nilai !== null && !isNaN(siswa.nilai));
         
-        let currentQuiz = {}, selectedAnswerIndex = -1;
-        const mainContainer = document.getElementById('main-container');
-        const sounds = {
-            heartbeat: document.getElementById('heartbeat-sound'),
-            glitch: document.getElementById('glitch-sound'),
-            typing: document.getElementById('typing-sound')
-        };
+        const KKM = 74;
+        const resultDiv = document.getElementById('result');
+        const searchInput = document.getElementById('searchInput');
+        const confettiDiv = document.getElementById('confetti');
 
-        // Fungsi utilitas
-        function playSound(audioEl) { audioEl.currentTime = 0; audioEl.play().catch(e => console.error("Audio play failed:", e)); }
-        function pauseSound(audioEl) { audioEl.pause(); audioEl.currentTime = 0; }
-        function typeWriter(element, text, speed) { let i = 0; element.innerHTML = ""; const type = () => { if (i < text.length) { element.innerHTML += text.charAt(i); i++; setTimeout(type, speed); } }; type(); }
+        // Cari Nilai Tertinggi Seangkatan (dari data yang valid)
+        const nilaiTertinggiSeangkatan = Math.max(...dataSiswaValid.map(siswa => siswa.nilai));
 
-        /** Mencari grup berdasarkan input nama. Mencocokkan SETIAP kata input ke anggota. */
-        function findUserGroup(inputName) {
-            const inputWords = inputName.toLowerCase().split(/\s+/).filter(word => word.length > 2);
-            if (inputWords.length === 0) return null;
-
-            for (const group of groupData) {
-                for (const member of group.members) {
-                    const memberWords = member.toLowerCase().split(/\s+/);
-                    if (inputWords.some(iWord => memberWords.some(mWord => mWord.includes(iWord)))) {
-                        return group;
-                    }
-                }
-            }
-            return null;
+        // Fungsi untuk animasi loading
+        function startLoadingAnimation() {
+            resultDiv.classList.remove('show');
+            resultDiv.style.animation = 'loading-pulse 1s infinite alternate';
+            resultDiv.innerHTML = '<p style="text-align: center; color: var(--color-primary); margin: 0; font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Sedang Mencari Data...</p>';
         }
 
-        async function startTheShow(userName) {
-            document.getElementById('name-entry-screen').classList.add('hidden');
-            const userGroup = findUserGroup(userName);
-            
-            if (!userGroup) {
-                document.getElementById('error-message').textContent = "NAMA INI TIDAK TERDAFTAR! Coba nama panggilan/lengkap yang benar.";
-                document.getElementById('name-entry-screen').classList.remove('hidden');
-                return;
-            }
-
-            // Mulai Loading
-            mainContainer.innerHTML += `
-                <div id="loading-screen" class="screen text-center">
-                    <p id="loading-header" class="mb-3">MENGKALIBRASI TAKDIR ${userName.toUpperCase()}...</p>
-                    <div id="fun-fact"></div>
-                    <div class="progress" style="height: 30px;">
-                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%; font-size: 1rem;">0%</div>
-                    </div>
-                </div>
-            `;
-            
-            playSound(sounds.heartbeat);
-
-            const progressBar = document.getElementById('progress-bar');
-            const funFactEl = document.getElementById('fun-fact');
-            let progress = 0;
-            let timeElapsed = 0;
-
-            // FASE 1: Fun Fact (3 detik)
-            let factInterval = setInterval(() => { funFactEl.textContent = "Fun Fact: " + funFacts[Math.floor(Math.random() * funFacts.length)]; }, 1500);
-            while (timeElapsed < 3000) { progress = Math.min(30, Math.floor(timeElapsed / 100)); progressBar.style.width = `${progress}%`; progressBar.textContent = `${progress}%`; await new Promise(r => setTimeout(r, 50)); timeElapsed += 50; }
-
-            // FASE 2: Glitch (3 detik)
-            clearInterval(factInterval); playSound(sounds.glitch); mainContainer.classList.add('glitch-active');
-            let glitchTextInterval = setInterval(() => { funFactEl.textContent = glitchTexts[Math.floor(Math.random() * glitchTexts.length)]; }, 800);
-            let targetProgress = 70; let startProgress = progress; let startTime = timeElapsed;
-            while (timeElapsed < 6000) {
-                const elapsedSinceStart = timeElapsed - startTime;
-                const newProgress = startProgress + Math.floor((targetProgress - startProgress) * (elapsedSinceStart / 3000));
-                progress = Math.min(targetProgress, newProgress); progressBar.style.width = `${progress}%`; progressBar.textContent = `${progress}%`; await new Promise(r => setTimeout(r, 50)); timeElapsed += 50;
-            }
-
-            // FASE 3: Prank Kucing (4 detik)
-            clearInterval(glitchTextInterval); mainContainer.classList.remove('glitch-active');
-            pauseSound(sounds.glitch); playSound(sounds.typing); pauseSound(sounds.heartbeat);
-            document.getElementById('loading-screen').classList.add('hidden');
-            mainContainer.innerHTML += `
-                <div id="cat-prank-screen" class="screen text-center">
-                    <h3>[ Akses Diberikan ke Server Takdir ]</h3>
-                    <pre id="cat-art" class="my-3">
-  /\\_/\\
- ( o.o )
-  > ^ <
-                    </pre>
-                    <h3 id="cat-text">ERROR CRITICAL! SERVER DIJAGA KUCING!</h3>
-                </div>
-            `;
-             while (timeElapsed < 10000) { await new Promise(r => setTimeout(r, 50)); timeElapsed += 50; } // Progress di background
-            await new Promise(r => setTimeout(r, 4000));
-            
-            // FASE 4: ROULETTE ANIMATION
-            pauseSound(sounds.typing);
-            document.getElementById('cat-prank-screen').classList.add('hidden');
-            mainContainer.innerHTML += `
-                <div id="roulette-screen" class="screen text-center">
-                    <h2 class="mb-4">MENGUNDI TAKDIR KELOMPOKMU...</h2>
-                    <div id="roulette-display">Pencarian Jodoh Kelompok...</div>
-                </div>
-            `;
-            
-            const rouletteDisplay = document.getElementById('roulette-display');
-            let spinInterval = setInterval(() => {
-                const randomGroup = groupData[Math.floor(Math.random() * groupData.length)];
-                rouletteDisplay.textContent = `${randomGroup.colorEmoji} ${randomGroup.name}`;
-            }, 100);
-
-            await new Promise(r => setTimeout(r, 5000));
-
-            clearInterval(spinInterval);
-            rouletteDisplay.textContent = `${userGroup.colorEmoji} ${userGroup.name}`;
-            rouletteDisplay.classList.add('roulette-winner');
-            await new Promise(r => setTimeout(r, 2000));
-            
-            // TAMPILKAN HASIL AKHIR
-            document.getElementById('roulette-screen').classList.add('hidden');
-            const finalHTML = `
-                <div id="main-content" class="text-center screen">
-                    <div id="personal-reveal">
-                        <h2 id="welcome-message" class="mb-5"></h2>
-                        <div id="personal-card-container" class="d-flex justify-content-center mt-3"></div>
-                        <button id="show-all-button" class="btn btn-lg mt-5">SPILL SEMUA KELOMPOK DONG! (Jawab Kuis dulu)</button>
-                    </div>
-                    <div id="spinner-container" class="hidden my-5"></div>
-                    <div id="all-groups-reveal" class="hidden">
-                        <h3 class="mt-5" style="color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green);">🔥 NAH, INI DIA DAFTAR LENGKAPNYA! Cekidot! 🔥</h3>
-                        <div id="all-groups-container" class="row g-4 mt-3 justify-content-center"></div>
-                    </div>
-                </div>
-            `;
-            mainContainer.innerHTML += finalHTML;
-
-            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-            document.getElementById('personal-card-container').innerHTML = createGroupCardHTML(userGroup, true);
-            
-            const firstName = userName.split(' ')[0];
-            typeWriter(document.getElementById('welcome-message'), `ANJAY! ${firstName.toUpperCase()}, INI TAKDIRMU!`, 75);
-
-            document.getElementById('show-all-button').addEventListener('click', () => displayQuiz(groupData));
-        }
-        
-        function createGroupCardHTML(group, isPersonal = false) {
-             const membersHTML = group.members.map(member => `<li class="list-group-item">${member}</li>`).join('');
-             return `
-                 <div class="card group-card ${isPersonal ? 'personal-card' : ''} group-${group.id} rounded-4" style="width: 100%; max-width: 350px;">
-                     <div class="card-header fw-bold">${group.colorEmoji} ${group.name}</div>
-                     <div class="card-body p-0">
-                         <ul class="list-group list-group-flush">${membersHTML}</ul>
-                     </div>
-                     <div class="card-footer task-assignment text-uppercase">${group.task}</div>
-                 </div>`;
-        }
-        
-        // --- QUIZ LOGIC ---
-
-        function displayQuiz(allGroups) {
-            if (!document.getElementById('quizModal')) {
-                 mainContainer.innerHTML += `
-                    <div class="modal fade" id="quizModal" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content text-light">
-                                <div class="modal-header border-0"><h5 class="modal-title w-100 text-center">⚡ KUIS DADAKAN TEKNOLOGI! ⚡</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                                <div class="modal-body text-center">
-                                    <p>Jawab dulu ini sebelum kepoin semua kelompok! Buktikan kalian gak gaptek!</p>
-                                    <p id="quiz-question" class="h5 my-4"></p>
-                                    <div id="quiz-options" class="d-grid gap-3"></div>
-                                    <p id="quiz-feedback" class="mt-4 fw-bold"></p>
-                                </div>
-                                <div class="modal-footer justify-content-center border-0"><button id="submit-answer-btn" class="btn btn-lg w-75">Jawab!</button></div>
-                            </div>
-                        </div>
-                    </div>
-                 `;
-            }
-            selectedAnswerIndex = -1;
-            currentQuiz = quizData[Math.floor(Math.random() * quizData.length)];
-            document.getElementById('quiz-question').textContent = currentQuiz.question;
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = '';
-            currentQuiz.options.forEach((option, index) => { optionsContainer.innerHTML += `<button class="btn quiz-option-btn" data-index="${index}">${option}</button>`; });
-            
-            const quizModal = new bootstrap.Modal(document.getElementById('quizModal'));
-            quizModal.show();
-
-            document.getElementById('submit-answer-btn').onclick = () => handleSubmitAnswer(allGroups, quizModal);
-            optionsContainer.onclick = handleQuizOptionClick;
-            document.getElementById('quiz-feedback').textContent = '';
+        function stopLoadingAnimation() {
+            resultDiv.style.animation = 'none';
         }
 
-        function handleQuizOptionClick(e) {
-            if (e.target.classList.contains('quiz-option-btn')) {
-                document.querySelectorAll('.quiz-option-btn').forEach(btn => btn.classList.remove('selected'));
-                e.target.classList.add('selected');
-                selectedAnswerIndex = parseInt(e.target.dataset.index);
-            }
-        }
-        
-        function handleSubmitAnswer(allGroups, modalInstance) {
-            if (selectedAnswerIndex === -1) {
-                document.getElementById('quiz-feedback').textContent = "Pilih salah satu jawaban dulu, Boss!";
-                document.getElementById('quiz-feedback').className = 'mt-4 fw-bold incorrect';
-                return;
-            }
-            const feedbackEl = document.getElementById('quiz-feedback');
-            const isCorrect = selectedAnswerIndex === currentQuiz.correctAnswer;
+        // Fungsi untuk menampilkan konfeti (menggunakan emoji)
+        function triggerConfetti() {
+            const emojis = ['🏆', '✨', '🎉', '🎊', '🥇', '🌟', '👑'];
             
-            feedbackEl.className = isCorrect ? 'mt-4 fw-bold correct' : 'mt-4 fw-bold incorrect';
-            feedbackEl.textContent = isCorrect ? "CAKEP BENER! Akses Diberikan!" : "YAH, SALAH! Akses Tetap Diberikan!";
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                confetti.style.position = 'absolute';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = Math.random() * window.innerHeight * 0.2 + 'px';
+                confetti.style.fontSize = Math.random() * 20 + 10 + 'px';
+                confetti.style.opacity = '0.9';
+                confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                confetti.style.transition = 'none';
+                
+                confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: 'translateY(' + (window.innerHeight) + 'px) rotate(720deg)', opacity: 0.1 }
+                ], {
+                    duration: Math.random() * 3000 + 2000,
+                    easing: 'ease-in',
+                    fill: 'forwards'
+                });
+
+                confettiDiv.appendChild(confetti);
+            }
             
             setTimeout(() => {
-                // START JUMPSCARE!
-                startJumpscare(modalInstance, allGroups);
-            }, 2500);
-        }
-
-        // --- FUNGSI JUMPSCARE HANTU BARU ---
-        async function startJumpscare(modalInstance, allGroups) {
-            modalInstance.hide();
-            
-            const jumpscareScreen = document.createElement('div');
-            jumpscareScreen.id = 'jumpscare-screen';
-            
-            document.body.appendChild(jumpscareScreen);
-            
-            // Konten Jumpscare
-            jumpscareScreen.innerHTML = `
-                <h1 style="font-size: 8vw; text-shadow: 0 0 40px var(--neon-pink); animation: flicker 0.1s infinite;">
-                    !!!! ERROR GAGAL TOTAL !!!!
-                </h1>
-                <p style="font-size: 3vw; color: white;">
-                    KAMU DIKUNCI DI SINI! HEHEHE...
-                </p>
-            `;
-
-            // Jumpscare ON
-            playSound(sounds.glitch);
-            jumpscareScreen.style.backgroundColor = 'red';
-            jumpscareScreen.style.opacity = 1;
-
-            await new Promise(r => setTimeout(r, 1200));
-            
-            // Jumpscare OFF
-            jumpscareScreen.style.opacity = 0;
-            pauseSound(sounds.glitch);
-
-            await new Promise(r => setTimeout(r, 500));
-            document.body.removeChild(jumpscareScreen);
-            
-            // Lanjutkan ke tampilan kelompok
-            startSpinnerAnimation(allGroups);
-        }
-
-        async function startSpinnerAnimation(allGroups) {
-            document.getElementById('show-all-button').classList.add('hidden');
-            const personalReveal = document.getElementById('personal-reveal');
-            const spinnerContainer = document.getElementById('spinner-container');
-            
-            personalReveal.classList.add('hidden');
-            spinnerContainer.classList.remove('hidden');
-
-            spinnerContainer.innerHTML = `
-                <h3 class="mb-4 text-center" style="color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);">
-                    MENGACAK TAKDIR TEMAN-TEMANMU...
-                </h3>
-                <div id="spinner-card-area" class="d-flex justify-content-center"></div>
-            `;
-            const spinnerCardArea = document.getElementById('spinner-card-area');
-
-            let spinInterval = setInterval(() => {
-                const randomGroup = allGroups[Math.floor(Math.random() * allGroups.length)];
-                const tempGroup = {...randomGroup, name: randomGroupNames[Math.floor(Math.random() * randomGroupNames.length)] };
-                spinnerCardArea.innerHTML = createGroupCardHTML(tempGroup);
-            }, 100);
-
-            await new Promise(r => setTimeout(r, 4500));
-            
-            clearInterval(spinInterval);
-            const finalGroup = allGroups[Math.floor(Math.random() * allGroups.length)];
-            spinnerCardArea.innerHTML = createGroupCardHTML(finalGroup);
-            
-            const finalCard = spinnerCardArea.firstElementChild;
-            if(finalCard) finalCard.classList.add('exploded');
-
-            await new Promise(r => setTimeout(r, 1000));
-
-            spinnerContainer.classList.add('hidden');
-            const allGroupsReveal = document.getElementById('all-groups-reveal');
-            allGroupsReveal.classList.remove('hidden');
-            
-            const allGroupsContainer = document.getElementById('all-groups-container');
-            allGroupsContainer.innerHTML = '';
-            // Tampilkan semua grup dengan efek delay
-            allGroups.forEach((group, index) => {
-                setTimeout(() => {
-                    const col = document.createElement('div');
-                    col.className = 'col-lg-4 col-md-6 col-sm-12';
-                    col.innerHTML = createGroupCardHTML(group);
-                    allGroupsContainer.appendChild(col);
-                }, index * 200);
-            });
+                confettiDiv.innerHTML = '';
+            }, 5000);
         }
         
-        document.getElementById('submit-name-btn').addEventListener('click', () => {
-            const nameInput = document.getElementById('name-input').value.trim();
-            if (nameInput === "") {
-                document.getElementById('error-message').textContent = "ISI NAMA DULU, BESTIE!";
-                return;
+        // Fungsi untuk membuat tabel perbaikan
+        function generatePerbaikanTable(perbaikanData) {
+            if (!perbaikanData || perbaikanData.length === 0) {
+                return '';
             }
-            startTheShow(nameInput);
-        });
+            
+            let tableHTML = `<div class="perbaikan-table-container">
+                                <h4><i class="fas fa-exclamation-triangle"></i> Riwayat Perbaikan Nilai</h4>
+                                <table class="perbaikan-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Nilai Awal</th>
+                                            <th>Nilai Perbaikan</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+            
+            perbaikanData.forEach(p => {
+                const status = p.nilai_baru >= KKM ? 
+                                `<span style="color: var(--color-success); font-weight: 700;">LULUS KKM</span>` : 
+                                `<span style="color: var(--color-danger);">BELUM LULUS</span>`;
+                tableHTML += `<tr>
+                                <td>${p.tgl}</td>
+                                <td>${p.nilai_lama}</td>
+                                <td style="font-weight: 600;">${p.nilai_baru}</td>
+                                <td>${status}</td>
+                              </tr>`;
+            });
 
-    });
+            tableHTML += `</tbody></table></div>`;
+            return tableHTML;
+        }
+
+
+        function cariNilai() {
+            startLoadingAnimation();
+            const input = searchInput.value.trim().toLowerCase();
+            
+            setTimeout(() => {
+                stopLoadingAnimation();
+                
+                if (input === "") {
+                    resultDiv.innerHTML = '<p style="color: var(--color-danger); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-times-circle"></i> Mohon masukkan Nama atau NIS.</p>';
+                    resultDiv.classList.add('show');
+                    return;
+                }
+
+                // LOGIKA PENCARIAN UTAMA
+                const siswaDitemukan = rawDataSiswa.find(siswa => {
+                    const nisLower = siswa.nis.toLowerCase();
+                    const noPesertaLower = siswa.no_peserta.toLowerCase();
+                    const namaLower = siswa.nama.toLowerCase();
+
+                    return nisLower === input || 
+                           noPesertaLower === input ||
+                           namaLower.includes(input);
+                });
+
+                if (siswaDitemukan) {
+                    
+                    // --- Handle Nilai Kosong ---
+                    if (siswaDitemukan.nilai === null) {
+                        resultDiv.innerHTML = `
+                            <div class="info-grid">
+                                <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
+                                <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
+                                <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
+                                <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
+                            </div>
+                            <div class="alert-badge status-fail" style="background-color: var(--color-warning); color: #856404; margin-bottom: 0;">
+                                <i class="fas fa-exclamation-triangle"></i> DATA NILAI UTAMA BELUM TERSEDIA.
+                            </div>
+                        `;
+                        resultDiv.classList.add('show');
+                        return;
+                    }
+
+
+                    let topScorerBadges = '';
+                    let statusKelas = '';
+                    let iconKKM = '';
+                    let pesanPeringatan = '';
+                    
+                    // 1. Cek Nilai Tertinggi Seangkatan
+                    if (siswaDitemukan.nilai === nilaiTertinggiSeangkatan) {
+                        topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-crown"></i> Nilai Tertinggi Seangkatan!</div>';
+                    }
+                    
+                    // 2. Cek Nilai Tertinggi di Kelasnya
+                    const siswaKelas = dataSiswaValid.filter(s => s.kelas === siswaDitemukan.kelas);
+                    const nilaiTertinggiKelas = Math.max(...siswaKelas.map(s => s.nilai));
+                    
+                    if (siswaDitemukan.nilai === nilaiTertinggiKelas) {
+                        topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
+                    }
+
+
+                    // 3. Cek KKM
+                    if (siswaDitemukan.nilai >= KKM) {
+                        statusKelas = 'status-success';
+                        iconKKM = '<i class="fas fa-trophy icon-win"></i>';
+                        pesanPeringatan = 'LULUS KKM (Nilai >= ' + KKM + ')';
+                        if (siswaDitemukan.nilai === nilaiTertinggiSeangkatan) {
+                             triggerConfetti(); 
+                        }
+                    } else {
+                        statusKelas = 'status-fail';
+                        iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
+                        pesanPeringatan = 'BELUM MEMENUHI KKM (Nilai < ' + KKM + ')';
+                    }
+                    
+                    // 4. Generate Tabel Perbaikan
+                    const perbaikanTable = generatePerbaikanTable(siswaDitemukan.perbaikan);
+
+
+                    // Tampilkan hasil
+                    resultDiv.innerHTML = `
+                        ${topScorerBadges}
+
+                        <div class="info-grid">
+                            <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
+                            <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
+                            <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
+                            <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
+                        </div>
+                        
+                        <div class="main-score">
+                            <div class="label">NILAI INFORMATIKA</div>
+                            <div class="value">${siswaDitemukan.nilai}</div>
+                        </div>
+
+                        <div class="${statusKelas} alert-badge">
+                            ${iconKKM}
+                            <span>${pesanPeringatan}</span>
+                        </div>
+                        
+                        ${perbaikanTable}
+                    `;
+                    resultDiv.classList.add('show');
+                } else {
+                    resultDiv.innerHTML = '<p style="color: var(--color-warning); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-search-minus"></i> Data siswa tidak ditemukan.</p>';
+                    resultDiv.classList.add('show');
+                }
+            }, 800); 
+        }
+
+        // Fungsi untuk mengaktifkan pencarian saat menekan Enter
+        function checkEnter(event) {
+            if (event.key === 'Enter') {
+                cariNilai();
+            }
+        }
     </script>
 </body>
 </html>
