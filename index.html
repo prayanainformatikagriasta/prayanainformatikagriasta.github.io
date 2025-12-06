@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        /* [CSS TETAP SAMA] */
+        /* [CSS DIBIARKAN SAMA UNTUK FOKUS PADA LOGIKA JS] */
         :root {
             --color-primary: #007bff;
             --color-secondary: #6c757d;
@@ -257,18 +257,16 @@
             font-weight: 600;
         }
 
-        /* --- Loading Animation --- */
+        /* --- Animasi --- */
         @keyframes loading-pulse {
             0% { background-color: #e9ecef; }
             50% { background-color: #dee2e6; }
             100% { background-color: #e9ecef; }
         }
-        
         @keyframes bounceIn {
             0% { opacity: 0; transform: scale(0.5); }
             100% { opacity: 1; transform: scale(1); }
         }
-        
         @keyframes fadeInOut {
             0% { opacity: 0.8; box-shadow: 0 0 10px rgba(255, 140, 0, 0.7); }
             100% { opacity: 1; box-shadow: none; }
@@ -322,22 +320,33 @@
     </div>
     
     <script>
-        // Fungsi utilitas untuk menormalkan string (menghilangkan spasi dan konversi ke huruf kecil)
-        function normalize(str) {
+        // Fungsi utilitas untuk menormalkan NIS/No. Peserta (hanya angka dan tanda hubung)
+        function normalizeId(str) {
             if (!str) return '';
-            // Menghapus semua karakter non-alphanumeric (kecuali tanda hubung) dan mengonversi ke huruf kecil
-            return String(str).replace(/[^a-zA-Z0-9-]/g, '').toLowerCase().trim();
+            return String(str).replace(/[^0-9-]/g, '').toLowerCase().trim();
         }
 
-        // Fungsi utilitas untuk menormalkan nama (hanya huruf dan spasi)
+        // Fungsi utilitas untuk menormalkan Nama (hanya huruf dan spasi, lowercase)
         function normalizeName(str) {
             if (!str) return '';
-            // Menghilangkan spasi berlebih dan mengonversi ke huruf kecil
             return String(str).toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+        
+        // Fungsi utilitas untuk konversi nilai yang mungkin desimal (string dengan koma/titik) ke float
+        function parseNumericValue(value) {
+            if (typeof value === 'string') {
+                // Mengganti koma dengan titik, lalu parsing
+                const cleanValue = value.replace(/,/g, '.');
+                return parseFloat(cleanValue);
+            }
+            if (typeof value === 'number') {
+                return value;
+            }
+            return NaN;
         }
 
 
-        // Data siswa lengkap Kelas 7
+        // Data siswa lengkap Kelas 7 (Data sudah pasti, tidak perlu diubah lagi)
         const rawDataSiswa = [
             // Format: { nis, nama, kelas, no_peserta, nilai_sas, stars, uh3, uh4, perbaikan }
             
@@ -632,23 +641,20 @@
             { nis: "6803", nama: "Viola Octavia Putrie", kelas: "7.8", no_peserta: "01-019-274", nilai_sas: 70, stars: 6, uh3: 91, uh4: 93, perbaikan: [] }
         ];
 
-        // Filter data siswa yang nilainya valid untuk perhitungan KKM dan nilai tertinggi
-        const dataSiswaValid = rawDataSiswa.filter(siswa => siswa.nilai_sas !== null && !isNaN(siswa.nilai_sas));
+        // Filter data siswa yang nilai_sas-nya valid untuk perhitungan KKM dan nilai tertinggi SAS
+        const dataSiswaValidSAS = rawDataSiswa.filter(siswa => parseNumericValue(siswa.nilai_sas) !== null && !isNaN(parseNumericValue(siswa.nilai_sas)));
         
         const KKM = 74;
         const resultDiv = document.getElementById('result');
         const searchInput = document.getElementById('searchInput');
         const confettiDiv = document.getElementById('confetti');
 
-        // Cari Nilai Tertinggi Seangkatan (SAS dan STARS)
-        const nilaiTertinggiSeangkatanSAS = Math.max(...dataSiswaValid.map(siswa => siswa.nilai_sas));
+        // Cari Nilai Tertinggi Seangkatan (SAS)
+        const nilaiTertinggiSeangkatanSAS = Math.max(...dataSiswaValidSAS.map(siswa => parseNumericValue(siswa.nilai_sas)));
         
-        // Pastikan Stars diolah sebagai numerik yang valid untuk pencarian tertinggi
-        const starsValid = rawDataSiswa.map(siswa => {
-            const starValue = typeof siswa.stars === 'string' ? parseFloat(siswa.stars.replace(',', '.')) : siswa.stars;
-            return isNaN(starValue) ? 0 : starValue; // Jika NaN, anggap 0
-        });
-        const nilaiTertinggiSeangkatanStars = Math.max(...starsValid);
+        // Cari Nilai Tertinggi Seangkatan (STARS)
+        const starsValid = rawDataSiswa.map(siswa => parseNumericValue(siswa.stars));
+        const nilaiTertinggiSeangkatanStars = Math.max(...starsValid.filter(s => !isNaN(s)));
 
         // Fungsi untuk animasi loading
         function startLoadingAnimation() {
@@ -715,7 +721,7 @@
                                     <tbody>`;
             
             perbaikanData.forEach(p => {
-                const status = p.nilai_baru >= KKM ? 
+                const status = parseNumericValue(p.nilai_baru) >= KKM ? 
                                 `<span style="color: var(--color-success); font-weight: 700;">LULUS KKM</span>` : 
                                 `<span style="color: var(--color-danger);">BELUM LULUS</span>`;
                 tableHTML += `<tr>
@@ -734,9 +740,8 @@
         function cariNilai() {
             startLoadingAnimation();
             
-            // NORMALISASI INPUT DARI PENGGUNA
             const rawInput = searchInput.value;
-            const inputNormalized = normalize(rawInput); // Untuk NIS/No Peserta
+            const inputNormalized = normalizeId(rawInput); // Untuk NIS/No Peserta
             const inputNameLower = normalizeName(rawInput); // Untuk Nama
 
             
@@ -744,7 +749,6 @@
                 stopLoadingAnimation();
                 
                 if (inputNormalized === "") {
-                    // Tampilkan kembali warning dan pesan default jika input kosong
                     resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>';
                     resultDiv.classList.add('show');
                     return;
@@ -752,8 +756,8 @@
 
                 // LOGIKA PENCARIAN UTAMA
                 const siswaDitemukan = rawDataSiswa.find(siswa => {
-                    const nisNormalized = normalize(siswa.nis);
-                    const noPesertaNormalized = normalize(siswa.no_peserta);
+                    const nisNormalized = normalizeId(siswa.nis);
+                    const noPesertaNormalized = normalizeId(siswa.no_peserta);
                     const namaNormalized = normalizeName(siswa.nama);
                     
                     // Prioritas 1 & 2: NIS/No. Peserta (exact match setelah normalisasi)
@@ -776,8 +780,9 @@
                     let iconKKM = '';
                     let pesanPeringatan = '';
                     
-                    // Ambil nilai stars (dikonversi ke numerik jika perlu)
-                    const starsSiswa = typeof siswaDitemukan.stars === 'string' ? parseFloat(siswaDitemukan.stars.replace(',', '.')) : siswaDitemukan.stars;
+                    // Ambil nilai stars dan SAS (dikonversi ke numerik)
+                    const starsSiswa = parseNumericValue(siswaDitemukan.stars);
+                    const nilaiSasSiswa = parseNumericValue(siswaDitemukan.nilai_sas);
 
                     // 1. Alert Rewards (Stars > 5)
                     if (starsSiswa > 5) {
@@ -792,18 +797,15 @@
                     }
                     
                     // 3. Cek Stars Tertinggi di Kelasnya
-                    const siswaKelasStars = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas && s.stars !== null && !isNaN(s.stars));
-                    const nilaiTertinggiKelasStars = Math.max(...siswaKelasStars.map(s => {
-                         const starVal = typeof s.stars === 'string' ? parseFloat(s.stars.replace(',', '.')) : s.stars;
-                         return isNaN(starVal) ? 0 : starVal;
-                    }));
+                    const siswaKelasStars = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas);
+                    const nilaiTertinggiKelasStars = Math.max(...siswaKelasStars.map(s => parseNumericValue(s.stars)).filter(s => !isNaN(s)));
                     
                     if (starsSiswa === nilaiTertinggiKelasStars) {
                         topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> STARS Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
                     }
 
                     // --- Handle Nilai Kosong (SAS) ---
-                    if (siswaDitemukan.nilai_sas === null) {
+                    if (isNaN(nilaiSasSiswa)) {
                         resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + `
                             ${topScorerBadges}
                             <div class="info-grid">
@@ -821,11 +823,11 @@
                     }
                     
                     // 4. Cek KKM (menggunakan nilai_sas)
-                    if (siswaDitemukan.nilai_sas >= KKM) {
+                    if (nilaiSasSiswa >= KKM) {
                         statusKelas = 'status-success';
                         iconKKM = '<i class="fas fa-trophy icon-win"></i>';
                         pesanPeringatan = 'LULUS KKM (Nilai SAS >= ' + KKM + ')';
-                        if (siswaDitemukan.nilai_sas === nilaiTertinggiSeangkatanSAS) {
+                        if (nilaiSasSiswa === nilaiTertinggiSeangkatanSAS) {
                              triggerConfetti(); 
                         }
                     } else {
@@ -852,7 +854,7 @@
                         <div class="score-grid">
                             <div class="score-item main-score" style="border-left: none;">
                                 <div class="label">NILAI SAS (AKHIR)</div>
-                                <div class="value">${siswaDitemukan.nilai_sas}</div>
+                                <div class="value">${nilaiSasSiswa}</div>
                             </div>
                             <div class="score-item">
                                 <div class="label">STARS ⭐️</div>
