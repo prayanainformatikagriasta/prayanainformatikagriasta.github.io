@@ -8,9 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        /* ====================================================================== */
-        /* BAGIAN 1: CSS (Gaya, Responsif, dan Animasi) */
-        /* ====================================================================== */
+        /* [CSS TETAP SAMA] */
         :root {
             --color-primary: #007bff;
             --color-secondary: #6c757d;
@@ -325,6 +323,7 @@
     
     <script>
         // Data siswa lengkap Kelas 7
+        // Catatan: Nilai UH 3 dan UH 4 yang memiliki koma atau titik harus dipastikan konsisten di data (menggunakan titik untuk desimal)
         const rawDataSiswa = [
             // Format: { nis, nama, kelas, no_peserta, nilai_sas, stars, uh3, uh4, perbaikan }
             
@@ -620,7 +619,6 @@
         ];
 
         // Filter data siswa yang nilainya valid untuk perhitungan KKM dan nilai tertinggi
-        // KKM dan nilai tertinggi tetap menggunakan NILAI SAS
         const dataSiswaValid = rawDataSiswa.filter(siswa => siswa.nilai_sas !== null && !isNaN(siswa.nilai_sas));
         
         const KKM = 74;
@@ -630,12 +628,18 @@
 
         // Cari Nilai Tertinggi Seangkatan (SAS dan STARS)
         const nilaiTertinggiSeangkatanSAS = Math.max(...dataSiswaValid.map(siswa => siswa.nilai_sas));
-        const nilaiTertinggiSeangkatanStars = Math.max(...rawDataSiswa.map(siswa => siswa.stars).filter(s => s !== null && !isNaN(s)));
-
+        
+        // Pastikan Stars juga diolah sebagai numerik yang valid untuk pencarian tertinggi
+        const starsValid = rawDataSiswa.map(siswa => {
+            // Mengganti koma dengan titik jika ada di string (meskipun data di sini sudah numerik, ini jaga-jaga)
+            const starValue = typeof siswa.stars === 'string' ? parseFloat(siswa.stars.replace(',', '.')) : siswa.stars;
+            return isNaN(starValue) ? 0 : starValue; // Jika NaN, anggap 0
+        });
+        const nilaiTertinggiSeangkatanStars = Math.max(...starsValid);
 
         // Fungsi untuk animasi loading
         function startLoadingAnimation() {
-            // Hapus konten sebelumnya kecuali Raport Warning
+            // Ambil konten Raport Warning dan masukkan kembali
             const warningHtml = document.querySelector('.raport-warning') ? document.querySelector('.raport-warning').outerHTML : '';
             resultDiv.innerHTML = warningHtml + '<p style="text-align: center; color: var(--color-primary); margin: 0; font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Sedang Mencari Data...</p>';
             resultDiv.classList.remove('show');
@@ -722,15 +726,17 @@
                 stopLoadingAnimation();
                 
                 if (input === "") {
-                    resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="color: var(--color-danger); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-times-circle"></i> Mohon masukkan Nama atau NIS.</p>';
+                    // Tampilkan kembali warning dan pesan default jika input kosong
+                    resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>';
                     resultDiv.classList.add('show');
                     return;
                 }
 
+                // LOGIKA PENCARIAN UTAMA
                 const siswaDitemukan = rawDataSiswa.find(siswa => {
-                    const nisLower = siswa.nis.toLowerCase();
-                    const noPesertaLower = siswa.no_peserta.toLowerCase();
-                    const namaLower = siswa.nama.toLowerCase();
+                    const nisLower = siswa.nis ? siswa.nis.toLowerCase() : '';
+                    const noPesertaLower = siswa.no_peserta ? siswa.no_peserta.toLowerCase() : '';
+                    const namaLower = siswa.nama ? siswa.nama.toLowerCase() : '';
 
                     return nisLower === input || 
                            noPesertaLower === input ||
@@ -739,9 +745,38 @@
 
                 if (siswaDitemukan) {
                     
+                    let topScorerBadges = '';
+                    let statusKelas = '';
+                    let iconKKM = '';
+                    let pesanPeringatan = '';
+                    
+                    // Ambil nilai stars (dikonversi ke numerik jika perlu)
+                    const starsSiswa = typeof siswaDitemukan.stars === 'string' ? parseFloat(siswaDitemukan.stars.replace(',', '.')) : siswaDitemukan.stars;
+
+                    // 1. Alert Rewards (Stars > 5)
+                    if (starsSiswa > 5) {
+                        topScorerBadges += '<div class="alert-badge reward-alert"><i class="fas fa-medal"></i> SELAMAT! Berhak Bebas UH/Tugas BAB 5 SMT 2!</div>';
+                        triggerConfetti();
+                    }
+
+
+                    // 2. Cek Stars Tertinggi Seangkatan
+                    if (starsSiswa === nilaiTertinggiSeangkatanStars) {
+                        topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-star-half-alt"></i> STARS Tertinggi Seangkatan!</div>';
+                    }
+                    
+                    // 3. Cek Stars Tertinggi di Kelasnya
+                    const siswaKelasStars = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas && s.stars !== null && !isNaN(s.stars));
+                    const nilaiTertinggiKelasStars = Math.max(...siswaKelasStars.map(s => s.stars));
+                    
+                    if (starsSiswa === nilaiTertinggiKelasStars) {
+                        topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> STARS Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
+                    }
+
                     // --- Handle Nilai Kosong (SAS) ---
                     if (siswaDitemukan.nilai_sas === null) {
                         resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + `
+                            ${topScorerBadges}
                             <div class="info-grid">
                                 <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
                                 <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
@@ -755,51 +790,22 @@
                         resultDiv.classList.add('show');
                         return;
                     }
-
-
-                    let topScorerBadges = '';
-                    let statusKelas = '';
-                    let iconKKM = '';
-                    let pesanPeringatan = '';
                     
-                    // --- 1. Alert Rewards (Stars > 5) ---
-                    if (siswaDitemukan.stars > 5) {
-                        topScorerBadges += '<div class="alert-badge reward-alert"><i class="fas fa-medal"></i> SELAMAT! Berhak Bebas UH/Tugas BAB 5 SMT 2!</div>';
-                        triggerConfetti();
-                    }
-
-
-                    // --- 2. Cek Stars Tertinggi Seangkatan ---
-                    if (siswaDitemukan.stars === nilaiTertinggiSeangkatanStars) {
-                        topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-star-half-alt"></i> STARS Tertinggi Seangkatan!</div>';
-                    }
-                    
-                    // --- 3. Cek Stars Tertinggi di Kelasnya ---
-                    const siswaKelasStars = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas && s.stars !== null && !isNaN(s.stars));
-                    const nilaiTertinggiKelasStars = Math.max(...siswaKelasStars.map(s => s.stars));
-                    
-                    if (siswaDitemukan.stars === nilaiTertinggiKelasStars) {
-                        topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> STARS Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
-                    }
-
-                    // --- 4. Cek Nilai Tertinggi SAS Seangkatan ---
-                    if (siswaDitemukan.nilai_sas === nilaiTertinggiSeangkatanSAS) {
-                        // Jika sudah dapat reward Stars, jangan tampilkan badge ini (kecuali Anda ingin keduanya)
-                        // topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-trophy"></i> Nilai SAS Tertinggi Seangkatan!</div>';
-                    }
-                    
-                    // --- 5. Cek KKM (menggunakan nilai_sas) ---
+                    // 4. Cek KKM (menggunakan nilai_sas)
                     if (siswaDitemukan.nilai_sas >= KKM) {
                         statusKelas = 'status-success';
                         iconKKM = '<i class="fas fa-trophy icon-win"></i>';
                         pesanPeringatan = 'LULUS KKM (Nilai SAS >= ' + KKM + ')';
+                        if (siswaDitemukan.nilai_sas === nilaiTertinggiSeangkatanSAS) {
+                             triggerConfetti(); 
+                        }
                     } else {
                         statusKelas = 'status-fail';
                         iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
                         pesanPeringatan = 'BELUM MEMENUHI KKM (Nilai SAS < ' + KKM + ')';
                     }
                     
-                    // 6. Generate Tabel Perbaikan
+                    // 5. Generate Tabel Perbaikan
                     const perbaikanTable = generatePerbaikanTable(siswaDitemukan.perbaikan);
 
 
@@ -821,7 +827,7 @@
                             </div>
                             <div class="score-item">
                                 <div class="label">STARS ⭐️</div>
-                                <div class="value" style="color: ${siswaDitemukan.stars > 5 ? var('--color-success)') : (siswaDitemukan.stars > 3 ? var('--color-highlight)') : var('--color-secondary)')};">${siswaDitemukan.stars}</div>
+                                <div class="value" style="color: ${starsSiswa > 5 ? var('--color-success)') : (starsSiswa > 3 ? var('--color-highlight)') : var('--color-secondary)')};">${starsSiswa}</div>
                             </div>
                             <div class="score-item">
                                 <div class="label">UH BAB 3</div>
