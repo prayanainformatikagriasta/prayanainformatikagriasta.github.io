@@ -132,26 +132,47 @@
             font-weight: 600;
             display: block;
         }
+        
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 0;
+            background-color: #fcfcfc;
+        }
+        
+        .score-item {
+            padding: 5px 0;
+            border-right: 1px solid #eee;
+        }
+        
+        .score-item:last-child {
+            border-right: none;
+        }
 
-        /* --- Nilai Utama --- */
+        /* --- Nilai Utama (SAS) --- */
         .main-score {
             text-align: center;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 0;
+            margin-bottom: 0;
             border-radius: 10px;
-            background: var(--bg-light);
         }
 
         .main-score .label {
             color: var(--color-secondary);
             font-size: 0.9em;
+            font-weight: 600;
         }
 
         .main-score .value {
-            font-size: 3em;
+            font-size: 1.8em;
             font-weight: 700;
             color: var(--color-primary);
-            line-height: 1;
+            line-height: 1.2;
         }
 
         /* --- Badges & Alerts --- */
@@ -178,6 +199,23 @@
              background-color: #00bcd4;
              color: white;
              box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
+        }
+
+        /* NEW: Reward Alert (Stars > 5) */
+        .reward-alert {
+            background-color: #c3e6cb;
+            color: #1a7e28;
+            border: 1px solid #8ac89b;
+        }
+        
+        /* NEW: Raport Warning Alert */
+        .raport-warning {
+            background-color: #ffeeba;
+            color: #856404;
+            border: 1px solid #ffcc5f;
+            font-size: 0.9em;
+            padding: 15px;
+            text-align: left;
         }
 
         .status-success {
@@ -243,17 +281,21 @@
             .container {
                 padding: 20px 15px;
             }
-            header h1 {
-                font-size: 1.5em;
-            }
             .search-area {
                 flex-direction: column;
             }
             .info-grid {
                 grid-template-columns: 1fr;
             }
-            .main-score .value {
-                font-size: 2.5em;
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+            .score-item {
+                border-bottom: 1px dashed #eee;
+                border-right: none;
+            }
+            .score-item:last-child {
+                border-bottom: none;
             }
         }
     </style>
@@ -262,7 +304,7 @@
     <div class="container" id="mainContainer">
         <header>
             <h1>Sistem Pengecekan Nilai 📚</h1>
-            <p>Informatika Kelas 7 | KKM: <span style="font-weight: 700;">74</span></p>
+            <p>Informatika Kelas 7 | KKM SAS: <span style="font-weight: 700;">74</span></p>
         </header>
         
         <div class="search-area">
@@ -271,6 +313,10 @@
         </div>
 
         <div id="result" class="result-card">
+            <div class="alert-badge raport-warning" style="opacity: 1; transform: translateY(0); margin-bottom: 25px;">
+                <i class="fas fa-exclamation-circle fa-beat"></i> 
+                <strong>PENTING:</strong> Nilai Raport Adalah Gabungan Antara Nilai SAS, Nilai Ulangan Harian, Nilai Tugas, Nilai Quiz, dan Sikap.
+            </div>
             <p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>
         </div>
         
@@ -278,316 +324,322 @@
     </div>
     
     <script>
+        // Data siswa lengkap Kelas 7
         const rawDataSiswa = [
-            // Format: { nis: "...", nama: "...", kelas: "...", no_peserta: "...", nilai: N, perbaikan: [{tgl: "...", nilai_lama: N, nilai_baru: N}]}
+            // Format: { nis, nama, kelas, no_peserta, nilai_sas, stars, uh3, uh4, perbaikan }
             
             // Data EC 7.1
-            { nis: "6531", nama: "Andrea Victoria Kaunang", kelas: "EC 7.1", no_peserta: "01-019-001-7", nilai: 88, perbaikan: [] },
-            { nis: "6532", nama: "Anindya Destyarani Sihaloho", kelas: "EC 7.1", no_peserta: "01-019-002-7", nilai: 68, perbaikan: [] },
-            { nis: "6533", nama: "Ararya Bagus Abhinandya Putra", kelas: "EC 7.1", no_peserta: "01-019-003-7", nilai: 70, perbaikan: [] },
-            { nis: "6534", nama: "Auraliana Kimi Athena Candra", kelas: "EC 7.1", no_peserta: "01-019-004-7", nilai: 68, perbaikan: [] },
-            { nis: "6535", nama: "Baiq Femigisya Az Zahra", kelas: "EC 7.1", no_peserta: "01-019-005-7", nilai: 66, perbaikan: [] },
-            { nis: "6536", nama: "Boby Setya Mahendra", kelas: "EC 7.1", no_peserta: "01-019-006-7", nilai: 62, perbaikan: [] },
-            { nis: "6537", nama: "Dewa Gede Rangga Sahitya Dalem", kelas: "EC 7.1", no_peserta: "01-019-007-7", nilai: 64, perbaikan: [] },
-            { nis: "6538", nama: "Fholand Aditya Pramana", kelas: "EC 7.1", no_peserta: "01-019-008-7", nilai: 40, perbaikan: [] },
-            { nis: "6539", nama: "Gede Angga Arya Wardana", kelas: "EC 7.1", no_peserta: "01-019-009-7", nilai: 54, perbaikan: [] },
-            { nis: "6540", nama: "I Dewa Ayu Ganita Parwati", kelas: "EC 7.1", no_peserta: "01-019-010-7", nilai: 68, perbaikan: [] },
-            { nis: "6541", nama: "I Made Bagus Panji Ari Yasa", kelas: "EC 7.1", no_peserta: "01-019-011-7", nilai: 34, perbaikan: [] },
-            { nis: "6542", nama: "I Putu Aditya Kesawa", kelas: "EC 7.1", no_peserta: "01-019-012-7", nilai: 70, perbaikan: [] },
-            { nis: "6543", nama: "Ketut Mico Prarama Suputra", kelas: "EC 7.1", no_peserta: "01-019-013-7", nilai: 44, perbaikan: [] },
-            { nis: "6544", nama: "Lusiana Safara", kelas: "EC 7.1", no_peserta: "01-019-014-7", nilai: 44, perbaikan: [] },
-            { nis: "6545", nama: "Ni Komang Aura Diah Gayatri", kelas: "EC 7.1", no_peserta: "01-019-015-7", nilai: 76, perbaikan: [] },
-            { nis: "6546", nama: "Ni Putu Ayu Candra Winasaputri", kelas: "EC 7.1", no_peserta: "01-019-016-7", nilai: 44, perbaikan: [] },
-            { nis: "6548", nama: "Putu Arya Prama Wibawa", kelas: "EC 7.1", no_peserta: "01-019-017-7", nilai: 60, perbaikan: [] },
-            { nis: "6549", nama: "Putu Deni Indriani", kelas: "EC 7.1", no_peserta: "01-019-018-7", nilai: 64, perbaikan: [] },
-            { nis: "6550", nama: "Putu Kiandra Kirana Prisha", kelas: "EC 7.1", no_peserta: "01-019-019-7", nilai: 78, perbaikan: [] },
-            { nis: "6551", nama: "Riski Valerie Putri", kelas: "EC 7.1", no_peserta: "01-019-020-7", nilai: 74, perbaikan: [] },
-            { nis: "6552", nama: "Rubbi Ina Pui Kenetty", kelas: "EC 7.1", no_peserta: "01-019-021-7", nilai: 64, perbaikan: [] },
-            { nis: "6553", nama: "Serafim Adonai Willson Ludji", kelas: "EC 7.1", no_peserta: "01-019-022-7", nilai: 66, perbaikan: [] },
-            { nis: "6554", nama: "Sheina Adara Yumi Anzita", kelas: "EC 7.1", no_peserta: "01-019-023-7", nilai: 64, perbaikan: [] },
-            { nis: "6807", nama: "Jeslyn Felicia Vivalona Walelangi", kelas: "EC 7.1", no_peserta: "01-019-024-7", nilai: 62, perbaikan: [] },
+            { nis: "6531", nama: "Andrea Victoria Kaunang", kelas: "EC 7.1", no_peserta: "01-019-001-7", nilai_sas: 88, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6532", nama: "Anindya Destyarani Sihaloho", kelas: "EC 7.1", no_peserta: "01-019-002-7", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6533", nama: "Ararya Bagus Abhinandya Putra", kelas: "EC 7.1", no_peserta: "01-019-003-7", nilai_sas: 70, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6534", nama: "Auraliana Kimi Athena Candra", kelas: "EC 7.1", no_peserta: "01-019-004-7", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6535", nama: "Baiq Femigisya Az Zahra", kelas: "EC 7.1", no_peserta: "01-019-005-7", nilai_sas: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6536", nama: "Boby Setya Mahendra", kelas: "EC 7.1", no_peserta: "01-019-006-7", nilai_sas: 62, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6537", nama: "Dewa Gede Rangga Sahitya Dalem", kelas: "EC 7.1", no_peserta: "01-019-007-7", nilai_sas: 64, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
+            { nis: "6538", nama: "Fholand Aditya Pramana", kelas: "EC 7.1", no_peserta: "01-019-008-7", nilai_sas: 40, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6539", nama: "Gede Angga Arya Wardana", kelas: "EC 7.1", no_peserta: "01-019-009-7", nilai_sas: 54, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6540", nama: "I Dewa Ayu Ganita Parwati", kelas: "EC 7.1", no_peserta: "01-019-010-7", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6541", nama: "I Made Bagus Panji Ari Yasa", kelas: "EC 7.1", no_peserta: "01-019-011-7", nilai_sas: 34, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6542", nama: "I Putu Aditya Kesawa", kelas: "EC 7.1", no_peserta: "01-019-012-7", nilai_sas: 70, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6543", nama: "Ketut Mico Prarama Suputra", kelas: "EC 7.1", no_peserta: "01-019-013-7", nilai_sas: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6544", nama: "Lusiana Safara", kelas: "EC 7.1", no_peserta: "01-019-014-7", nilai_sas: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6545", nama: "Ni Komang Aura Diah Gayatri", kelas: "EC 7.1", no_peserta: "01-019-015-7", nilai_sas: 76, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6546", nama: "Ni Putu Ayu Candra Winasaputri", kelas: "EC 7.1", no_peserta: "01-019-016-7", nilai_sas: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6548", nama: "Putu Arya Prama Wibawa", kelas: "EC 7.1", no_peserta: "01-019-017-7", nilai_sas: 60, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6549", nama: "Putu Deni Indriani", kelas: "EC 7.1", no_peserta: "01-019-018-7", nilai_sas: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6550", nama: "Putu Kiandra Kirana Prisha", kelas: "EC 7.1", no_peserta: "01-019-019-7", nilai_sas: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6551", nama: "Riski Valerie Putri", kelas: "EC 7.1", no_peserta: "01-019-020-7", nilai_sas: 74, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6552", nama: "Rubbi Ina Pui Kenetty", kelas: "EC 7.1", no_peserta: "01-019-021-7", nilai_sas: 64, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
+            { nis: "6553", nama: "Serafim Adonai Willson Ludji", kelas: "EC 7.1", no_peserta: "01-019-022-7", nilai_sas: 66, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6554", nama: "Sheina Adara Yumi Anzita", kelas: "EC 7.1", no_peserta: "01-019-023-7", nilai_sas: 64, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6807", nama: "Jeslyn Felicia Vivalona Walelangi", kelas: "EC 7.1", no_peserta: "01-019-024-7", nilai_sas: 62, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
 
             // Data EC 7.2
-            { nis: "6555", nama: "Anasyalia Zevalian Syakeela", kelas: "EC 7.2", no_peserta: "01-019-025", nilai: 80, perbaikan: [] },
-            { nis: "6556", nama: "Ayu Dewi Septiani", kelas: "EC 7.2", no_peserta: "01-019-026", nilai: 68, perbaikan: [] },
-            { nis: "6557", nama: "Cetta Anindita Saraswati", kelas: "EC 7.2", no_peserta: "01-019-027", nilai: 88, perbaikan: [] },
-            { nis: "6558", nama: "Chiyo Anaya Tjong", kelas: "EC 7.2", no_peserta: "01-019-028", nilai: 74, perbaikan: [] },
-            { nis: "6559", nama: "Denayya Syarifaqilla Ramadhan", kelas: "EC 7.2", no_peserta: "01-019-029", nilai: 78, perbaikan: [] },
-            { nis: "6560", nama: "I Gusti Ayu Nindya Putri Kania", kelas: "EC 7.2", no_peserta: "01-019-030", nilai: 68, perbaikan: [] },
-            { nis: "6561", nama: "I Kadek Aditya Nagata", kelas: "EC 7.2", no_peserta: "01-019-031", nilai: 80, perbaikan: [] },
-            { nis: "6562", nama: "I Putu Angga Narendra", kelas: "EC 7.2", no_peserta: "01-019-032", nilai: 90, perbaikan: [] },
-            { nis: "6563", nama: "I Wayan Giri Sastra", kelas: "EC 7.2", no_peserta: "01-019-033", nilai: 66, perbaikan: [] },
-            { nis: "6564", nama: "Jimmy Setiawan Prasetyo", kelas: "EC 7.2", no_peserta: "01-019-034", nilai: 46, perbaikan: [] },
-            { nis: "6565", nama: "Kadek Aira Dewina Indah", kelas: "EC 7.2", no_peserta: "01-019-035", nilai: 78, perbaikan: [] },
-            { nis: "6566", nama: "Ni Kadek Vidya Pramesvari Yoga", kelas: "EC 7.2", no_peserta: "01-019-036", nilai: 78, perbaikan: [] },
-            { nis: "6567", nama: "Keisha Ayundya Nugroho", kelas: "EC 7.2", no_peserta: "01-019-037", nilai: 72, perbaikan: [] },
-            { nis: "6568", nama: "Kevin Aprilio Iswanto", kelas: "EC 7.2", no_peserta: "01-019-038", nilai: 64, perbaikan: [] },
-            { nis: "6569", nama: "Komang Wina Meliani", kelas: "EC 7.2", no_peserta: "01-019-039", nilai: 56, perbaikan: [] },
-            { nis: "6570", nama: "Leon Elysium Basuki", kelas: "EC 7.2", no_peserta: "01-019-040", nilai: 78, perbaikan: [] },
-            { nis: "6571", nama: "Made Jati Putra Wiryawan", kelas: "EC 7.2", no_peserta: "01-019-041", nilai: 68, perbaikan: [] },
-            { nis: "6572", nama: "Ni Ketut Kirsty Kinanti Sanjaya", kelas: "EC 7.2", no_peserta: "01-019-042", nilai: 80, perbaikan: [] },
-            { nis: "6573", nama: "Ni Luh Devina Mulia", kelas: "EC 7.2", no_peserta: "01-019-043", nilai: 64, perbaikan: [] },
-            { nis: "6574", nama: "Ni Made Ayu Widya Atalia Dewi", kelas: "EC 7.2", no_peserta: "01-019-044", nilai: 68, perbaikan: [] },
-            { nis: "6575", nama: "Putu Keanu Nathano Yodha", kelas: "EC 7.2", no_peserta: "01-019-045", nilai: 64, perbaikan: [] },
-            { nis: "6576", nama: "Rheananda Amora Ilham", kelas: "EC 7.2", no_peserta: "01-019-046", nilai: 82, perbaikan: [] },
-            { nis: "6577", nama: "Ni Luh Nandita Widiantari", kelas: "EC 7.2", no_peserta: "01-019-047", nilai: 56, perbaikan: [] },
-            { nis: "6578", nama: "Theratama Nagata Pradna Dika Prasetya", kelas: "EC 7.2", no_peserta: "01-019-048", nilai: 78, perbaikan: [] },
+            { nis: "6555", nama: "Anasyalia Zevalian Syakeela", kelas: "EC 7.2", no_peserta: "01-019-025", nilai_sas: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6556", nama: "Ayu Dewi Septiani", kelas: "EC 7.2", no_peserta: "01-019-026", nilai_sas: 68, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6557", nama: "Cetta Anindita Saraswati", kelas: "EC 7.2", no_peserta: "01-019-027", nilai_sas: 88, stars: 7, uh3: 92, uh4: 95, perbaikan: [] },
+            { nis: "6558", nama: "Chiyo Anaya Tjong", kelas: "EC 7.2", no_peserta: "01-019-028", nilai_sas: 74, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6559", nama: "Denayya Syarifaqilla Ramadhan", kelas: "EC 7.2", no_peserta: "01-019-029", nilai_sas: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6560", nama: "I Gusti Ayu Nindya Putri Kania", kelas: "EC 7.2", no_peserta: "01-019-030", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6561", nama: "I Kadek Aditya Nagata", kelas: "EC 7.2", no_peserta: "01-019-031", nilai_sas: 80, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
+            { nis: "6562", nama: "I Putu Angga Narendra", kelas: "EC 7.2", no_peserta: "01-019-032", nilai_sas: 90, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
+            { nis: "6563", nama: "I Wayan Giri Sastra", kelas: "EC 7.2", no_peserta: "01-019-033", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6564", nama: "Jimmy Setiawan Prasetyo", kelas: "EC 7.2", no_peserta: "01-019-034", nilai_sas: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6565", nama: "Kadek Aira Dewina Indah", kelas: "EC 7.2", no_peserta: "01-019-035", nilai_sas: 78, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6566", nama: "Ni Kadek Vidya Pramesvari Yoga", kelas: "EC 7.2", no_peserta: "01-019-036", nilai_sas: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6567", nama: "Keisha Ayundya Nugroho", kelas: "EC 7.2", no_peserta: "01-019-037", nilai_sas: 72, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6568", nama: "Kevin Aprilio Iswanto", kelas: "EC 7.2", no_peserta: "01-019-038", nilai_sas: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6569", nama: "Komang Wina Meliani", kelas: "EC 7.2", no_peserta: "01-019-039", nilai_sas: 56, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6570", nama: "Leon Elysium Basuki", kelas: "EC 7.2", no_peserta: "01-019-040", nilai_sas: 78, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6571", nama: "Made Jati Putra Wiryawan", kelas: "EC 7.2", no_peserta: "01-019-041", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6572", nama: "Ni Ketut Kirsty Kinanti Sanjaya", kelas: "EC 7.2", no_peserta: "01-019-042", nilai_sas: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6573", nama: "Ni Luh Devina Mulia", kelas: "EC 7.2", no_peserta: "01-019-043", nilai_sas: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6574", nama: "Ni Made Ayu Widya Atalia Dewi", kelas: "EC 7.2", no_peserta: "01-019-044", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6575", nama: "Putu Keanu Nathano Yodha", kelas: "EC 7.2", no_peserta: "01-019-045", nilai_sas: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6576", nama: "Rheananda Amora Ilham", kelas: "EC 7.2", no_peserta: "01-019-046", nilai_sas: 82, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6577", nama: "Ni Luh Nandita Widiantari", kelas: "EC 7.2", no_peserta: "01-019-047", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6578", nama: "Theratama Nagata Pradna Dika Prasetya", kelas: "EC 7.2", no_peserta: "01-019-048", nilai_sas: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
 
             // Data EC 7.3
-            { nis: "6579", nama: "Aghitsni Maulaya", kelas: "EC 7.3", no_peserta: "01-019-049", nilai: 66, perbaikan: [] },
-            { nis: "6580", nama: "Aqiyla Qadisah Febrian", kelas: "EC 7.3", no_peserta: "01-019-050", nilai: 42, perbaikan: [] },
-            { nis: "6581", nama: "Christyano Arthanugraha Sukarsa", kelas: "EC 7.3", no_peserta: "01-019-051", nilai: 64, perbaikan: [] },
-            { nis: "6582", nama: "I Gede Narendra Ananda Putra", kelas: "EC 7.3", no_peserta: "01-019-052", nilai: 56, perbaikan: [] },
-            { nis: "6583", nama: "I Gusti Ayu Agung Manik Mas Swaridewi", kelas: "EC 7.3", no_peserta: "01-019-053", nilai: 70, perbaikan: [] },
-            { nis: "6584", nama: "I Gusti Putu Radheya Saguna Nugraha", kelas: "EC 7.3", no_peserta: "01-019-054", nilai: 72, perbaikan: [] },
-            { nis: "6719", nama: "Putu Gavana Kresna Widha", kelas: "EC 7.3", no_peserta: "01-019-055", nilai: 60, perbaikan: [] },
-            { nis: "6586", nama: "I Made Dhanez Khadira Putra", kelas: "EC 7.3", no_peserta: "01-019-056", nilai: 70, perbaikan: [] },
-            { nis: "6587", nama: "I Putu Satria Paramarta Putra", kelas: "EC 7.3", no_peserta: "01-019-057", nilai: 28, perbaikan: [] },
-            { nis: "6588", nama: "Jonathan Elbert Immanuel Liandhy", kelas: "EC 7.3", no_peserta: "01-019-058", nilai: 64, perbaikan: [] },
-            { nis: "6589", nama: "Jonathan Imanuel", kelas: "EC 7.3", no_peserta: "01-019-059", nilai: 60, perbaikan: [] },
-            { nis: "6590", nama: "Kadek Novia Asti Diantari", kelas: "EC 7.3", no_peserta: "01-019-060", nilai: 90, perbaikan: [] },
-            { nis: "6591", nama: "Made Anindha Oceania", kelas: "EC 7.3", no_peserta: "01-019-061", nilai: 54, perbaikan: [] },
-            { nis: "6592", nama: "Made Callista Felycia Wibawa", kelas: "EC 7.3", no_peserta: "01-019-062", nilai: 84, perbaikan: [] },
-            { nis: "6593", nama: "Made Yodha Ryusandi", kelas: "EC 7.3", no_peserta: "01-019-063", nilai: 76, perbaikan: [] },
-            { nis: "6594", nama: "Ni Kadek Candra Stiti Dewi", kelas: "EC 7.3", no_peserta: "01-019-064", nilai: 80, perbaikan: [] },
-            { nis: "6595", nama: "Kadek Hira Amanda Putri", kelas: "EC 7.3", no_peserta: "01-019-065", nilai: 64, perbaikan: [] },
-            { nis: "6596", nama: "Ni Putu Diah Pradnya Paramitha", kelas: "EC 7.3", no_peserta: "01-019-066", nilai: 44, perbaikan: [] },
-            { nis: "6597", nama: "Ni Putu Meylia Wirapramesti", kelas: "EC 7.3", no_peserta: "01-019-067", nilai: 76, perbaikan: [] },
-            { nis: "6598", nama: "Putu Angga Pratama Putra", kelas: "EC 7.3", no_peserta: "01-019-068", nilai: 56, perbaikan: [] },
-            { nis: "6599", nama: "Putu Ayu Tirtawati", kelas: "EC 7.3", no_peserta: "01-019-069", nilai: 90, perbaikan: [] },
-            { nis: "6600", nama: "Sang Ayu Komang Trisnadia Artika Dewi", kelas: "EC 7.3", no_peserta: "01-019-070", nilai: 88, perbaikan: [] },
-            { nis: "6601", nama: "Sang Putu Andhika Pradana", kelas: "EC 7.3", no_peserta: "01-019-071", nilai: 78, perbaikan: [] },
-            { nis: "6602", nama: "Zahraa Asrafunnissa De Nato", kelas: "EC 7.3", no_peserta: "01-019-072", nilai: 54, perbaikan: [] },
+            { nis: "6579", nama: "Aghitsni Maulaya", kelas: "EC 7.3", no_peserta: "01-019-049", nilai_sas: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6580", nama: "Aqiyla Qadisah Febrian", kelas: "EC 7.3", no_peserta: "01-019-050", nilai_sas: 42, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6581", nama: "Christyano Arthanugraha Sukarsa", kelas: "EC 7.3", no_peserta: "01-019-051", nilai_sas: 64, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6582", nama: "I Gede Narendra Ananda Putra", kelas: "EC 7.3", no_peserta: "01-019-052", nilai_sas: 56, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6583", nama: "I Gusti Ayu Agung Manik Mas Swaridewi", kelas: "EC 7.3", no_peserta: "01-019-053", nilai_sas: 70, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
+            { nis: "6584", nama: "I Gusti Putu Radheya Saguna Nugraha", kelas: "EC 7.3", no_peserta: "01-019-054", nilai_sas: 72, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6719", nama: "Putu Gavana Kresna Widha", kelas: "EC 7.3", no_peserta: "01-019-055", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6586", nama: "I Made Dhanez Khadira Putra", kelas: "EC 7.3", no_peserta: "01-019-056", nilai_sas: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6587", nama: "I Putu Satria Paramarta Putra", kelas: "EC 7.3", no_peserta: "01-019-057", nilai_sas: 28, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6588", nama: "Jonathan Elbert Immanuel Liandhy", kelas: "EC 7.3", no_peserta: "01-019-058", nilai_sas: 64, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6589", nama: "Jonathan Imanuel", kelas: "EC 7.3", no_peserta: "01-019-059", nilai_sas: 60, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6590", nama: "Kadek Novia Asti Diantari", kelas: "EC 7.3", no_peserta: "01-019-060", nilai_sas: 90, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6591", nama: "Made Anindha Oceania", kelas: "EC 7.3", no_peserta: "01-019-061", nilai_sas: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6592", nama: "Made Callista Felycia Wibawa", kelas: "EC 7.3", no_peserta: "01-019-062", nilai_sas: 84, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6593", nama: "Made Yodha Ryusandi", kelas: "EC 7.3", no_peserta: "01-019-063", nilai_sas: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6594", nama: "Ni Kadek Candra Stiti Dewi", kelas: "EC 7.3", no_peserta: "01-019-064", nilai_sas: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6595", nama: "Kadek Hira Amanda Putri", kelas: "EC 7.3", no_peserta: "01-019-065", nilai_sas: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6596", nama: "Ni Putu Diah Pradnya Paramitha", kelas: "EC 7.3", no_peserta: "01-019-066", nilai_sas: 44, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6597", nama: "Ni Putu Meylia Wirapramesti", kelas: "EC 7.3", no_peserta: "01-019-067", nilai_sas: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6598", nama: "Putu Angga Pratama Putra", kelas: "EC 7.3", no_peserta: "01-019-068", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6599", nama: "Putu Ayu Tirtawati", kelas: "EC 7.3", no_peserta: "01-019-069", nilai_sas: 90, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6600", nama: "Sang Ayu Komang Trisnadia Artika Dewi", kelas: "EC 7.3", no_peserta: "01-019-070", nilai_sas: 88, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6601", nama: "Sang Putu Andhika Pradana", kelas: "EC 7.3", no_peserta: "01-019-071", nilai_sas: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6602", nama: "Zahraa Asrafunnissa De Nato", kelas: "EC 7.3", no_peserta: "01-019-072", nilai_sas: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
             
             // Data 7.4
-            { nis: "6603", nama: "A.A Gede Wedanandyaksa Putra", kelas: "7.4", no_peserta: "01-019-073", nilai: 70, perbaikan: [] },
-            { nis: "6604", nama: "A.A Ngurah Agung Aby Putra Samirana", kelas: "7.4", no_peserta: "01-019-074", nilai: 82, perbaikan: [] },
-            { nis: "6605", nama: "Aini Salsabila", kelas: "7.4", no_peserta: "01-019-075", nilai: 64, perbaikan: [] },
-            { nis: "6606", nama: "Alif Ismail", kelas: "7.4", no_peserta: "01-019-076", nilai: 58, perbaikan: [] },
-            { nis: "6607", nama: "Alvin Anantaka Mbura", kelas: "7.4", no_peserta: "01-019-077", nilai: 66, perbaikan: [] },
-            { nis: "6608", nama: "Farrel Aquino Dwi Putra Adrianto", kelas: "7.4", no_peserta: "01-019-078", nilai: 66, perbaikan: [] },
-            { nis: "6609", nama: "Gusti Putu Ananda Arya Putra", kelas: "7.4", no_peserta: "01-019-079", nilai: 34, perbaikan: [] },
-            { nis: "6610", nama: "Gracia Ananda Kasih", kelas: "7.4", no_peserta: "01-019-080", nilai: 56, perbaikan: [] },
-            { nis: "6611", nama: "Griffin Ananda Hugo Putra", kelas: "7.4", no_peserta: "01-019-081", nilai: 70, perbaikan: [] },
-            { nis: "6612", nama: "I Gede Ezra Pradhipta Ruspian", kelas: "7.4", no_peserta: "01-019-082", nilai: 30, perbaikan: [] },
-            { nis: "6613", nama: "I Gede Rama Setyawan", kelas: "7.4", no_peserta: "01-019-083", nilai: 60, perbaikan: [] },
-            { nis: "6614", nama: "I Gusti Made Dwi Anandha Putra", kelas: "7.4", no_peserta: "01-019-084", nilai: 74, perbaikan: [] },
-            { nis: "6615", nama: "I Kadek Ardhana Dharma Putra", kelas: "7.4", no_peserta: "01-019-085", nilai: 62, perbaikan: [] },
-            { nis: "6616", nama: "I Kadek Arya Dwi Putra", kelas: "7.4", no_peserta: "01-019-086", nilai: 58, perbaikan: [] },
-            { nis: "6617", nama: "I Komang Tristan Tara Putra Dinata", kelas: "7.4", no_peserta: "01-019-087", nilai: 68, perbaikan: [] },
-            { nis: "6618", nama: "Indra Jaya Saputra", kelas: "7.4", no_peserta: "01-019-088", nilai: 34, perbaikan: [] },
-            { nis: "6619", nama: "I Putu Eri Suwardiva Artha Pratama", kelas: "7.4", no_peserta: "01-019-089", nilai: 66, perbaikan: [] },
-            { nis: "6620", nama: "I Putu Raditya Yudhi Sinatra", kelas: "7.4", no_peserta: "01-019-090", nilai: 50, perbaikan: [] },
-            { nis: "6621", nama: "Kadek Dwi Adi Pradita", kelas: "7.4", no_peserta: "01-019-091", nilai: 56, perbaikan: [] },
-            { nis: "6622", nama: "Ni Kadek Sintya Sriningsih", kelas: "7.4", no_peserta: "01-019-092", nilai: 36, perbaikan: [] },
-            { nis: "6623", nama: "Kenrich Ambrosius Sugiharto", kelas: "7.4", no_peserta: "01-019-093", nilai: 82, perbaikan: [] },
-            { nis: "6624", nama: "Ketut Andhini Ardanaeswari Mahaparamitha", kelas: "7.4", no_peserta: "01-019-094", nilai: 70, perbaikan: [] },
-            { nis: "6625", nama: "Komang Nandha Maheswari", kelas: "7.4", no_peserta: "01-019-095", nilai: 68, perbaikan: [] },
-            { nis: "6626", nama: "Maria Gracia Alicia Dahu", kelas: "7.4", no_peserta: "01-019-096", nilai: 80, perbaikan: [] },
-            { nis: "6627", nama: "Mayrsa Anindita Putri", kelas: "7.4", no_peserta: "01-019-097", nilai: 56, perbaikan: [] },
-            { nis: "6628", nama: "Ni Luh Devi Wulandari Putri", kelas: "7.4", no_peserta: "01-019-098", nilai: 42, perbaikan: [] },
-            { nis: "6629", nama: "Ni Putu Ayu Meilika Permata Sari", kelas: "7.4", no_peserta: "01-019-099", nilai: 50, perbaikan: [] },
-            { nis: "6630", nama: "Ni Putu Ayutra Febby Santiani Putri", kelas: "7.4", no_peserta: "01-019-100", nilai: 52, perbaikan: [] },
-            { nis: "6631", nama: "Ni Putu Crishnayanti Purnama Sari", kelas: "7.4", no_peserta: "01-019-101", nilai: 66, perbaikan: [] },
-            { nis: "6632", nama: "Ni Putu Gita Aristya Devi", kelas: "7.4", no_peserta: "01-019-102", nilai: 60, perbaikan: [] },
-            { nis: "6633", nama: "Natasya Sabrina Salsabila", kelas: "7.4", no_peserta: "01-019-103", nilai: 68, perbaikan: [] },
-            { nis: "6634", nama: "Nur Maulidia Ayuningtyas", kelas: "7.4", no_peserta: "01-019-104", nilai: 50, perbaikan: [] },
-            { nis: "6635", nama: "Putu Agus Suastika", kelas: "7.4", no_peserta: "01-019-105", nilai: 22, perbaikan: [] },
-            { nis: "6636", nama: "Putu Anggun Wulani", kelas: "7.4", no_peserta: "01-019-106", nilai: 98, perbaikan: [] },
-            { nis: "6637", nama: "Putu Denandra Alvi Wirawan", kelas: "7.4", no_peserta: "01-019-107", nilai: 46, perbaikan: [] },
-            { nis: "6638", nama: "Putu Desta Pratama", kelas: "7.4", no_peserta: "01-019-108", nilai: 66, perbaikan: [] },
-            { nis: "6639", nama: "Putu Diandra Jessica Anastasya", kelas: "7.4", no_peserta: "01-019-109", nilai: 74, perbaikan: [] },
-            { nis: "6640", nama: "Samuel Gede Pratama", kelas: "7.4", no_peserta: "01-019-110", nilai: 50, perbaikan: [] },
-            { nis: "6641", nama: "Theresa Rizqy Putri Tristan", kelas: "7.4", no_peserta: "01-019-111", nilai: 62, perbaikan: [] },
-            { nis: "6642", nama: "Tirta Dwi Pratama", kelas: "7.4", no_peserta: "01-019-112", nilai: 50, perbaikan: [] },
-            { nis: "6204", nama: "Muh. Musalli Habizar", kelas: "7.4", no_peserta: "01-019-113", nilai: 46, perbaikan: [] },
+            { nis: "6603", nama: "A.A Gede Wedanandyaksa Putra", kelas: "7.4", no_peserta: "01-019-073", nilai_sas: 70, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6604", nama: "A.A Ngurah Agung Aby Putra Samirana", kelas: "7.4", no_peserta: "01-019-074", nilai_sas: 82, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6605", nama: "Aini Salsabila", kelas: "7.4", no_peserta: "01-019-075", nilai_sas: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6606", nama: "Alif Ismail", kelas: "7.4", no_peserta: "01-019-076", nilai_sas: 58, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6607", nama: "Alvin Anantaka Mbura", kelas: "7.4", no_peserta: "01-019-077", nilai_sas: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6608", nama: "Farrel Aquino Dwi Putra Adrianto", kelas: "7.4", no_peserta: "01-019-078", nilai_sas: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6609", nama: "Gusti Putu Ananda Arya Putra", kelas: "7.4", no_peserta: "01-019-079", nilai_sas: 34, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6610", nama: "Gracia Ananda Kasih", kelas: "7.4", no_peserta: "01-019-080", nilai_sas: 56, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6611", nama: "Griffin Ananda Hugo Putra", kelas: "7.4", no_peserta: "01-019-081", nilai_sas: 70, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6612", nama: "I Gede Ezra Pradhipta Ruspian", kelas: "7.4", no_peserta: "01-019-082", nilai_sas: 30, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6613", nama: "I Gede Rama Setyawan", kelas: "7.4", no_peserta: "01-019-083", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6614", nama: "I Gusti Made Dwi Anandha Putra", kelas: "7.4", no_peserta: "01-019-084", nilai_sas: 74, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6615", nama: "I Kadek Ardhana Dharma Putra", kelas: "7.4", no_peserta: "01-019-085", nilai_sas: 62, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6616", nama: "I Kadek Arya Dwi Putra", kelas: "7.4", no_peserta: "01-019-086", nilai_sas: 58, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6617", nama: "I Komang Tristan Tara Putra Dinata", kelas: "7.4", no_peserta: "01-019-087", nilai_sas: 68, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6618", nama: "Indra Jaya Saputra", kelas: "7.4", no_peserta: "01-019-088", nilai_sas: 34, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6619", nama: "I Putu Eri Suwardiva Artha Pratama", kelas: "7.4", no_peserta: "01-019-089", nilai_sas: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6620", nama: "I Putu Raditya Yudhi Sinatra", kelas: "7.4", no_peserta: "01-019-090", nilai_sas: 50, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6621", nama: "Kadek Dwi Adi Pradita", kelas: "7.4", no_peserta: "01-019-091", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6622", nama: "Ni Kadek Sintya Sriningsih", kelas: "7.4", no_peserta: "01-019-092", nilai_sas: 36, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6623", nama: "Kenrich Ambrosius Sugiharto", kelas: "7.4", no_peserta: "01-019-093", nilai_sas: 82, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6624", nama: "Ketut Andhini Ardanaeswari Mahaparamitha", kelas: "7.4", no_peserta: "01-019-094", nilai_sas: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6625", nama: "Komang Nandha Maheswari", kelas: "7.4", no_peserta: "01-019-095", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6626", nama: "Maria Gracia Alicia Dahu", kelas: "7.4", no_peserta: "01-019-096", nilai_sas: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6627", nama: "Mayrsa Anindita Putri", kelas: "7.4", no_peserta: "01-019-097", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6628", nama: "Ni Luh Devi Wulandari Putri", kelas: "7.4", no_peserta: "01-019-098", nilai_sas: 42, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6629", nama: "Ni Putu Ayu Meilika Permata Sari", kelas: "7.4", no_peserta: "01-019-099", nilai_sas: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6630", nama: "Ni Putu Ayutra Febby Santiani Putri", kelas: "7.4", no_peserta: "01-019-100", nilai_sas: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6631", nama: "Ni Putu Crishnayanti Purnama Sari", kelas: "7.4", no_peserta: "01-019-101", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6632", nama: "Ni Putu Gita Aristya Devi", kelas: "7.4", no_peserta: "01-019-102", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6633", nama: "Natasya Sabrina Salsabila", kelas: "7.4", no_peserta: "01-019-103", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6634", nama: "Nur Maulidia Ayuningtyas", kelas: "7.4", no_peserta: "01-019-104", nilai_sas: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6635", nama: "Putu Agus Suastika", kelas: "7.4", no_peserta: "01-019-105", nilai_sas: 22, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6636", nama: "Putu Anggun Wulani", kelas: "7.4", no_peserta: "01-019-106", nilai_sas: 98, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6637", nama: "Putu Denandra Alvi Wirawan", kelas: "7.4", no_peserta: "01-019-107", nilai_sas: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6638", nama: "Putu Desta Pratama", kelas: "7.4", no_peserta: "01-019-108", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6639", nama: "Putu Diandra Jessica Anastasya", kelas: "7.4", no_peserta: "01-019-109", nilai_sas: 74, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6640", nama: "Samuel Gede Pratama", kelas: "7.4", no_peserta: "01-019-110", nilai_sas: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6641", nama: "Theresa Rizqy Putri Tristan", kelas: "7.4", no_peserta: "01-019-111", nilai_sas: 62, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6642", nama: "Tirta Dwi Pratama", kelas: "7.4", no_peserta: "01-019-112", nilai_sas: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6204", nama: "Muh. Musalli Habizar", kelas: "7.4", no_peserta: "01-019-113", nilai_sas: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
 
             // Data 7.5
-            { nis: "6643", nama: "Ahmad Riwaky Hasan", kelas: "7.5", no_peserta: "01-019-114", nilai: 60, perbaikan: [] },
-            { nis: "6644", nama: "Aline Candra Dewi", kelas: "7.5", no_peserta: "01-019-115", nilai: 72, perbaikan: [] },
-            { nis: "6645", nama: "Calista Az Zahra", kelas: "7.5", no_peserta: "01-019-116", nilai: 64, perbaikan: [] },
-            { nis: "6646", nama: "Chrisbyan Candra Amnaska", kelas: "7.5", no_peserta: "01-019-117", nilai: 58, perbaikan: [] },
-            { nis: "6647", nama: "Dzakaneza Abbasy Kaindra", kelas: "7.5", no_peserta: "01-019-118", nilai: 64, perbaikan: [] },
-            { nis: "6648", nama: "Erwan Rudi Sanjaya", kelas: "7.5", no_peserta: "01-019-119", nilai: 46, perbaikan: [] },
-            { nis: "6649", nama: "Felicia Metta Joana", kelas: "7.5", no_peserta: "01-019-120", nilai: 60, perbaikan: [] },
-            { nis: "6650", nama: "Gede Gheo Adrian Saputra", kelas: "7.5", no_peserta: "01-019-121", nilai: 60, perbaikan: [] },
-            { nis: "6651", nama: "Glory Permata Putri", kelas: "7.5", no_peserta: "01-019-122", nilai: 56, perbaikan: [] },
-            { nis: "6652", nama: "Ida Ayu Putu Avika Prameswari", kelas: "7.5", no_peserta: "01-019-123", nilai: 68, perbaikan: [] },
-            { nis: "6653", nama: "I Gede Christiano Marsev Pasang", kelas: "7.5", no_peserta: "01-019-124", nilai: 32, perbaikan: [] },
-            { nis: "6654", nama: "I Gede Yudana", kelas: "7.5", no_peserta: "01-019-125", nilai: 48, perbaikan: [] },
-            { nis: "6655", nama: "I Ketut Adi darmawan", kelas: "7.5", no_peserta: "01-019-126", nilai: 38, perbaikan: [] },
-            { nis: "6656", nama: "I Kadek Adnyana Suputra", kelas: "7.5", no_peserta: "01-019-127", nilai: 66, perbaikan: [] },
-            { nis: "6657", nama: "I Made Aditya Abimanyu", kelas: "7.5", no_peserta: "01-019-128", nilai: 60, perbaikan: [] },
-            { nis: "6658", nama: "I Made Jeremi Desta Sahdana", kelas: "7.5", no_peserta: "01-019-129", nilai: 52, perbaikan: [] },
-            { nis: "6659", nama: "I Made Ricky Nugraha", kelas: "7.5", no_peserta: "01-019-130", nilai: 76, perbaikan: [] },
-            { nis: "6660", nama: "I Nyoman Adimukti Putra Yasa", kelas: "7.5", no_peserta: "01-019-131", nilai: 62, perbaikan: [] },
-            { nis: "6661", nama: "I Nyoman Aditya Wistara", kelas: "7.5", no_peserta: "01-019-132", nilai: 54, perbaikan: [] },
-            { nis: "6662", nama: "Kadek Ayu Widiantari", kelas: "7.5", no_peserta: "01-019-133", nilai: 56, perbaikan: [] },
-            { nis: "6663", nama: "Kadek Chalista Dwi Cahyani", kelas: "7.5", no_peserta: "01-019-134", nilai: 48, perbaikan: [] },
-            { nis: "6664", nama: "Kadek Cahya Widiantari", kelas: "7.5", no_peserta: "01-019-135", nilai: 76, perbaikan: [] },
-            { nis: "6665", nama: "Maria Anindya Indah Kinara Carbonilla", kelas: "7.5", no_peserta: "01-019-136", nilai: 66, perbaikan: [] },
-            { nis: "6666", nama: "Maria Geressia Carolina Subu", kelas: "7.5", no_peserta: "01-019-137", nilai: 56, perbaikan: [] },
-            { nis: "6667", nama: "Micko Chandra Santosa", kelas: "7.5", no_peserta: "01-019-138", nilai: 50, perbaikan: [] },
-            { nis: "6668", nama: "Muchammad Gabriel Aji Alvino", kelas: "7.5", no_peserta: "01-019-139", nilai: 70, perbaikan: [] },
-            { nis: "6669", nama: "Ni Luh Eka Oktaviani", kelas: "7.5", no_peserta: "01-019-140", nilai: 58, perbaikan: [] },
-            { nis: "6670", nama: "Ni Made Amelia Maheswari", kelas: "7.5", no_peserta: "01-019-141", nilai: 78, perbaikan: [] },
-            { nis: "6671", nama: "Ni Putu Gista Pradnyandari", kelas: "7.5", no_peserta: "01-019-142", nilai: 66, perbaikan: [] },
-            { nis: "6672", nama: "Ni Putu Pranita Candra Dewi", kelas: "7.5", no_peserta: "01-019-143", nilai: 60, perbaikan: [] },
-            { nis: "6673", nama: "Ni Putu Tia Anggraeni", kelas: "7.5", no_peserta: "01-019-144", nilai: 54, perbaikan: [] },
-            { nis: "6674", nama: "Putri Putu Keysia Wiyono", kelas: "7.5", no_peserta: "01-019-145", nilai: 60, perbaikan: [] },
-            { nis: "6675", nama: "Putu Agus Juliana Putra", kelas: "7.5", no_peserta: "01-019-146", nilai: 72, perbaikan: [] },
-            { nis: "6676", nama: "Putu Ayana Prishagita Adnyani Putri", kelas: "7.5", no_peserta: "01-019-147", nilai: 70, perbaikan: [] },
-            { nis: "6677", nama: "Putu Candra Eka Nataly", kelas: "7.5", no_peserta: "01-019-148", nilai: 68, perbaikan: [] },
-            { nis: "6678", nama: "Putu Divina Maharani", kelas: "7.5", no_peserta: "01-019-149", nilai: 62, perbaikan: [] },
-            { nis: "6679", nama: "Putu Kayla Natania Wirawan", kelas: "7.5", no_peserta: "01-019-150", nilai: 76, perbaikan: [] },
-            { nis: "6680", nama: "Putu Okta Viona Ayunda", kelas: "7.5", no_peserta: "01-019-151", nilai: 76, perbaikan: [] },
-            { nis: "6681", nama: "Yohanes Rafael Unab", kelas: "7.5", no_peserta: "01-019-152", nilai: 44, perbaikan: [] },
-            { nis: "6682", nama: "Zefanya Lathisa Putri Widodo", kelas: "7.5", no_peserta: "01-019-153", nilai: 66, perbaikan: [] },
-            { nis: "6805", nama: "Hafijatun Nurul Huda", kelas: "7.5", no_peserta: "01-019-154", nilai: 66, perbaikan: [] },
+            { nis: "6643", nama: "Ahmad Riwaky Hasan", kelas: "7.5", no_peserta: "01-019-114", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6644", nama: "Aline Candra Dewi", kelas: "7.5", no_peserta: "01-019-115", nilai_sas: 72, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6645", nama: "Calista Az Zahra", kelas: "7.5", no_peserta: "01-019-116", nilai_sas: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6646", nama: "Chrisbyan Candra Amnaska", kelas: "7.5", no_peserta: "01-019-117", nilai_sas: 58, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6647", nama: "Dzakaneza Abbasy Kaindra", kelas: "7.5", no_peserta: "01-019-118", nilai_sas: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6648", nama: "Erwan Rudi Sanjaya", kelas: "7.5", no_peserta: "01-019-119", nilai_sas: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6649", nama: "Felicia Metta Joana", kelas: "7.5", no_peserta: "01-019-120", nilai_sas: 60, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6650", nama: "Gede Gheo Adrian Saputra", kelas: "7.5", no_peserta: "01-019-121", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6651", nama: "Glory Permata Putri", kelas: "7.5", no_peserta: "01-019-122", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6652", nama: "Ida Ayu Putu Avika Prameswari", kelas: "7.5", no_peserta: "01-019-123", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6653", nama: "I Gede Christiano Marsev Pasang", kelas: "7.5", no_peserta: "01-019-124", nilai_sas: 32, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6654", nama: "I Gede Yudana", kelas: "7.5", no_peserta: "01-019-125", nilai_sas: 48, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6655", nama: "I Ketut Adi darmawan", kelas: "7.5", no_peserta: "01-019-126", nilai_sas: 38, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6656", nama: "I Kadek Adnyana Suputra", kelas: "7.5", no_peserta: "01-019-127", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6657", nama: "I Made Aditya Abimanyu", kelas: "7.5", no_peserta: "01-019-128", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6658", nama: "I Made Jeremi Desta Sahdana", kelas: "7.5", no_peserta: "01-019-129", nilai_sas: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6659", nama: "I Made Ricky Nugraha", kelas: "7.5", no_peserta: "01-019-130", nilai_sas: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6660", nama: "I Nyoman Adimukti Putra Yasa", kelas: "7.5", no_peserta: "01-019-131", nilai_sas: 62, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6661", nama: "I Nyoman Aditya Wistara", kelas: "7.5", no_peserta: "01-019-132", nilai_sas: 54, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6662", nama: "Kadek Ayu Widiantari", kelas: "7.5", no_peserta: "01-019-133", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6663", nama: "Kadek Chalista Dwi Cahyani", kelas: "7.5", no_peserta: "01-019-134", nilai_sas: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6664", nama: "Kadek Cahya Widiantari", kelas: "7.5", no_peserta: "01-019-135", nilai_sas: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6665", nama: "Maria Anindya Indah Kinara Carbonilla", kelas: "7.5", no_peserta: "01-019-136", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6666", nama: "Maria Geressia Carolina Subu", kelas: "7.5", no_peserta: "01-019-137", nilai_sas: 56, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6667", nama: "Micko Chandra Santosa", kelas: "7.5", no_peserta: "01-019-138", nilai_sas: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6668", nama: "Muchammad Gabriel Aji Alvino", kelas: "7.5", no_peserta: "01-019-139", nilai_sas: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6669", nama: "Ni Luh Eka Oktaviani", kelas: "7.5", no_peserta: "01-019-140", nilai_sas: 58, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6670", nama: "Ni Made Amelia Maheswari", kelas: "7.5", no_peserta: "01-019-141", nilai_sas: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6671", nama: "Ni Putu Gista Pradnyandari", kelas: "7.5", no_peserta: "01-019-142", nilai_sas: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6672", nama: "Ni Putu Pranita Candra Dewi", kelas: "7.5", no_peserta: "01-019-143", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6673", nama: "Ni Putu Tia Anggraeni", kelas: "7.5", no_peserta: "01-019-144", nilai_sas: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6674", nama: "Putri Putu Keysia Wiyono", kelas: "7.5", no_peserta: "01-019-145", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6675", nama: "Putu Agus Juliana Putra", kelas: "7.5", no_peserta: "01-019-146", nilai_sas: 72, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6676", nama: "Putu Ayana Prishagita Adnyani Putri", kelas: "7.5", no_peserta: "01-019-147", nilai_sas: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6677", nama: "Putu Candra Eka Nataly", kelas: "7.5", no_peserta: "01-019-148", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6678", nama: "Putu Divina Maharani", kelas: "7.5", no_peserta: "01-019-149", nilai_sas: 62, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6679", nama: "Putu Kayla Natania Wirawan", kelas: "7.5", no_peserta: "01-019-150", nilai_sas: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6680", nama: "Putu Okta Viona Ayunda", kelas: "7.5", no_peserta: "01-019-151", nilai_sas: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6681", nama: "Yohanes Rafael Unab", kelas: "7.5", no_peserta: "01-019-152", nilai_sas: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6682", nama: "Zefanya Lathisa Putri Widodo", kelas: "7.5", no_peserta: "01-019-153", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6805", nama: "Hafijatun Nurul Huda", kelas: "7.5", no_peserta: "01-019-154", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
 
             // Data 7.6
-            { nis: "6684", nama: "Alaina Tias Putri Aorora", kelas: "7.6", no_peserta: "01-019-155", nilai: 46, perbaikan: [] },
-            { nis: "6685", nama: "Anak Agung Ary Intan Arya Dewi", kelas: "7.6", no_peserta: "01-019-156", nilai: 56, perbaikan: [] },
-            { nis: "6686", nama: "Almira Tungga Dewi", kelas: "7.6", no_peserta: "01-019-157", nilai: 60, perbaikan: [] },
-            { nis: "6687", nama: "Daffa Rifky Azzuhri", kelas: "7.6", no_peserta: "01-019-158", nilai: 56, perbaikan: [] },
-            { nis: "6688", nama: "Dewa Ayu Putu Santika Dewi", kelas: "7.6", no_peserta: "01-019-159", nilai: 58, perbaikan: [] },
-            { nis: "6689", nama: "Dyna Agnesia Putri", kelas: "7.6", no_peserta: "01-019-160", nilai: 64, perbaikan: [] },
-            { nis: "6690", nama: "Earlyta Kazue Ardita Putri", kelas: "7.6", no_peserta: "01-019-161", nilai: 92, perbaikan: [] },
-            { nis: "6691", nama: "Galang Kusuma Putra", kelas: "7.6", no_peserta: "01-019-162", nilai: 46, perbaikan: [] },
-            { nis: "6692", nama: "I Gede Eka Apriana Sadema", kelas: "7.6", no_peserta: "01-019-163", nilai: 56, perbaikan: [] },
-            { nis: "6693", nama: "I Gede Farendra Putra Deay", kelas: "7.6", no_peserta: "01-019-164", nilai: 32, perbaikan: [] },
-            { nis: "6694", nama: "I Kadek Hadi Davindra Pramana", kelas: "7.6", no_peserta: "01-019-165", nilai: 54, perbaikan: [] },
-            { nis: "6695", nama: "I Kadek Krisna Dwipayoga", kelas: "7.6", no_peserta: "01-019-166", nilai: 80, perbaikan: [] },
-            { nis: "6696", nama: "I Kadek Widhika Satya Ramawan", kelas: "7.6", no_peserta: "01-019-167", nilai: 52, perbaikan: [] },
-            { nis: "6697", nama: "I Komang Daiva Devara", kelas: "7.6", no_peserta: "01-019-168", nilai: null, perbaikan: [] },
-            { nis: "6698", nama: "I Made Dwi Putra Sedana Artha", kelas: "7.6", no_peserta: "01-019-169", nilai: 52, perbaikan: [] },
-            { nis: "6699", nama: "I Putu Bagus Prasetya Utama", kelas: "7.6", no_peserta: "01-019-170", nilai: 46, perbaikan: [] },
-            { nis: "6700", nama: "Kadek Bagus Willy Mahendras", kelas: "7.6", no_peserta: "01-019-171", nilai: 76, perbaikan: [] },
-            { nis: "6701", nama: "Kadek Kalyana Pradnya Dewi", kelas: "7.6", no_peserta: "01-019-172", nilai: 64, perbaikan: [] },
-            { nis: "6702", nama: "Kadek Rendra Pradana", kelas: "7.6", no_peserta: "01-019-173", nilai: 60, perbaikan: [] },
-            { nis: "6703", nama: "Kadek Ririn Diantari", kelas: "7.6", no_peserta: "01-019-174", nilai: 50, perbaikan: [] },
-            { nis: "6704", nama: "Komang Sintya Santi", kelas: "7.6", no_peserta: "01-019-175", nilai: 50, perbaikan: [] },
-            { nis: "6705", nama: "M. Amin Al-Kutbi", kelas: "7.6", no_peserta: "01-019-176", nilai: 70, perbaikan: [] },
-            { nis: "6706", nama: "Made Juanita", kelas: "7.6", no_peserta: "01-019-177", nilai: 48, perbaikan: [] },
-            { nis: "6707", nama: "Made Sambuca Raditya Pinatih", kelas: "7.6", no_peserta: "01-019-178", nilai: 80, perbaikan: [] },
-            { nis: "6708", nama: "Mochamad Iqbal Al Farisyi", kelas: "7.6", no_peserta: "01-019-179", nilai: 64, perbaikan: [] },
-            { nis: "6709", nama: "Muhammad Ja'far Shodiq", kelas: "7.6", no_peserta: "01-019-180", nilai: 72, perbaikan: [] },
-            { nis: "6710", nama: "Ngurah Putu David Kenji Dinata", kelas: "7.6", no_peserta: "01-019-181", nilai: 56, perbaikan: [] },
-            { nis: "6711", nama: "Ni Kadek Alya Aprilia Govardani", kelas: "7.6", no_peserta: "01-019-182", nilai: 74, perbaikan: [] },
-            { nis: "6712", nama: "Ni Made Sri Oktaviani Putri", kelas: "7.6", no_peserta: "01-019-183", nilai: 72, perbaikan: [] },
-            { nis: "6713", nama: "Ni Made Radhaswari Suputri", kelas: "7.6", no_peserta: "01-019-184", nilai: 98, perbaikan: [] },
-            { nis: "6714", nama: "Ni Putu Yuri Danisha Putri", kelas: "7.6", no_peserta: "01-019-185", nilai: 66, perbaikan: [] },
-            { nis: "6715", nama: "Noval Indra Syaputra", kelas: "7.6", no_peserta: "01-019-186", nilai: 44, perbaikan: [] },
-            { nis: "6716", nama: "Novan Rizki Setiawan", kelas: "7.6", no_peserta: "01-019-187", nilai: 48, perbaikan: [] },
-            { nis: "6717", nama: "Putri Ristalia Anggraeni", kelas: "7.6", no_peserta: "01-019-188", nilai: 48, perbaikan: [] },
-            { nis: "6718", nama: "Putu Ayu Mas Ratna Dewi", kelas: "7.6", no_peserta: "01-019-189", nilai: 70, perbaikan: [] },
-            { nis: "6804", nama: "Bagus Jaya Arjuna", kelas: "7.6", no_peserta: "01-019-190", nilai: 58, perbaikan: [] },
-            { nis: "6720", nama: "Putu Viana Putri Maharani", kelas: "7.6", no_peserta: "01-019-191", nilai: 76, perbaikan: [] },
-            { nis: "6721", nama: "Risqi Putra Al-Fatah", kelas: "7.6", no_peserta: "01-019-192", nilai: 76, perbaikan: [] },
-            { nis: "6722", nama: "Selvia Nur Viky Rahayu", kelas: "7.6", no_peserta: "01-019-193", nilai: 52, perbaikan: [] },
-            { nis: "6723", nama: "Waroh", kelas: "7.6", no_peserta: "01-019-194", nilai: 66, perbaikan: [] },
+            { nis: "6684", nama: "Alaina Tias Putri Aorora", kelas: "7.6", no_peserta: "01-019-155", nilai_sas: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6685", nama: "Anak Agung Ary Intan Arya Dewi", kelas: "7.6", no_peserta: "01-019-156", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6686", nama: "Almira Tungga Dewi", kelas: "7.6", no_peserta: "01-019-157", nilai_sas: 60, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6687", nama: "Daffa Rifky Azzuhri", kelas: "7.6", no_peserta: "01-019-158", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6688", nama: "Dewa Ayu Putu Santika Dewi", kelas: "7.6", no_peserta: "01-019-159", nilai_sas: 58, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6689", nama: "Dyna Agnesia Putri", kelas: "7.6", no_peserta: "01-019-160", nilai_sas: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6690", nama: "Earlyta Kazue Ardita Putri", kelas: "7.6", no_peserta: "01-019-161", nilai_sas: 92, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
+            { nis: "6691", nama: "Galang Kusuma Putra", kelas: "7.6", no_peserta: "01-019-162", nilai_sas: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6692", nama: "I Gede Eka Apriana Sadema", kelas: "7.6", no_peserta: "01-019-163", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6693", nama: "I Gede Farendra Putra Deay", kelas: "7.6", no_peserta: "01-019-164", nilai_sas: 32, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6694", nama: "I Kadek Hadi Davindra Pramana", kelas: "7.6", no_peserta: "01-019-165", nilai_sas: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6695", nama: "I Kadek Krisna Dwipayoga", kelas: "7.6", no_peserta: "01-019-166", nilai_sas: 80, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
+            { nis: "6696", nama: "I Kadek Widhika Satya Ramawan", kelas: "7.6", no_peserta: "01-019-167", nilai_sas: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6697", nama: "I Komang Daiva Devara", kelas: "7.6", no_peserta: "01-019-168", nilai_sas: null, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6698", nama: "I Made Dwi Putra Sedana Artha", kelas: "7.6", no_peserta: "01-019-169", nilai_sas: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6699", nama: "I Putu Bagus Prasetya Utama", kelas: "7.6", no_peserta: "01-019-170", nilai_sas: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6700", nama: "Kadek Bagus Willy Mahendras", kelas: "7.6", no_peserta: "01-019-171", nilai_sas: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6701", nama: "Kadek Kalyana Pradnya Dewi", kelas: "7.6", no_peserta: "01-019-172", nilai_sas: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6702", nama: "Kadek Rendra Pradana", kelas: "7.6", no_peserta: "01-019-173", nilai_sas: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6703", nama: "Kadek Ririn Diantari", kelas: "7.6", no_peserta: "01-019-174", nilai_sas: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6704", nama: "Komang Sintya Santi", kelas: "7.6", no_peserta: "01-019-175", nilai_sas: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6705", nama: "M. Amin Al-Kutbi", kelas: "7.6", no_peserta: "01-019-176", nilai_sas: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6706", nama: "Made Juanita", kelas: "7.6", no_peserta: "01-019-177", nilai_sas: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6707", nama: "Made Sambuca Raditya Pinatih", kelas: "7.6", no_peserta: "01-019-178", nilai_sas: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6708", nama: "Mochamad Iqbal Al Farisyi", kelas: "7.6", no_peserta: "01-019-179", nilai_sas: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6709", nama: "Muhammad Ja'far Shodiq", kelas: "7.6", no_peserta: "01-019-180", nilai_sas: 72, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
+            { nis: "6710", nama: "Ngurah Putu David Kenji Dinata", kelas: "7.6", no_peserta: "01-019-181", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6711", nama: "Ni Kadek Alya Aprilia Govardani", kelas: "7.6", no_peserta: "01-019-182", nilai_sas: 74, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6712", nama: "Ni Made Sri Oktaviani Putri", kelas: "7.6", no_peserta: "01-019-183", nilai_sas: 72, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6713", nama: "Ni Made Radhaswari Suputri", kelas: "7.6", no_peserta: "01-019-184", nilai_sas: 98, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
+            { nis: "6714", nama: "Ni Putu Yuri Danisha Putri", kelas: "7.6", no_peserta: "01-019-185", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6715", nama: "Noval Indra Syaputra", kelas: "7.6", no_peserta: "01-019-186", nilai_sas: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6716", nama: "Novan Rizki Setiawan", kelas: "7.6", no_peserta: "01-019-187", nilai_sas: 48, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6717", nama: "Putri Ristalia Anggraeni", kelas: "7.6", no_peserta: "01-019-188", nilai_sas: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6718", nama: "Putu Ayu Mas Ratna Dewi", kelas: "7.6", no_peserta: "01-019-189", nilai_sas: 70, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
+            { nis: "6804", nama: "Bagus Jaya Arjuna", kelas: "7.6", no_peserta: "01-019-190", nilai_sas: 58, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6720", nama: "Putu Viana Putri Maharani", kelas: "7.6", no_peserta: "01-019-191", nilai_sas: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6721", nama: "Risqi Putra Al-Fatah", kelas: "7.6", no_peserta: "01-019-192", nilai_sas: 76, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6722", nama: "Selvia Nur Viky Rahayu", kelas: "7.6", no_peserta: "01-019-193", nilai_sas: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6723", nama: "Waroh", kelas: "7.6", no_peserta: "01-019-194", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
 
             // Data 7.7
-            { nis: "6724", nama: "Adelia Ragil Clauriza", kelas: "7.7", no_peserta: "01-019-195", nilai: 76, perbaikan: [] },
-            { nis: "6725", nama: "Alvin Setya Pradana", kelas: "7.7", no_peserta: "01-019-196", nilai: 50, perbaikan: [] },
-            { nis: "6726", nama: "Arcelia Fahrotul Ulfania", kelas: "7.7", no_peserta: "01-019-197", nilai: 58, perbaikan: [] },
-            { nis: "6727", nama: "Dewa Ketut Hari Parama Nanda", kelas: "7.7", no_peserta: "01-019-198", nilai: 64, perbaikan: [] },
-            { nis: "6728", nama: "Dewa Ngakan Gede Diego Putra Darma Wisesa", kelas: "7.7", no_peserta: "01-019-199", nilai: 74, perbaikan: [] },
-            { nis: "6729", nama: "Gian Filanski Hendrik", kelas: "7.7", no_peserta: "01-019-200", nilai: 56, perbaikan: [] },
-            { nis: "6730", nama: "I Gusti Ayu Sri Kusuma Dewi", kelas: "7.7", no_peserta: "01-019-201", nilai: 40, perbaikan: [] },
-            { nis: "6731", nama: "I Gusti Ngurah Arjuna Agastya Natih Putra", kelas: "7.7", no_peserta: "01-019-202", nilai: 36, perbaikan: [] },
-            { nis: "6732", nama: "I Kadek Anantha Artha Wiguna", kelas: "7.7", no_peserta: "01-019-203", nilai: 56, perbaikan: [] },
-            { nis: "6733", nama: "I Kadek Agus Raditya Witama", kelas: "7.7", no_peserta: "01-019-204", nilai: 56, perbaikan: [] },
-            { nis: "6734", nama: "I Kadek Bagus Pramana Putra", kelas: "7.7", no_peserta: "01-019-205", nilai: 70, perbaikan: [] },
-            { nis: "6735", nama: "I Komang Deva Parwata", kelas: "7.7", no_peserta: "01-019-206", nilai: 62, perbaikan: [] },
-            { nis: "6736", nama: "I Komang Sutha Widya Sena", kelas: "7.7", no_peserta: "01-019-207", nilai: 72, perbaikan: [] },
-            { nis: "6737", nama: "I Made Gio Wira Mahatma", kelas: "7.7", no_peserta: "01-019-208", nilai: 62, perbaikan: [] },
-            { nis: "6738", nama: "I Putu Eka Erlangga Saputra", kelas: "7.7", no_peserta: "01-019-209", nilai: 62, perbaikan: [] },
-            { nis: "6739", nama: "I Putu Yudha Madhusudana", kelas: "7.7", no_peserta: "01-019-210", nilai: 74, perbaikan: [] },
-            { nis: "6740", nama: "Kadek Ningnata Mertayasa", kelas: "7.7", no_peserta: "01-019-211", nilai: 32, perbaikan: [] },
-            { nis: "6741", nama: "Komang Revan Palentio", kelas: "7.7", no_peserta: "01-019-212", nilai: 48, perbaikan: [] },
-            { nis: "6742", nama: "Krsna Karuna Shindu", kelas: "7.7", no_peserta: "01-019-213", nilai: 48, perbaikan: [] },
-            { nis: "6743", nama: "Muhamad Abib Firmansyah", kelas: "7.7", no_peserta: "01-019-214", nilai: 50, perbaikan: [] },
-            { nis: "6744", nama: "Muhammad Fatir Rifatullah", kelas: "7.7", no_peserta: "01-019-215", nilai: 70, perbaikan: [] },
-            { nis: "6745", nama: "Muhammad Mifathul Huda", kelas: "7.7", no_peserta: "01-019-216", nilai: 38, perbaikan: [] },
-            { nis: "6746", nama: "Ngurah Arya Mahendra Kadjar", kelas: "7.7", no_peserta: "01-019-217", nilai: 52, perbaikan: [] },
-            { nis: "6747", nama: "Ni Kadek Devi Kania Aprilia", kelas: "7.7", no_peserta: "01-019-218", nilai: 66, perbaikan: [] },
-            { nis: "6748", nama: "Ni Kadek Diva Felisha Padmaswari", kelas: "7.7", no_peserta: "01-019-219", nilai: 76, perbaikan: [] },
-            { nis: "6749", nama: "Ni Kadek Reisya Rikha Pradita", kelas: "7.7", no_peserta: "01-019-220", nilai: 66, perbaikan: [] },
-            { nis: "6750", nama: "Ni Kadek Santhi Aurelia", kelas: "7.7", no_peserta: "01-019-221", nilai: 54, perbaikan: [] },
-            { nis: "6751", nama: "Ni Ketut Jia Jasmine Pradnya Pramesty", kelas: "7.7", no_peserta: "01-019-222", nilai: 66, perbaikan: [] },
-            { nis: "6752", nama: "Ni Komang Riana Pujayanti", kelas: "7.7", no_peserta: "01-019-223", nilai: 54, perbaikan: [] },
-            { nis: "6753", nama: "Ni Putu Adistya Candra Pradita", kelas: "7.7", no_peserta: "01-019-224", nilai: 72, perbaikan: [] },
-            { nis: "6754", nama: "Ni Putu Dila Novita Sari", kelas: "7.7", no_peserta: "01-019-225", nilai: 44, perbaikan: [] },
-            { nis: "6755", nama: "Putri Abigail Meysha Reandra", kelas: "7.7", no_peserta: "01-019-226", nilai: null, perbaikan: [] },
-            { nis: "6756", nama: "Putu Devi Atika Pratiwi", kelas: "7.7", no_peserta: "01-019-227", nilai: 52, perbaikan: [] },
-            { nis: "6757", nama: "Putu Felina Dwijayanti", kelas: "7.7", no_peserta: "01-019-228", nilai: 56, perbaikan: [] },
-            { nis: "6758", nama: "Putu Susila Andyana", kelas: "7.7", no_peserta: "01-019-229", nilai: 22, perbaikan: [] },
-            { nis: "6759", nama: "Putu Wika Ananta Putra", kelas: "7.7", no_peserta: "01-019-230", nilai: 78, perbaikan: [] },
-            { nis: "6760", nama: "Qenzo Djazen Januarta", kelas: "7.7", no_peserta: "01-019-231", nilai: 68, perbaikan: [] },
-            { nis: "6761", nama: "Rifki Yoga Saputra", kelas: "7.7", no_peserta: "01-019-232", nilai: 50, perbaikan: [] },
-            { nis: "6762", nama: "Silvi Afifatus Sholihah", kelas: "7.7", no_peserta: "01-019-233", nilai: 70, perbaikan: [] },
-            { nis: "6763", nama: "Ucca Kusuma Wicitra", kelas: "7.7", no_peserta: "01-019-234", nilai: 82, perbaikan: [] },
+            { nis: "6724", nama: "Adelia Ragil Clauriza", kelas: "7.7", no_peserta: "01-019-195", nilai_sas: 76, stars: 6, uh3: 92, uh4: 95, perbaikan: [] },
+            { nis: "6725", nama: "Alvin Setya Pradana", kelas: "7.7", no_peserta: "01-019-196", nilai_sas: 50, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6726", nama: "Arcelia Fahrotul Ulfania", kelas: "7.7", no_peserta: "01-019-197", nilai_sas: 58, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6727", nama: "Dewa Ketut Hari Parama Nanda", kelas: "7.7", no_peserta: "01-019-198", nilai_sas: 64, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6728", nama: "Dewa Ngakan Gede Diego Putra Darma Wisesa", kelas: "7.7", no_peserta: "01-019-199", nilai_sas: 74, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
+            { nis: "6729", nama: "Gian Filanski Hendrik", kelas: "7.7", no_peserta: "01-019-200", nilai_sas: 56, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6730", nama: "I Gusti Ayu Sri Kusuma Dewi", kelas: "7.7", no_peserta: "01-019-201", nilai_sas: 40, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6731", nama: "I Gusti Ngurah Arjuna Agastya Natih Putra", kelas: "7.7", no_peserta: "01-019-202", nilai_sas: 36, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6732", nama: "I Kadek Anantha Artha Wiguna", kelas: "7.7", no_peserta: "01-019-203", nilai_sas: 56, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6733", nama: "I Kadek Agus Raditya Witama", kelas: "7.7", no_peserta: "01-019-204", nilai_sas: 56, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6734", nama: "I Kadek Bagus Pramana Putra", kelas: "7.7", no_peserta: "01-019-205", nilai_sas: 70, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
+            { nis: "6735", nama: "I Komang Deva Parwata", kelas: "7.7", no_peserta: "01-019-206", nilai_sas: 62, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6736", nama: "I Komang Sutha Widya Sena", kelas: "7.7", no_peserta: "01-019-207", nilai_sas: 72, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
+            { nis: "6737", nama: "I Made Gio Wira Mahatma", kelas: "7.7", no_peserta: "01-019-208", nilai_sas: 62, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6738", nama: "I Putu Eka Erlangga Saputra", kelas: "7.7", no_peserta: "01-019-209", nilai_sas: 62, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6739", nama: "I Putu Yudha Madhusudana", kelas: "7.7", no_peserta: "01-019-210", nilai_sas: 74, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6740", nama: "Kadek Ningnata Mertayasa", kelas: "7.7", no_peserta: "01-019-211", nilai_sas: 32, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6741", nama: "Komang Revan Palentio", kelas: "7.7", no_peserta: "01-019-212", nilai_sas: 48, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6742", nama: "Krsna Karuna Shindu", kelas: "7.7", no_peserta: "01-019-213", nilai_sas: 48, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6743", nama: "Muhamad Abib Firmansyah", kelas: "7.7", no_peserta: "01-019-214", nilai_sas: 50, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6744", nama: "Muhammad Fatir Rifatullah", kelas: "7.7", no_peserta: "01-019-215", nilai_sas: 70, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
+            { nis: "6745", nama: "Muhammad Mifathul Huda", kelas: "7.7", no_peserta: "01-019-216", nilai_sas: 38, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
+            { nis: "6746", nama: "Ngurah Arya Mahendra Kadjar", kelas: "7.7", no_peserta: "01-019-217", nilai_sas: 52, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6747", nama: "Ni Kadek Devi Kania Aprilia", kelas: "7.7", no_peserta: "01-019-218", nilai_sas: 66, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6748", nama: "Ni Kadek Diva Felisha Padmaswari", kelas: "7.7", no_peserta: "01-019-219", nilai_sas: 76, stars: 3.5, uh3: 88.875, uh4: 90, perbaikan: [] },
+            { nis: "6749", nama: "Ni Kadek Reisya Rikha Pradita", kelas: "7.7", no_peserta: "01-019-220", nilai_sas: 66, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6750", nama: "Ni Kadek Santhi Aurelia", kelas: "7.7", no_peserta: "01-019-221", nilai_sas: 54, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6751", nama: "Ni Ketut Jia Jasmine Pradnya Pramesty", kelas: "7.7", no_peserta: "01-019-222", nilai_sas: 66, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6752", nama: "Ni Komang Riana Pujayanti", kelas: "7.7", no_peserta: "01-019-223", nilai_sas: 54, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6753", nama: "Ni Putu Adistya Candra Pradita", kelas: "7.7", no_peserta: "01-019-224", nilai_sas: 72, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6754", nama: "Ni Putu Dila Novita Sari", kelas: "7.7", no_peserta: "01-019-225", nilai_sas: 44, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6755", nama: "Putri Abigail Meysha Reandra", kelas: "7.7", no_peserta: "01-019-226", nilai_sas: null, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6756", nama: "Putu Devi Atika Pratiwi", kelas: "7.7", no_peserta: "01-019-227", nilai_sas: 52, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6757", nama: "Putu Felina Dwijayanti", kelas: "7.7", no_peserta: "01-019-228", nilai_sas: 56, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6758", nama: "Putu Susila Andyana", kelas: "7.7", no_peserta: "01-019-229", nilai_sas: 22, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
+            { nis: "6759", nama: "Putu Wika Ananta Putra", kelas: "7.7", no_peserta: "01-019-230", nilai_sas: 78, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
+            { nis: "6760", nama: "Qenzo Djazen Januarta", kelas: "7.7", no_peserta: "01-019-231", nilai_sas: 68, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6761", nama: "Rifki Yoga Saputra", kelas: "7.7", no_peserta: "01-019-232", nilai_sas: 50, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
+            { nis: "6762", nama: "Silvi Afifatus Sholihah", kelas: "7.7", no_peserta: "01-019-233", nilai_sas: 70, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6763", nama: "Ucca Kusuma Wicitra", kelas: "7.7", no_peserta: "01-019-234", nilai_sas: 82, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
 
             // Data 7.8
-            { nis: "6764", nama: "A.A Gede Pandu Rajendra", kelas: "7.8", no_peserta: "01-019-235", nilai: 44, perbaikan: [] },
-            { nis: "6765", nama: "Abizar Misyari Winata", kelas: "7.8", no_peserta: "01-019-236", nilai: 48, perbaikan: [] },
-            { nis: "6766", nama: "Al Furqon Johan Prasetyo", kelas: "7.8", no_peserta: "01-019-237", nilai: 50, perbaikan: [] },
-            { nis: "6767", nama: "Almeera Safiqha Maritza Pami", kelas: "7.8", no_peserta: "01-019-238", nilai: 60, perbaikan: [] },
-            { nis: "6768", nama: "Assyfa Nur Khasanah", kelas: "7.8", no_peserta: "01-019-239", nilai: 64, perbaikan: [] },
-            { nis: "6769", nama: "Aun Hibatullah", kelas: "7.8", no_peserta: "01-019-240", nilai: 62, perbaikan: [] },
-            { nis: "6770", nama: "Dewa Ayu Made Indira Anindya Kusuma", kelas: "7.8", no_peserta: "01-019-241", nilai: 86, perbaikan: [] },
-            { nis: "6771", nama: "Firda Apriliyani", kelas: "7.8", no_peserta: "01-019-242", nilai: 48, perbaikan: [] },
-            { nis: "6772", nama: "Gede Marendra Wijaya", kelas: "7.8", no_peserta: "01-019-243", nilai: 76, perbaikan: [] },
-            { nis: "6773", nama: "I Dewa Putu Satya Wiguna", kelas: "7.8", no_peserta: "01-019-244", nilai: 48, perbaikan: [] },
-            { nis: "6774", nama: "I Gusti Agung Istri Gayatri", kelas: "7.8", no_peserta: "01-019-245", nilai: 48, perbaikan: [] },
-            { nis: "6775", nama: "I Gusti Ayu Septiani Putri", kelas: "7.8", no_peserta: "01-019-246", nilai: 74, perbaikan: [] },
-            { nis: "6776", nama: "I Gede Nengah Reynard Aditya", kelas: "7.8", no_peserta: "01-019-247", nilai: 56, perbaikan: [] },
-            { nis: "6777", nama: "I Kadek Adi Arya Putra", kelas: "7.8", no_peserta: "01-019-248", nilai: 70, perbaikan: [] },
-            { nis: "6778", nama: "I Kadek Bagus Krishna Dwipa Sanjaya", kelas: "7.8", no_peserta: "01-019-249", nilai: 38, perbaikan: [] },
-            { nis: "6779", nama: "I Komang Aditya Putra", kelas: "7.8", no_peserta: "01-019-250", nilai: 66, perbaikan: [] },
-            { nis: "6780", nama: "I Made Arta Wiguna", kelas: "7.8", no_peserta: "01-019-251", nilai: null, perbaikan: [] },
-            { nis: "6781", nama: "I Putu Rehan Arta Erlangga", kelas: "7.8", no_peserta: "01-019-252", nilai: 82, perbaikan: [] },
-            { nis: "6782", nama: "Kadek Dwi Paramita", kelas: "7.8", no_peserta: "01-019-253", nilai: 56, perbaikan: [] },
-            { nis: "6783", nama: "Kesya Yudya Saka", kelas: "7.8", no_peserta: "01-019-254", nilai: 52, perbaikan: [] },
-            { nis: "6784", nama: "Lucky Indra Perdana", kelas: "7.8", no_peserta: "01-019-255", nilai: 42, perbaikan: [] },
-            { nis: "6785", nama: "Ni Luh Pande Puspaningsih", kelas: "7.8", no_peserta: "01-019-256", nilai: 52, perbaikan: [] },
-            { nis: "6786", nama: "Muhammad Abizar", kelas: "7.8", no_peserta: "01-019-257", nilai: 36, perbaikan: [] },
-            { nis: "6787", nama: "Mohamad Arya Putra", kelas: "7.8", no_peserta: "01-019-258", nilai: 52, perbaikan: [] },
-            { nis: "6788", nama: "Ni Kadek Intan Kusuma Dewi", kelas: "7.8", no_peserta: "01-019-259", nilai: 52, perbaikan: [] },
-            { nis: "6789", nama: "Ni Kadek Dinda Dian Maharani", kelas: "7.8", no_peserta: "01-019-260", nilai: 60, perbaikan: [] },
-            { nis: "6790", nama: "Ni Ketut Kembar Alita Putri", kelas: "7.8", no_peserta: "01-019-261", nilai: null, perbaikan: [] },
-            { nis: "6791", nama: "Nikken Pritarini Widjayanti", kelas: "7.8", no_peserta: "01-019-262", nilai: 64, perbaikan: [] },
-            { nis: "6792", nama: "Ni Komang Kembar Alika Putri", kelas: "7.8", no_peserta: "01-019-263", nilai: 58, perbaikan: [] },
-            { nis: "6793", nama: "Ni Luh Sintya Dewi", kelas: "7.8", no_peserta: "01-019-264", nilai: 62, perbaikan: [] },
-            { nis: "6794", nama: "Ni Made Anggita Prame Swari", kelas: "7.8", no_peserta: "01-019-265", nilai: 60, perbaikan: [] },
-            { nis: "6795", nama: "Ni Putu Ayudya Paramitha Swari", kelas: "7.8", no_peserta: "01-019-266", nilai: 52, perbaikan: [] },
-            { nis: "6796", nama: "Putu Altaffian Panji Pranata", kelas: "7.8", no_peserta: "01-019-267", nilai: 48, perbaikan: [] },
-            { nis: "6797", nama: "Putu Deepika Purnama Dewi", kelas: "7.8", no_peserta: "01-019-268", nilai: 76, perbaikan: [] },
-            { nis: "6798", nama: "Putu Devan Adhitya Wicaksana", kelas: "7.8", no_peserta: "01-019-269", nilai: 68, perbaikan: [] },
-            { nis: "6799", nama: "Putu Dinda Indira Putri", kelas: "7.8", no_peserta: "01-019-270", nilai: 72, perbaikan: [] },
-            { nis: "6800", nama: "Putu Yuwanda Cahayanidta", kelas: "7.8", no_peserta: "01-019-271", nilai: 68, perbaikan: [] },
-            { nis: "6801", nama: "Rahen Zakyal Maizan", kelas: "7.8", no_peserta: "01-019-272", nilai: 46, perbaikan: [] },
-            { nis: "6802", nama: "Velynzha Gealova Sweetsherien Hanton", kelas: "7.8", no_peserta: "01-019-273", nilai: 88, perbaikan: [] },
-            { nis: "6803", nama: "Viola Octavia Putrie", kelas: "7.8", no_peserta: "01-019-274", nilai: 70, perbaikan: [] }
+            { nis: "6764", nama: "A.A Gede Pandu Rajendra", kelas: "7.8", no_peserta: "01-019-235", nilai_sas: 44, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6765", nama: "Abizar Misyari Winata", kelas: "7.8", no_peserta: "01-019-236", nilai_sas: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6766", nama: "Al Furqon Johan Prasetyo", kelas: "7.8", no_peserta: "01-019-237", nilai_sas: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6767", nama: "Almeera Safiqha Maritza Pami", kelas: "7.8", no_peserta: "01-019-238", nilai_sas: 60, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6768", nama: "Assyfa Nur Khasanah", kelas: "7.8", no_peserta: "01-019-239", nilai_sas: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6769", nama: "Aun Hibatullah", kelas: "7.8", no_peserta: "01-019-240", nilai_sas: 62, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6770", nama: "Dewa Ayu Made Indira Anindya Kusuma", kelas: "7.8", no_peserta: "01-019-241", nilai_sas: 86, stars: 3.5, uh3: 88.5, uh4: 89, perbaikan: [] },
+            { nis: "6771", nama: "Firda Apriliyani", kelas: "7.8", no_peserta: "01-019-242", nilai_sas: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6772", nama: "Gede Marendra Wijaya", kelas: "7.8", no_peserta: "01-019-243", nilai_sas: 76, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6773", nama: "I Dewa Putu Satya Wiguna", kelas: "7.8", no_peserta: "01-019-244", nilai_sas: 48, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6774", nama: "I Gusti Agung Istri Gayatri", kelas: "7.8", no_peserta: "01-019-245", nilai_sas: 48, stars: 3.5, uh3: 88.5, uh4: 89, perbaikan: [] },
+            { nis: "6775", nama: "I Gusti Ayu Septiani Putri", kelas: "7.8", no_peserta: "01-019-246", nilai_sas: 74, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6776", nama: "I Gede Nengah Reynard Aditya", kelas: "7.8", no_peserta: "01-019-247", nilai_sas: 56, stars: 3.5, uh3: 88.5, uh4: 89, perbaikan: [] },
+            { nis: "6777", nama: "I Kadek Adi Arya Putra", kelas: "7.8", no_peserta: "01-019-248", nilai_sas: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6778", nama: "I Kadek Bagus Krishna Dwipa Sanjaya", kelas: "7.8", no_peserta: "01-019-249", nilai_sas: 38, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6779", nama: "I Komang Aditya Putra", kelas: "7.8", no_peserta: "01-019-250", nilai_sas: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6780", nama: "I Made Arta Wiguna", kelas: "7.8", no_peserta: "01-019-251", nilai_sas: null, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6781", nama: "I Putu Rehan Arta Erlangga", kelas: "7.8", no_peserta: "01-019-252", nilai_sas: 82, stars: 7, uh3: 92, uh4: 95, perbaikan: [] },
+            { nis: "6782", nama: "Kadek Dwi Paramita", kelas: "7.8", no_peserta: "01-019-253", nilai_sas: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6783", nama: "Kesya Yudya Saka", kelas: "7.8", no_peserta: "01-019-254", nilai_sas: 52, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6784", nama: "Lucky Indra Perdana", kelas: "7.8", no_peserta: "01-019-255", nilai_sas: 42, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6785", nama: "Ni Luh Pande Puspaningsih", kelas: "7.8", no_peserta: "01-019-256", nilai_sas: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6786", nama: "Muhammad Abizar", kelas: "7.8", no_peserta: "01-019-257", nilai_sas: 36, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6787", nama: "Mohamad Arya Putra", kelas: "7.8", no_peserta: "01-019-258", nilai_sas: 52, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6788", nama: "Ni Kadek Intan Kusuma Dewi", kelas: "7.8", no_peserta: "01-019-259", nilai_sas: 52, stars: 4.5, uh3: 89.5, uh4: 91, perbaikan: [] },
+            { nis: "6789", nama: "Ni Kadek Dinda Dian Maharani", kelas: "7.8", no_peserta: "01-019-260", nilai_sas: 60, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6790", nama: "Ni Ketut Kembar Alita Putri", kelas: "7.8", no_peserta: "01-019-261", nilai_sas: null, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6791", nama: "Nikken Pritarini Widjayanti", kelas: "7.8", no_peserta: "01-019-262", nilai_sas: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6792", nama: "Ni Komang Kembar Alika Putri", kelas: "7.8", no_peserta: "01-019-263", nilai_sas: 58, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6793", nama: "Ni Luh Sintya Dewi", kelas: "7.8", no_peserta: "01-019-264", nilai_sas: 62, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6794", nama: "Ni Made Anggita Prame Swari", kelas: "7.8", no_peserta: "01-019-265", nilai_sas: 60, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6795", nama: "Ni Putu Ayudya Paramitha Swari", kelas: "7.8", no_peserta: "01-019-266", nilai_sas: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6796", nama: "Putu Altaffian Panji Pranata", kelas: "7.8", no_peserta: "01-019-267", nilai_sas: 48, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6797", nama: "Putu Deepika Purnama Dewi", kelas: "7.8", no_peserta: "01-019-268", nilai_sas: 76, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
+            { nis: "6798", nama: "Putu Devan Adhitya Wicaksana", kelas: "7.8", no_peserta: "01-019-269", nilai_sas: 68, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
+            { nis: "6799", nama: "Putu Dinda Indira Putri", kelas: "7.8", no_peserta: "01-019-270", nilai_sas: 72, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
+            { nis: "6800", nama: "Putu Yuwanda Cahayanidta", kelas: "7.8", no_peserta: "01-019-271", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6801", nama: "Rahen Zakyal Maizan", kelas: "7.8", no_peserta: "01-019-272", nilai_sas: 46, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6802", nama: "Velynzha Gealova Sweetsherien Hanton", kelas: "7.8", no_peserta: "01-019-273", nilai_sas: 88, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+            { nis: "6803", nama: "Viola Octavia Putrie", kelas: "7.8", no_peserta: "01-019-274", nilai_sas: 70, stars: 6, uh3: 91, uh4: 93, perbaikan: [] }
         ];
 
         // Filter data siswa yang nilainya valid untuk perhitungan KKM dan nilai tertinggi
-        const dataSiswaValid = rawDataSiswa.filter(siswa => siswa.nilai !== null && !isNaN(siswa.nilai));
+        // KKM dan nilai tertinggi tetap menggunakan NILAI SAS
+        const dataSiswaValid = rawDataSiswa.filter(siswa => siswa.nilai_sas !== null && !isNaN(siswa.nilai_sas));
         
         const KKM = 74;
         const resultDiv = document.getElementById('result');
         const searchInput = document.getElementById('searchInput');
         const confettiDiv = document.getElementById('confetti');
 
-        // Cari Nilai Tertinggi Seangkatan (dari data yang valid)
-        const nilaiTertinggiSeangkatan = Math.max(...dataSiswaValid.map(siswa => siswa.nilai));
+        // Cari Nilai Tertinggi Seangkatan (SAS dan STARS)
+        const nilaiTertinggiSeangkatanSAS = Math.max(...dataSiswaValid.map(siswa => siswa.nilai_sas));
+        const nilaiTertinggiSeangkatanStars = Math.max(...rawDataSiswa.map(siswa => siswa.stars).filter(s => s !== null && !isNaN(s)));
+
 
         // Fungsi untuk animasi loading
         function startLoadingAnimation() {
+            // Hapus konten sebelumnya kecuali Raport Warning
+            const warningHtml = document.querySelector('.raport-warning') ? document.querySelector('.raport-warning').outerHTML : '';
+            resultDiv.innerHTML = warningHtml + '<p style="text-align: center; color: var(--color-primary); margin: 0; font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Sedang Mencari Data...</p>';
             resultDiv.classList.remove('show');
             resultDiv.style.animation = 'loading-pulse 1s infinite alternate';
-            resultDiv.innerHTML = '<p style="text-align: center; color: var(--color-primary); margin: 0; font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Sedang Mencari Data...</p>';
         }
 
         function stopLoadingAnimation() {
@@ -670,12 +722,11 @@
                 stopLoadingAnimation();
                 
                 if (input === "") {
-                    resultDiv.innerHTML = '<p style="color: var(--color-danger); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-times-circle"></i> Mohon masukkan Nama atau NIS.</p>';
+                    resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="color: var(--color-danger); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-times-circle"></i> Mohon masukkan Nama atau NIS.</p>';
                     resultDiv.classList.add('show');
                     return;
                 }
 
-                // LOGIKA PENCARIAN UTAMA
                 const siswaDitemukan = rawDataSiswa.find(siswa => {
                     const nisLower = siswa.nis.toLowerCase();
                     const noPesertaLower = siswa.no_peserta.toLowerCase();
@@ -688,9 +739,9 @@
 
                 if (siswaDitemukan) {
                     
-                    // --- Handle Nilai Kosong ---
-                    if (siswaDitemukan.nilai === null) {
-                        resultDiv.innerHTML = `
+                    // --- Handle Nilai Kosong (SAS) ---
+                    if (siswaDitemukan.nilai_sas === null) {
+                        resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + `
                             <div class="info-grid">
                                 <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
                                 <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
@@ -698,7 +749,7 @@
                                 <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
                             </div>
                             <div class="alert-badge status-fail" style="background-color: var(--color-warning); color: #856404; margin-bottom: 0;">
-                                <i class="fas fa-exclamation-triangle"></i> DATA NILAI UTAMA BELUM TERSEDIA.
+                                <i class="fas fa-exclamation-triangle"></i> DATA NILAI SAS BELUM TERSEDIA.
                             </div>
                         `;
                         resultDiv.classList.add('show');
@@ -711,40 +762,49 @@
                     let iconKKM = '';
                     let pesanPeringatan = '';
                     
-                    // 1. Cek Nilai Tertinggi Seangkatan
-                    if (siswaDitemukan.nilai === nilaiTertinggiSeangkatan) {
-                        topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-crown"></i> Nilai Tertinggi Seangkatan!</div>';
-                    }
-                    
-                    // 2. Cek Nilai Tertinggi di Kelasnya
-                    const siswaKelas = dataSiswaValid.filter(s => s.kelas === siswaDitemukan.kelas);
-                    const nilaiTertinggiKelas = Math.max(...siswaKelas.map(s => s.nilai));
-                    
-                    if (siswaDitemukan.nilai === nilaiTertinggiKelas) {
-                        topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
+                    // --- 1. Alert Rewards (Stars > 5) ---
+                    if (siswaDitemukan.stars > 5) {
+                        topScorerBadges += '<div class="alert-badge reward-alert"><i class="fas fa-medal"></i> SELAMAT! Berhak Bebas UH/Tugas BAB 5 SMT 2!</div>';
+                        triggerConfetti();
                     }
 
 
-                    // 3. Cek KKM
-                    if (siswaDitemukan.nilai >= KKM) {
+                    // --- 2. Cek Stars Tertinggi Seangkatan ---
+                    if (siswaDitemukan.stars === nilaiTertinggiSeangkatanStars) {
+                        topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-star-half-alt"></i> STARS Tertinggi Seangkatan!</div>';
+                    }
+                    
+                    // --- 3. Cek Stars Tertinggi di Kelasnya ---
+                    const siswaKelasStars = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas && s.stars !== null && !isNaN(s.stars));
+                    const nilaiTertinggiKelasStars = Math.max(...siswaKelasStars.map(s => s.stars));
+                    
+                    if (siswaDitemukan.stars === nilaiTertinggiKelasStars) {
+                        topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> STARS Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
+                    }
+
+                    // --- 4. Cek Nilai Tertinggi SAS Seangkatan ---
+                    if (siswaDitemukan.nilai_sas === nilaiTertinggiSeangkatanSAS) {
+                        // Jika sudah dapat reward Stars, jangan tampilkan badge ini (kecuali Anda ingin keduanya)
+                        // topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-trophy"></i> Nilai SAS Tertinggi Seangkatan!</div>';
+                    }
+                    
+                    // --- 5. Cek KKM (menggunakan nilai_sas) ---
+                    if (siswaDitemukan.nilai_sas >= KKM) {
                         statusKelas = 'status-success';
                         iconKKM = '<i class="fas fa-trophy icon-win"></i>';
-                        pesanPeringatan = 'LULUS KKM (Nilai >= ' + KKM + ')';
-                        if (siswaDitemukan.nilai === nilaiTertinggiSeangkatan) {
-                             triggerConfetti(); 
-                        }
+                        pesanPeringatan = 'LULUS KKM (Nilai SAS >= ' + KKM + ')';
                     } else {
                         statusKelas = 'status-fail';
                         iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
-                        pesanPeringatan = 'BELUM MEMENUHI KKM (Nilai < ' + KKM + ')';
+                        pesanPeringatan = 'BELUM MEMENUHI KKM (Nilai SAS < ' + KKM + ')';
                     }
                     
-                    // 4. Generate Tabel Perbaikan
+                    // 6. Generate Tabel Perbaikan
                     const perbaikanTable = generatePerbaikanTable(siswaDitemukan.perbaikan);
 
 
                     // Tampilkan hasil
-                    resultDiv.innerHTML = `
+                    resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + `
                         ${topScorerBadges}
 
                         <div class="info-grid">
@@ -754,9 +814,23 @@
                             <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
                         </div>
                         
-                        <div class="main-score">
-                            <div class="label">NILAI INFORMATIKA</div>
-                            <div class="value">${siswaDitemukan.nilai}</div>
+                        <div class="score-grid">
+                            <div class="score-item main-score" style="border-left: none;">
+                                <div class="label">NILAI SAS (AKHIR)</div>
+                                <div class="value">${siswaDitemukan.nilai_sas}</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="label">STARS ⭐️</div>
+                                <div class="value" style="color: ${siswaDitemukan.stars > 5 ? var('--color-success)') : (siswaDitemukan.stars > 3 ? var('--color-highlight)') : var('--color-secondary)')};">${siswaDitemukan.stars}</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="label">UH BAB 3</div>
+                                <div class="value">${siswaDitemukan.uh3}</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="label">UH BAB 4</div>
+                                <div class="value">${siswaDitemukan.uh4}</div>
+                            </div>
                         </div>
 
                         <div class="${statusKelas} alert-badge">
@@ -768,7 +842,7 @@
                     `;
                     resultDiv.classList.add('show');
                 } else {
-                    resultDiv.innerHTML = '<p style="color: var(--color-warning); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-search-minus"></i> Data siswa tidak ditemukan.</p>';
+                    resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="color: var(--color-warning); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-search-minus"></i> Data siswa tidak ditemukan.</p>';
                     resultDiv.classList.add('show');
                 }
             }, 800); 
