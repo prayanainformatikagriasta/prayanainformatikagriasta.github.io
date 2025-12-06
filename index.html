@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pengecekan Nilai Interaktif</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Sistem Pengecekan Nilai Interaktif - Kelas 7</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+    
     <style>
-        /* [CSS DIBIARKAN SAMA UNTUK FOKUS PADA LOGIKA JS] */
+        /* ====================================================================== */
+        /* BAGIAN 1: CSS (Gaya, Responsif, dan Animasi) */
+        /* ====================================================================== */
         :root {
             --color-primary: #007bff;
             --color-secondary: #6c757d;
@@ -35,24 +36,25 @@
             background: #ffffff;
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             width: 100%;
             max-width: 650px;
             margin-top: 30px;
+            overflow: hidden; /* Penting untuk animasi */
         }
 
         header {
             text-align: center;
             margin-bottom: 30px;
         }
-
+        
         header h1 {
             color: var(--color-primary);
-            font-weight: 700;
+            font-weight: 800;
             font-size: 2em;
             margin-bottom: 5px;
         }
-
+        
         header p {
             font-size: 0.9em;
             color: var(--color-secondary);
@@ -102,17 +104,33 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             min-height: 120px;
-            opacity: 0;
+            opacity: 0; 
             transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out; /* Animasi lebih cepat */
             border-left: 5px solid var(--color-primary);
         }
-
+        
         .result-card.show {
             opacity: 1;
             transform: translateY(0);
         }
+        
+        /* Loading animation */
+        .loading-state {
+            text-align: center;
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+        
+        @keyframes spinner {
+          to {transform: rotate(360deg);}
+        }
+        
+        .loading-state i {
+            animation: spinner 1s linear infinite;
+        }
 
+        /* --- Info Grid --- */
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -120,61 +138,80 @@
             margin-bottom: 15px;
             font-size: 0.95em;
         }
-
-        .info-grid div {
-            padding: 5px 0;
-            border-bottom: 1px dashed #eee;
-        }
-
+        
         .info-grid strong {
             color: #333;
             font-weight: 600;
             display: block;
         }
 
+        /* --- Score Grid --- */
         .score-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: 2fr repeat(3, 1fr); /* SAS lebih besar */
             gap: 10px;
             margin-bottom: 20px;
             text-align: center;
             border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px 0;
+            border-radius: 10px;
             background-color: #fcfcfc;
+            padding: 10px 0;
+            overflow: hidden;
         }
-
+        
         .score-item {
             padding: 5px 0;
             border-right: 1px solid #eee;
+            position: relative;
         }
-
+        
         .score-item:last-child {
             border-right: none;
         }
 
-        /* --- Nilai Utama (SAS) --- */
-        .main-score {
-            text-align: center;
-            padding: 0;
-            margin-bottom: 0;
-            border-radius: 10px;
-        }
-
-        .main-score .label {
-            color: var(--color-secondary);
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
+        /* Nilai SAS (Utama) */
         .main-score .value {
-            font-size: 1.8em;
+            font-size: 2.8em;
             font-weight: 700;
             color: var(--color-primary);
-            line-height: 1.2;
+            line-height: 1.1;
+            transition: color 0.5s ease-in-out;
+            animation: scorePop 0.5s ease-out; /* Animasi muncul */
+        }
+        
+        /* Animasi Pop untuk Nilai */
+        @keyframes scorePop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* --- Badges & Alerts --- */
+        /* Nilai Stars dengan Superscript */
+        .stars-score .value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--color-highlight);
+            line-height: 1.2;
+            display: inline-block;
+            position: relative;
+            animation: starSpin 0.5s ease-out;
+        }
+        
+        /* Animasi Putar untuk Stars */
+        @keyframes starSpin {
+            0% { transform: rotateY(90deg); opacity: 0; }
+            100% { transform: rotateY(0deg); opacity: 1; }
+        }
+
+        .stars-score .value sub {
+            font-size: 0.5em; /* Membuat /7 lebih kecil */
+            vertical-align: super;
+            position: absolute;
+            bottom: 0.5em;
+            right: -0.6em;
+            color: var(--color-secondary);
+        }
+
+        /* --- Badges & Alerts (Tetap Sama) --- */
         .alert-badge {
             padding: 10px;
             border-radius: 8px;
@@ -187,27 +224,24 @@
             font-size: 1em;
             animation: bounceIn 0.5s ease-out;
         }
-
+        
         .top-scorer-alert {
             background-color: var(--color-highlight);
             color: white;
             animation: fadeInOut 2s infinite alternate;
         }
-
+        
         .top-class-alert {
-            background-color: #00bcd4;
-            color: white;
-            box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
+             background-color: #00bcd4;
+             color: white;
         }
 
-        /* NEW: Reward Alert (Stars > 5) */
         .reward-alert {
             background-color: #c3e6cb;
             color: #1a7e28;
             border: 1px solid #8ac89b;
         }
-
-        /* NEW: Raport Warning Alert */
+        
         .raport-warning {
             background-color: #ffeeba;
             color: #856404;
@@ -226,140 +260,67 @@
             background-color: #f8d7da;
             color: var(--color-danger);
         }
-
-        /* --- Tabel Perbaikan --- */
-        .perbaikan-table-container {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .perbaikan-table-container h4 {
-            color: var(--color-danger);
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-
-        .perbaikan-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9em;
-        }
-
-        .perbaikan-table th,
-        .perbaikan-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .perbaikan-table th {
-            background-color: #f2f2f2;
-            color: #333;
-            font-weight: 600;
-        }
-
-        /* --- Animasi --- */
-        @keyframes loading-pulse {
-            0% {
-                background-color: #e9ecef;
-            }
-
-            50% {
-                background-color: #dee2e6;
-            }
-
-            100% {
-                background-color: #e9ecef;
-            }
-        }
-
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.5);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes fadeInOut {
-            0% {
-                opacity: 0.8;
-                box-shadow: 0 0 10px rgba(255, 140, 0, 0.7);
-            }
-
-            100% {
-                opacity: 1;
-                box-shadow: none;
-            }
-        }
-
-        /* --- Responsiveness --- */
+        
+        /* --- Responsiveness (Tetap Sama) --- */
         @media (max-width: 500px) {
             .container {
                 padding: 20px 15px;
             }
-
             .search-area {
                 flex-direction: column;
             }
-
             .info-grid {
                 grid-template-columns: 1fr;
             }
-
             .score-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr; /* Stack scores vertically on mobile */
             }
-
             .score-item {
                 border-bottom: 1px dashed #eee;
                 border-right: none;
             }
-
             .score-item:last-child {
                 border-bottom: none;
+            }
+            .main-score .value {
+                 font-size: 2.2em;
+            }
+            .stars-score .value {
+                font-size: 1.5em;
+            }
+            .stars-score .value sub {
+                bottom: 0.4em;
             }
         }
     </style>
 </head>
-
 <body>
     <div class="container" id="mainContainer">
         <header>
             <h1>Sistem Pengecekan Nilai 📚</h1>
             <p>Informatika Kelas 7 | KKM SAS: <span style="font-weight: 700;">74</span></p>
         </header>
-
+        
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="Masukkan Nama, NIS, atau No. Peserta..."
-                onkeyup="checkEnter(event)" autofocus>
+            <input type="text" id="searchInput" placeholder="Masukkan Nama, NIS, atau No. Peserta..." onkeyup="checkEnter(event)" autofocus>
             <button onclick="cariNilai()"><i class="fas fa-search"></i> Cari</button>
         </div>
 
-        <div id="result" class="result-card">
+        <div id="result" class="result-card show">
             <div class="alert-badge raport-warning" style="opacity: 1; transform: translateY(0); margin-bottom: 25px;">
-                <i class="fas fa-exclamation-circle fa-beat"></i>
-                <strong>PENTING:</strong> Nilai Raport Adalah Gabungan Antara Nilai SAS, Nilai Ulangan Harian, Nilai
-                Tugas, Nilai Quiz, dan Sikap.
+                <i class="fas fa-exclamation-circle fa-beat"></i> 
+                <strong>PENTING:</strong> Nilai Raport Adalah Gabungan Antara Nilai SAS, Nilai Ulangan Harian, Nilai Tugas, Nilai Quiz, dan Sikap.
             </div>
-            <p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan
-                masukkan data pencarian.</p>
+            <p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian untuk melihat detail nilai.</p>
         </div>
-
-        <div id="confetti"
-            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100;">
-        </div>
+        
+        <div id="confetti" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100;"></div>
     </div>
+    
     <script>
         // Fungsi utilitas untuk menormalkan NIS/No. Peserta (hanya angka dan tanda hubung, lowercase)
         function normalizeId(str) {
             if (!str) return '';
-            // Menghapus semua spasi dan karakter non-alphanumeric selain tanda hubung
             return String(str).replace(/\s/g, '').toLowerCase().trim();
         }
 
@@ -368,7 +329,7 @@
             if (!str) return '';
             return String(str).toLowerCase().replace(/\s+/g, ' ').trim();
         }
-
+        
         // Fungsi utilitas untuk konversi nilai yang mungkin desimal (string dengan koma/titik) ke float
         function parseNumericValue(value) {
             if (typeof value === 'string') {
@@ -385,7 +346,7 @@
         // Data siswa lengkap Kelas 7
         const rawDataSiswa = [
             // Format: { nis, nama, kelas, no_peserta, nilai_sas, stars, uh3, uh4, perbaikan }
-
+            
             // Data EC 7.1
             { nis: "6531", nama: "Andrea Victoria Kaunang", kelas: "EC 7.1", no_peserta: "01-019-001-7", nilai_sas: 88, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
             { nis: "6532", nama: "Anindya Destyarani Sihaloho", kelas: "EC 7.1", no_peserta: "01-019-002-7", nilai_sas: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
@@ -463,7 +424,7 @@
             { nis: "6600", nama: "Sang Ayu Komang Trisnadia Artika Dewi", kelas: "EC 7.3", no_peserta: "01-019-070", nilai_sas: 88, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
             { nis: "6601", nama: "Sang Putu Andhika Pradana", kelas: "EC 7.3", no_peserta: "01-019-071", nilai_sas: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
             { nis: "6602", nama: "Zahraa Asrafunnissa De Nato", kelas: "EC 7.3", no_peserta: "01-019-072", nilai_sas: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-
+            
             // Data 7.4
             { nis: "6603", nama: "A.A Gede Wedanandyaksa Putra", kelas: "7.4", no_peserta: "01-019-073", nilai_sas: 70, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
             { nis: "6604", nama: "A.A Ngurah Agung Aby Putra Samirana", kelas: "7.4", no_peserta: "01-019-074", nilai_sas: 82, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
@@ -679,7 +640,7 @@
 
         // Filter data siswa yang nilai_sas-nya valid untuk perhitungan KKM dan nilai tertinggi SAS
         const dataSiswaValidSAS = rawDataSiswa.filter(siswa => parseNumericValue(siswa.nilai_sas) !== null && !isNaN(parseNumericValue(siswa.nilai_sas)));
-
+        
         const KKM = 74;
         const resultDiv = document.getElementById('result');
         const searchInput = document.getElementById('searchInput');
@@ -687,7 +648,7 @@
 
         // Cari Nilai Tertinggi Seangkatan (SAS)
         const nilaiTertinggiSeangkatanSAS = Math.max(...dataSiswaValidSAS.map(siswa => parseNumericValue(siswa.nilai_sas)));
-
+        
         // Cari Nilai Tertinggi Seangkatan (STARS)
         const starsValid = rawDataSiswa.map(siswa => parseNumericValue(siswa.stars));
         const nilaiTertinggiSeangkatanStars = Math.max(...starsValid.filter(s => !isNaN(s)));
@@ -695,19 +656,20 @@
         // Fungsi untuk animasi loading
         function startLoadingAnimation() {
             const warningHtml = document.querySelector('.raport-warning') ? document.querySelector('.raport-warning').outerHTML : '';
-            resultDiv.innerHTML = warningHtml + '<p style="text-align: center; color: var(--color-primary); margin: 0; font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Sedang Mencari Data...</p>';
+            resultDiv.innerHTML = warningHtml + '<p class="loading-state"><i class="fas fa-spinner fa-spin"></i> Sedang Mencari Data...</p>';
             resultDiv.classList.remove('show');
-            resultDiv.style.animation = 'loading-pulse 1s infinite alternate';
+            resultDiv.style.animation = 'none'; // Hapus animasi bouncein sementara
+            resultDiv.classList.add('show'); 
         }
 
         function stopLoadingAnimation() {
-            resultDiv.style.animation = 'none';
+             // Dihapus, karena kita hanya menggunakan class .show dan animasi loading-state
         }
 
         // Fungsi untuk menampilkan konfeti (menggunakan emoji)
         function triggerConfetti() {
             const emojis = ['🏆', '✨', '🎉', '🎊', '🥇', '🌟', '👑'];
-
+            
             for (let i = 0; i < 50; i++) {
                 const confetti = document.createElement('div');
                 confetti.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
@@ -718,7 +680,7 @@
                 confetti.style.opacity = '0.9';
                 confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
                 confetti.style.transition = 'none';
-
+                
                 confetti.animate([
                     { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                     { transform: 'translateY(' + (window.innerHeight) + 'px) rotate(720deg)', opacity: 0.1 }
@@ -730,41 +692,41 @@
 
                 confettiDiv.appendChild(confetti);
             }
-
+            
             setTimeout(() => {
                 confettiDiv.innerHTML = '';
             }, 5000);
         }
-
+        
         // Fungsi untuk membuat tabel perbaikan
         function generatePerbaikanTable(perbaikanData) {
             if (!perbaikanData || perbaikanData.length === 0) {
                 return '';
             }
-
+            
             let tableHTML = `<div class="perbaikan-table-container">
-                            <h4><i class="fas fa-exclamation-triangle"></i> Riwayat Perbaikan Nilai</h4>
-                            <table class="perbaikan-table">
-                                <thead>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>Nilai Awal</th>
-                                        <th>Nilai Perbaikan</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`;
-
+                                <h4><i class="fas fa-exclamation-triangle"></i> Riwayat Perbaikan Nilai</h4>
+                                <table class="perbaikan-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Nilai Awal</th>
+                                            <th>Nilai Perbaikan</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+            
             perbaikanData.forEach(p => {
-                const status = parseNumericValue(p.nilai_baru) >= KKM ?
-                    `<span style="color: var(--color-success); font-weight: 700;">LULUS KKM</span>` :
-                    `<span style="color: var(--color-danger);">BELUM LULUS</span>`;
+                const status = parseNumericValue(p.nilai_baru) >= KKM ? 
+                                `<span style="color: var(--color-success); font-weight: 700;">LULUS KKM</span>` : 
+                                `<span style="color: var(--color-danger);">BELUM LULUS</span>`;
                 tableHTML += `<tr>
-                            <td>${p.tgl}</td>
-                            <td>${p.nilai_lama}</td>
-                            <td style="font-weight: 600;">${p.nilai_baru}</td>
-                            <td>${status}</td>
-                          </tr>`;
+                                <td>${p.tgl}</td>
+                                <td>${p.nilai_lama}</td>
+                                <td style="font-weight: 600;">${p.nilai_baru}</td>
+                                <td>${status}</td>
+                              </tr>`;
             });
 
             tableHTML += `</tbody></table></div>`;
@@ -774,15 +736,15 @@
 
         function cariNilai() {
             startLoadingAnimation();
-
+            
             const rawInput = searchInput.value;
-            const inputNormalized = normalizeId(rawInput);
-            const inputNameLower = normalizeName(rawInput);
+            const inputNormalized = normalizeId(rawInput); 
+            const inputNameLower = normalizeName(rawInput); 
 
-
+            
             setTimeout(() => {
                 stopLoadingAnimation();
-
+                
                 if (inputNormalized === "" && inputNameLower === "") {
                     resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>';
                     resultDiv.classList.add('show');
@@ -794,15 +756,14 @@
                     const nisNormalized = normalizeId(siswa.nis);
                     const noPesertaNormalized = normalizeId(siswa.no_peserta);
                     const namaNormalized = normalizeName(siswa.nama);
-
+                    
                     // Prioritas 1 & 2: NIS/No. Peserta (exact match setelah normalisasi)
-                    // Cek hanya jika input tampak seperti ID (ada angka)
                     if (inputNormalized !== '') {
                         if (nisNormalized === inputNormalized || noPesertaNormalized === inputNormalized) {
                             return true;
                         }
                     }
-
+                    
                     // Prioritas 3: Nama (partial match)
                     if (namaNormalized.includes(inputNameLower) && inputNameLower !== '') {
                         return true;
@@ -812,12 +773,12 @@
                 });
 
                 if (siswaDitemukan) {
-
+                    
                     let topScorerBadges = '';
                     let statusKelas = '';
                     let iconKKM = '';
                     let pesanPeringatan = '';
-
+                    
                     // Ambil nilai stars dan SAS (dikonversi ke numerik)
                     const starsSiswa = parseNumericValue(siswaDitemukan.stars);
                     const nilaiSasSiswa = parseNumericValue(siswaDitemukan.nilai_sas);
@@ -825,7 +786,6 @@
                     // 1. Alert Rewards (Stars > 5)
                     if (starsSiswa > 5) {
                         topScorerBadges += '<div class="alert-badge reward-alert"><i class="fas fa-medal"></i> SELAMAT! Berhak Bebas UH/Tugas BAB 5 SMT 2!</div>';
-                        // Confetti hanya jika ini adalah pencapaian terbesar (yaitu Stars > 5)
                         if (nilaiSasSiswa < KKM) triggerConfetti();
                     }
 
@@ -834,11 +794,11 @@
                     if (starsSiswa === nilaiTertinggiSeangkatanStars) {
                         topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-star-half-alt"></i> STARS Tertinggi Seangkatan!</div>';
                     }
-
+                    
                     // 3. Cek Stars Tertinggi di Kelasnya
                     const siswaKelasStars = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas);
                     const nilaiTertinggiKelasStars = Math.max(...siswaKelasStars.map(s => parseNumericValue(s.stars)).filter(s => !isNaN(s)));
-
+                    
                     if (starsSiswa === nilaiTertinggiKelasStars && starsSiswa > 0) {
                         topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> STARS Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
                     }
@@ -846,85 +806,85 @@
                     // --- Handle Nilai Kosong (SAS) ---
                     if (isNaN(nilaiSasSiswa)) {
                         resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + `
-                        ${topScorerBadges}
-                        <div class="info-grid">
-                            <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
-                            <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
-                            <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
-                            <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
-                        </div>
-                        <div class="alert-badge status-fail" style="background-color: var(--color-warning); color: #856404; margin-bottom: 0;">
-                            <i class="fas fa-exclamation-triangle"></i> DATA NILAI SAS BELUM TERSEDIA.
-                        </div>
-                    `;
+                            ${topScorerBadges}
+                            <div class="info-grid">
+                                <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
+                                <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
+                                <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
+                                <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
+                            </div>
+                            <div class="alert-badge status-fail" style="background-color: var(--color-warning); color: #856404; margin-bottom: 0;">
+                                <i class="fas fa-exclamation-triangle"></i> DATA NILAI SAS BELUM TERSEDIA.
+                            </div>
+                        `;
                         resultDiv.classList.add('show');
                         return;
                     }
-
+                    
                     // 4. Cek KKM (menggunakan nilai_sas)
                     if (nilaiSasSiswa >= KKM) {
                         statusKelas = 'status-success';
                         iconKKM = '<i class="fas fa-trophy icon-win"></i>';
                         pesanPeringatan = 'LULUS KKM (Nilai SAS >= ' + KKM + ')';
-                        if (nilaiSasSiswa === nilaiTertinggiSeangkatanSAS) {
-                            triggerConfetti();
+                        if (nilaiSasSiswa === nilaiTertinggiSeangkatanSAS && topScorerBadges === '') {
+                             triggerConfetti(); /* Confetti jika hanya SAS tertinggi */
                         }
                     } else {
                         statusKelas = 'status-fail';
                         iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
                         pesanPeringatan = 'BELUM MEMENUHI KKM (Nilai SAS < ' + KKM + ')';
                     }
-
+                    
                     // 5. Generate Tabel Perbaikan
                     const perbaikanTable = generatePerbaikanTable(siswaDitemukan.perbaikan);
 
 
                     // Tampilkan hasil
                     resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + `
-                    ${topScorerBadges}
+                        ${topScorerBadges}
 
-                    <div class="info-grid">
-                        <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
-                        <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
-                        <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
-                        <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
-                    </div>
-                    
-                    <div class="score-grid">
-                        <div class="score-item main-score" style="border-left: none;">
-                            <div class="label">NILAI SAS (AKHIR)</div>
-                            <div class="value">${nilaiSasSiswa}</div>
+                        <div class="info-grid">
+                            <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
+                            <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
+                            <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
+                            <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
                         </div>
-                        <div class="score-item">
-                            <div class="label">STARS ⭐️</div>
-                            <div class="value" style="color: ${starsSiswa > 5 ? 'var(--color-success)' : (starsSiswa >= 4 ? 'var(--color-highlight)' : 'var(--color-secondary)')};">${starsSiswa}</div>
+                        
+                        <div class="score-grid">
+                            <div class="score-item main-score">
+                                <div class="label">NILAI SAS (AKHIR)</div>
+                                <div class="value">${nilaiSasSiswa}</div>
+                            </div>
+                            <div class="score-item stars-score">
+                                <div class="label">STARS ⭐️</div>
+                                <div class="value">${starsSiswa}<sub>/7</sub></div>
+                            </div>
+                            <div class="score-item">
+                                <div class="label">ULANGAN HARIAN BAB 3</div>
+                                <div class="value">${siswaDitemukan.uh3}</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="label">ULANGAN HARIAN BAB 4</div>
+                                <div class="value">${siswaDitemukan.uh4}</div>
+                            </div>
                         </div>
-                        <div class="score-item">
-                            <div class="label">UH BAB 3</div>
-                            <div class="value">${siswaDitemukan.uh3}</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="label">UH BAB 4</div>
-                            <div class="value">${siswaDitemukan.uh4}</div>
-                        </div>
-                    </div>
 
-                    <div class="${statusKelas} alert-badge">
-                        ${iconKKM}
-                        <span>${pesanPeringatan}</span>
-                    </div>
-                    
-                    ${perbaikanTable}
-                `;
+                        <div class="${statusKelas} alert-badge">
+                            ${iconKKM}
+                            <span>${pesanPeringatan}</span>
+                        </div>
+                        
+                        ${perbaikanTable}
+                    `;
                     resultDiv.classList.add('show');
                 } else {
                     resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="color: var(--color-warning); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-search-minus"></i> Data siswa tidak ditemukan.</p>';
                     resultDiv.classList.add('show');
                 }
-            }, 800);
+            }, 800); 
         }
 
-        // Fungsi untuk mengaktifkan pencarian saat menekan Enter (HARUS DI LUAR cariNilai)
+        // Fungsi untuk mengaktifkan pencarian saat menekan Enter (Diletakkan di luar)
         function checkEnter(event) {
             if (event.key === 'Enter') {
                 cariNilai();
@@ -932,5 +892,4 @@
         }
     </script>
 </body>
-
 </html>
