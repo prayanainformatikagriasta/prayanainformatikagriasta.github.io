@@ -322,8 +322,22 @@
     </div>
     
     <script>
+        // Fungsi utilitas untuk menormalkan string (menghilangkan spasi dan konversi ke huruf kecil)
+        function normalize(str) {
+            if (!str) return '';
+            // Menghapus semua karakter non-alphanumeric (kecuali tanda hubung) dan mengonversi ke huruf kecil
+            return String(str).replace(/[^a-zA-Z0-9-]/g, '').toLowerCase().trim();
+        }
+
+        // Fungsi utilitas untuk menormalkan nama (hanya huruf dan spasi)
+        function normalizeName(str) {
+            if (!str) return '';
+            // Menghilangkan spasi berlebih dan mengonversi ke huruf kecil
+            return String(str).toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+
+
         // Data siswa lengkap Kelas 7
-        // Catatan: Nilai UH 3 dan UH 4 yang memiliki koma atau titik harus dipastikan konsisten di data (menggunakan titik untuk desimal)
         const rawDataSiswa = [
             // Format: { nis, nama, kelas, no_peserta, nilai_sas, stars, uh3, uh4, perbaikan }
             
@@ -629,9 +643,8 @@
         // Cari Nilai Tertinggi Seangkatan (SAS dan STARS)
         const nilaiTertinggiSeangkatanSAS = Math.max(...dataSiswaValid.map(siswa => siswa.nilai_sas));
         
-        // Pastikan Stars juga diolah sebagai numerik yang valid untuk pencarian tertinggi
+        // Pastikan Stars diolah sebagai numerik yang valid untuk pencarian tertinggi
         const starsValid = rawDataSiswa.map(siswa => {
-            // Mengganti koma dengan titik jika ada di string (meskipun data di sini sudah numerik, ini jaga-jaga)
             const starValue = typeof siswa.stars === 'string' ? parseFloat(siswa.stars.replace(',', '.')) : siswa.stars;
             return isNaN(starValue) ? 0 : starValue; // Jika NaN, anggap 0
         });
@@ -720,12 +733,17 @@
 
         function cariNilai() {
             startLoadingAnimation();
-            const input = searchInput.value.trim().toLowerCase();
+            
+            // NORMALISASI INPUT DARI PENGGUNA
+            const rawInput = searchInput.value;
+            const inputNormalized = normalize(rawInput); // Untuk NIS/No Peserta
+            const inputNameLower = normalizeName(rawInput); // Untuk Nama
+
             
             setTimeout(() => {
                 stopLoadingAnimation();
                 
-                if (input === "") {
+                if (inputNormalized === "") {
                     // Tampilkan kembali warning dan pesan default jika input kosong
                     resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>';
                     resultDiv.classList.add('show');
@@ -734,13 +752,21 @@
 
                 // LOGIKA PENCARIAN UTAMA
                 const siswaDitemukan = rawDataSiswa.find(siswa => {
-                    const nisLower = siswa.nis ? siswa.nis.toLowerCase() : '';
-                    const noPesertaLower = siswa.no_peserta ? siswa.no_peserta.toLowerCase() : '';
-                    const namaLower = siswa.nama ? siswa.nama.toLowerCase() : '';
+                    const nisNormalized = normalize(siswa.nis);
+                    const noPesertaNormalized = normalize(siswa.no_peserta);
+                    const namaNormalized = normalizeName(siswa.nama);
+                    
+                    // Prioritas 1 & 2: NIS/No. Peserta (exact match setelah normalisasi)
+                    if (nisNormalized === inputNormalized || noPesertaNormalized === inputNormalized) {
+                        return true;
+                    }
+                    
+                    // Prioritas 3: Nama (partial match)
+                    if (namaNormalized.includes(inputNameLower)) {
+                        return true;
+                    }
 
-                    return nisLower === input || 
-                           noPesertaLower === input ||
-                           namaLower.includes(input);
+                    return false;
                 });
 
                 if (siswaDitemukan) {
@@ -767,7 +793,10 @@
                     
                     // 3. Cek Stars Tertinggi di Kelasnya
                     const siswaKelasStars = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas && s.stars !== null && !isNaN(s.stars));
-                    const nilaiTertinggiKelasStars = Math.max(...siswaKelasStars.map(s => s.stars));
+                    const nilaiTertinggiKelasStars = Math.max(...siswaKelasStars.map(s => {
+                         const starVal = typeof s.stars === 'string' ? parseFloat(s.stars.replace(',', '.')) : s.stars;
+                         return isNaN(starVal) ? 0 : starVal;
+                    }));
                     
                     if (starsSiswa === nilaiTertinggiKelasStars) {
                         topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> STARS Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
@@ -827,7 +856,7 @@
                             </div>
                             <div class="score-item">
                                 <div class="label">STARS ⭐️</div>
-                                <div class="value" style="color: ${starsSiswa > 5 ? var('--color-success)') : (starsSiswa > 3 ? var('--color-highlight)') : var('--color-secondary)')};">${starsSiswa}</div>
+                                <div class="value" style="color: ${starsSiswa > 5 ? var('--color-success)') : (starsSiswa >= 4 ? var('--color-highlight)') : var('--color-secondary)')};">${starsSiswa}</div>
                             </div>
                             <div class="score-item">
                                 <div class="label">UH BAB 3</div>
