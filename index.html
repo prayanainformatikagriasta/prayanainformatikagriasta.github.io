@@ -361,7 +361,7 @@
     <script>
         // INISIALISASI KONSTANTA DAN UTILITAS
         const REMEDIAL_LINK = "https://forms.gle/VQvHWSyZNzd6GTeC6"; 
-        const KKM = 70; // KKM TUNGGAL
+        const KKM = 60; // KKM TUNGGAL
         const MAX_STARS = 7;
         const REWARD_STAR_THRESHOLD = 5;
 
@@ -813,17 +813,17 @@
 
             statsContainer.innerHTML = `
                 <div class="stats-group">
-                    <h5 class="stat-title"><i class="fas fa-chart-bar"></i> Statistik Nilai SAS (KKM ${KKM})</h5>
+                    <h5 class="stat-title"><i class="fas fa-chart-bar"></i> Statistik Nilai SAS</h5>
                     <div class="stat-item">
                         <span class="stat-label"><i class="fas fa-question-circle"></i> Belum Ada Nilai (${missingCount})</span>
                         ${renderBar(missingPercent, 'missing')}
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-times-circle"></i> Wajib Remedial (< ${KKM}) (${remedialCount})</span>
+                        <span class="stat-label"><i class="fas fa-times-circle"></i> Wajib Remedial (${remedialCount})</span>
                         ${renderBar(remedialPercent, 'remedial')}
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-check-circle"></i> Lulus Aman (>= ${KKM}) (${safeCount})</span>
+                        <span class="stat-label"><i class="fas fa-check-circle"></i> Lulus Aman (${safeCount})</span>
                         ${renderBar(safePercent, 'safe')}
                     </div>
                 </div>
@@ -928,7 +928,7 @@
                         
                         if (nilaiSasSiswa === KKM) {
                             // Nilai tepat KKM (72)
-                            pesanPeringatan = `LULUS KKM TEPAT! (Nilai = ${KKM})`;
+                            pesanPeringatan = `LULUS KKM!`;
                             remedialMessage = `
                                 <div class="reward-remedial status-aman">
                                     Nilai SAS Anda sudah di area aman. Jika ingin meningkatkan nilai, silakan ikuti remedial.
@@ -936,7 +936,7 @@
                                 </div>`;
                         } else {
                             // Nilai di atas KKM (> 72)
-                            pesanPeringatan = `LULUS KKM AMAN! (Nilai > ${KKM})`;
+                            pesanPeringatan = `LULUS KKM AMAN!`;
                              remedialMessage = `
                                 <div class="reward-remedial status-aman" style="background-color: var(--color-success); color: white;">
                                     <i class="fas fa-check-circle"></i> Nilai SAS Anda Aman (>= ${KKM}). Tidak perlu remedial.
@@ -949,12 +949,12 @@
                         // Nilai di bawah KKM (< 72)
                         statusKelas = 'status-fail';
                         iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
-                        pesanPeringatan = `TIDAK LULUS KKM! (Nilai < ${KKM})`;
+                        pesanPeringatan = `TIDAK LULUS KKM!`;
                         
                         remedialMessage = `
                             <div class="reward-remedial">
                                 <p style="color: var(--color-danger); font-weight: 600; margin-bottom: 5px;">
-                                    Wajib Remedial untuk mencapai KKM ${KKM}.
+                                    Wajib Remedial untuk mencapai KKM.
                                 </p>
                                 <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button"><i class="fas fa-external-link-alt"></i> Klik di sini untuk Remedial</a>
                             </div>`;
@@ -977,7 +977,7 @@
                         
                         <div style="display: flex; gap: 20px;">
                             <div class="main-score" style="flex: 1;">
-                                <div class="label">NILAI SAS (KKM ${KKM})</div>
+                                <div class="label">NILAI SAS</div>
                                 <div class="value">${nilaiSasSiswa}</div>
                             </div>
                             <div class="stars-score" style="flex: 1;">
