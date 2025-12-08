@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Nilai Interaktif - Kelas 7</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Sistem Pengecekan Nilai - Kelas 7</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Montserrat:wght@700;900&family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
@@ -14,12 +14,14 @@
         :root {
             --color-primary: #6B21A8; /* Deep Purple */
             --color-secondary: #4b5563; /* Gray */
-            --color-success: #10b981; /* Tailwind Green */
-            --color-danger: #ef4444; /* Tailwind Red */
-            --color-warning: #f59e0b; /* Tailwind Amber */
-            --color-highlight: #f97316; /* Tailwind Orange */
+            --color-success: #10b981; 
+            --color-danger: #ef4444; 
+            --color-warning: #f59e0b; 
+            --color-highlight: #f97316; 
             --bg-light: #f3f4f6;
             --color-remedial: #8B5CF6; /* Light Purple for buttons */
+            --color-stars: #facc15; 
+            --color-reward: #10b981; 
         }
 
         body {
@@ -46,63 +48,70 @@
 
         header { text-align: center; margin-bottom: 30px; }
         header h1 { color: var(--color-primary); font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 2.5em; margin-bottom: 5px; }
-        header p { color: var(--color-secondary); font-weight: 500; }
 
         /* --- Search and Buttons --- */
         .search-area { display: flex; gap: 10px; margin-bottom: 30px; }
-        #searchInput { flex-grow: 1; padding: 14px 18px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1.05em; transition: all 0.3s; }
-        #searchInput:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(107, 33, 168, 0.15); outline: none; }
-        button { padding: 12px 25px; background-color: var(--color-remedial); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; transition: background-color 0.3s, transform 0.1s; }
-        button:hover { background-color: #6d28d9; }
 
-        /* --- Stats Container --- */
+        /* --- Stats Container & Grid --- */
         .stats-container {
-            padding: 20px; border-radius: 15px; background: #fdf2f8; /* Light Pink/Purple */
+            padding: 20px; border-radius: 15px; background: #fdf2f8; 
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); margin-bottom: 25px;
         }
-        .stat-group-title { color: var(--color-primary); font-size: 1.1em; font-weight: 700; margin-bottom: 15px; }
-        .stat-item { background: white; padding: 12px; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .stat-name { font-weight: 600; color: #374151; font-size: 0.95em; }
-        .stat-value { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.3em; margin-top: 5px; }
-        .stat-detail { font-size: 0.8em; color: var(--color-secondary); }
+        .stats-group { padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px dashed #e5e7eb; }
+        .stats-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .stat-title { color: var(--color-primary); font-size: 1.1em; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .stat-card {
+            background: white; padding: 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stat-value { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.5em; margin-bottom: 0; line-height: 1.2; }
+        .stat-detail { font-size: 0.75em; color: var(--color-secondary); margin-top: 3px; }
+        .stat-label-main { font-size: 0.9em; font-weight: 600; margin-bottom: 5px; }
 
         /* --- Result Card --- */
         .result-card { padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); min-height: 120px; opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; border-left: 6px solid var(--color-primary); }
         .result-card.show { opacity: 1; transform: translateY(0); }
         .loading-state { color: var(--color-primary); font-weight: 600; padding-top: 10px; text-align: center; animation: pulse 1s infinite alternate; }
 
-        /* --- Info Grid & Score Cards --- */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #e5e7eb; }
-        .info-grid strong { color: #333; font-weight: 600; display: block; }
-
-        .score-cards-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        
+        /* --- Score Cards --- */
+        .score-cards-container { display: grid; grid-template-columns: 2fr repeat(2, 1fr); gap: 20px; margin-bottom: 20px; }
         .score-card { background: #f9fafb; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        
         .score-card .label { font-size: 0.85em; color: var(--color-secondary); margin-bottom: 5px; font-weight: 500; }
 
-        /* SAS Score */
         .main-score { grid-column: span 2; background: #ebf5ff; }
-        .main-score .value { font-size: 4em; font-weight: 900; color: var(--color-primary); line-height: 1; animation: scorePop 0.5s ease-out; }
+        .main-score .value { font-size: 4em; font-weight: 900; color: var(--color-primary); line-height: 1; }
         
         /* Stars Score */
         .stars-score { background: #fffef2; border: 1px solid var(--color-stars); }
-        .stars-score .value { font-size: 2.5em; font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--color-stars); line-height: 1.2; display: inline-block; position: relative; animation: starRotate 0.6s ease-out; }
+        .stars-score .value { font-size: 2.5em; font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--color-stars); line-height: 1.2; display: inline-block; position: relative; }
         .stars-score .value sub { font-size: 0.5em; vertical-align: super; position: absolute; bottom: 0.5em; right: -1.0em; color: var(--color-secondary); font-weight: 400; }
         
-        /* UH Scores */
         .uh-score { background: #f0fdf4; border: 1px solid #d1fae5; }
         .uh-score .value { font-size: 1.8em; font-weight: 700; color: #333; }
-
-        /* --- Alerts and Remedial --- */
-        .status-aman { background-color: #d1fae5; color: #047857; font-weight: 600; }
+        
+        /* --- Remedial/Alert Specifics --- */
         .remedial-button-area { padding-top: 15px; border-top: 1px dashed #e5e7eb; margin-top: 15px; text-align: center; }
+        .remedial-button { background-color: var(--color-remedial); }
+        .remedial-button:hover { background-color: #6a0dad; }
 
-        /* ANIMATIONS */
-        @keyframes scorePop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes starRotate { 0% { transform: rotateY(180deg); opacity: 0; } 100% { transform: rotateY(0deg); opacity: 1; } }
-        @keyframes pulse { 0% { opacity: 1; } 100% { opacity: 0.5; } }
-        @keyframes fadein { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* --- Responsiveness --- */
+        @media (max-width: 500px) {
+            .container { padding: 20px 15px; }
+            .search-area { flex-direction: column; }
+            .info-grid { grid-template-columns: 1fr; }
+            .score-cards-container { grid-template-columns: 1fr; }
+            .main-score { grid-column: span 1; }
+            .stat-label { width: 100%; }
+            .progress-bar-container { margin-left: 0; }
+        }
     </style>
 </head>
 <body>
@@ -132,9 +141,9 @@
         <div id="confetti" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100;"></div>
     </div>
     
-    <audio id="searchAudio" src="URL_SUARA_SEARCHING_CARI" preload="auto"></audio>
-    <audio id="successAudio" src="URL_SUARA_SUCCESS_LULUS" preload="auto"></audio>
-    <audio id="failAudio" src="URL_SUARA_FAIL_REMEDIAL" preload="auto"></audio>
+    <audio id="searchAudio" src="#" preload="auto"></audio>
+    <audio id="successAudio" src="#" preload="auto"></audio>
+    <audio id="failAudio" src="#" preload="auto"></audio>
 
     
     <script>
@@ -144,11 +153,18 @@
         const MAX_STARS = 7;
         const REWARD_STAR_THRESHOLD = 5;
 
-        // URL Audio (Ganti dengan URL audio yang sesuai jika ada)
-        const AUDIO_SEARCH = "data:audio/mp3;base64,PLACEHOLDER_SEARCH_AUDIO"; 
-        const AUDIO_SUCCESS = "data:audio/mp3;base64,PLACEHOLDER_SUCCESS_AUDIO";
-        const AUDIO_FAIL = "data:audio/mp3;base64,PLACEHOLDER_FAIL_AUDIO";
-
+        // Fungsi Audio Placeholder (untuk menghindari error saat URL kosong)
+        function playAudio(elementId) {
+            try {
+                const audio = document.getElementById(elementId);
+                audio.currentTime = 0;
+                audio.play();
+            } catch (e) {
+                // Audio play failed (e.g., due to autoplay restrictions)
+                console.warn(`Audio playback failed for ${elementId}:`, e);
+            }
+        }
+        
         function normalizeId(str) {
             if (!str) return '';
             return String(str).replace(/\s/g, '').toLowerCase().trim();
@@ -466,11 +482,6 @@
         // Filter data siswa yang nilainya valid untuk perhitungan KKM dan nilai tertinggi
         const dataSiswaValid = rawDataSiswa.filter(siswa => parseNumericValue(siswa.nilai) !== null && !isNaN(parseNumericValue(siswa.nilai)));
 
-        const resultDiv = document.getElementById('result');
-        const statsContainer = document.getElementById('statsContainer'); 
-        const searchInput = document.getElementById('searchInput');
-        const confettiDiv = document.getElementById('confetti');
-
         // Cari Nilai Tertinggi Seangkatan (dari data yang valid)
         const nilaiTertinggiSeangkatan = Math.max(...dataSiswaValid.map(siswa => parseNumericValue(siswa.nilai)));
         
@@ -478,12 +489,18 @@
         const starsValid = rawDataSiswa.map(siswa => parseNumericValue(siswa.stars));
         const nilaiTertinggiSeangkatanStars = Math.max(...starsValid.filter(s => !isNaN(s)));
 
+        // Variabel elemen DOM (didefinisikan di dalam DOMContentLoaded)
+        let resultDiv, statsContainer, searchInput, confettiDiv;
+
         // Fungsi untuk animasi loading
         function startLoadingAnimation() {
+            // Memastikan elemen ada sebelum memanipulasi
+            if (!resultDiv) return; 
+            
             // Play Audio
             try {
-                const audio = new Audio(AUDIO_SEARCH);
-                audio.play();
+                const searchAudio = document.getElementById('searchAudio');
+                if(searchAudio.src && searchAudio.src !== '#') searchAudio.play();
             } catch (e) { /* ignore */ }
 
             const warningHtml = document.querySelector('.raport-warning') ? document.querySelector('.raport-warning').outerHTML : '';
@@ -500,7 +517,8 @@
                 const searchAudio = document.getElementById('searchAudio');
                 searchAudio.pause();
                 searchAudio.currentTime = 0;
-                new Audio(AUDIO_SUCCESS).play();
+                const successAudio = document.getElementById('successAudio');
+                if(successAudio.src && successAudio.src !== '#') successAudio.play();
             } catch (e) { /* ignore */ }
             
             const emojis = ['🏆', '✨', '🎉', '🎊', '🥇', '🌟', '👑'];
@@ -525,11 +543,11 @@
                     fill: 'forwards'
                 });
 
-                confettiDiv.appendChild(confetti);
+                document.getElementById('confetti').appendChild(confetti);
             }
             
             setTimeout(() => {
-                confettiDiv.innerHTML = '';
+                document.getElementById('confetti').innerHTML = '';
             }, 5000);
         }
         
@@ -538,8 +556,8 @@
             // Play fail audio if it's mandatory remedial
             if (!isOptional) {
                 try {
-                    const audio = new Audio(AUDIO_FAIL);
-                    audio.play();
+                    const audio = document.getElementById('failAudio');
+                    if(audio.src && audio.src !== '#') audio.play();
                 } catch (e) { /* ignore */ }
             }
             
@@ -566,12 +584,83 @@
                                 <tr><td>6</td><td>Keputusan (Decision)</td><td>Memilih contoh kapan kita harus membuat keputusan di dalam suatu algoritma.</td><td>Dasar</td></tr>
                             </tbody>
                         </table>
-                        
-                        <h2 style="margin-top: 20px;"><span class="icon">💻</span> Bagian Lain (B, C, D, E)</h2>
-                        <p>Silakan pelajari semua materi Sistem Komputer, Aplikasi, Biner, dan Jaringan yang tertera di kisi-kisi asli Anda.</p>
-                        
+
+                        <h2 style="margin-top: 20px;"><span class="icon">🖥️</span> Bagian B: Mengenal Sistem Komputer (10 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>7</td><td>CPU</td><td>Mengidentifikasi tugas utama dari <strong>Otak Komputer (CPU)</strong>.</td><td>Dasar</td></tr>
+                                <tr><td>8</td><td>RAM</td><td>Menjelaskan kegunaan <strong>RAM</strong> (tempat penyimpanan sementara saat komputer menyala).</td><td>Dasar</td></tr>
+                                <tr><td>9</td><td>Perangkat Input</td><td>Mengenal alat-alat yang berfungsi memasukkan data ke komputer (seperti Mouse dan Keyboard).</td><td>Dasar</td></tr>
+                                <tr><td>10</td><td>Perangkat Output</td><td>Mengenal alat-alat yang menampilkan hasil dari komputer (seperti Monitor dan Printer).</td><td>Dasar</td></tr>
+                                <tr><td>11</td><td>Pemecahan Masalah</td><td>Menganalisis alasan mengapa komputer kita bisa tiba-tiba menjadi lambat.</td><td class="level-analisis">Analisis</td></tr>
+                                <tr><td>12</td><td>BIOS</td><td>Menjelaskan peran penting <strong>BIOS</strong> saat komputer pertama kali dinyalakan.</td><td>Dasar</td></tr>
+                                <tr><td>13</td><td>Media Penyimpanan</td><td>Menentukan jenis media penyimpanan yang paling cepat saat ini (*Petunjuk: SSD*).</td><td>Dasar</td></tr>
+                                <tr><td>14</td><td>Peran Sistem Operasi (OS)</td><td>Mengetahui fungsi utama dari OS (seperti Windows, Linux, atau macOS).</td><td>Dasar</td></tr>
+                                <tr><td>15</td><td>Kebutuhan OS</td><td>Menjelaskan mengapa semua komputer <strong>wajib</strong> memiliki Sistem Operasi.</td><td class="level-analisis">Analisis</td></tr>
+                                <tr><td>16</td><td>OS Mobile</td><td>Mengidentifikasi Sistem Operasi yang biasa dipakai di HP atau Tablet.</td><td>Dasar</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h2 style="margin-top: 20px;"><span class="icon">🗂️</span> Bagian C: Aplikasi & Fungsinya (5 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>17</td><td>Pengolah Kata</td><td>Menentukan aplikasi yang paling cocok untuk membuat surat atau dokumen.</td><td>Dasar</td></tr>
+                                <tr><td>18</td><td>Format File</td><td>Menjelaskan kegunaan file dengan akhiran <strong>.pptx</strong> (Presentasi).</td><td>Dasar</td></tr>
+                                <tr><td>19</td><td>Web Browser</td><td>Menentukan fungsi utama dari aplikasi untuk menjelajahi internet.</td><td>Dasar</td></tr>
+                                <tr><td>20</td><td>Memilih Aplikasi</td><td>Memilih aplikasi yang paling efektif untuk membuat laporan yang berisi banyak data dan grafik.</td><td class="level-analisis">Analisis</td></tr>
+                                <tr><td>21</td><td>Spreadsheet (Excel)</td><td>Mengidentifikasi kegunaan dasar dari aplikasi pengolah angka.</td><td>Dasar</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h2 style="margin-top: 20px;"><span class="icon">🔢</span> Bagian D: Dunia Bilangan Biner (2 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>22</td><td>Konversi Biner ke Desimal</td><td>Mengubah bilangan Biner (contoh: 1010) menjadi angka yang kita kenal (Desimal).</td><td>Dasar</td></tr>
+                                <tr><td>23</td><td>Konversi Desimal ke Biner</td><td>Mengubah angka Desimal (biasa) menjadi bilangan Biner.</td><td>Dasar</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h2 style="margin-top: 20px;"><span class="icon">📶</span> Bagian E: Jaringan & Internet (2 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>24</td><td>Perangkat Jaringan</td><td>Menentukan fungsi alat <strong>Router</strong> (pengatur lalu lintas data internet).</td><td>Dasar</td></tr>
+                                <tr><td>25</td><td>Masalah Internet</td><td>Menyimpulkan penyebab mengapa koneksi WiFi di rumah bisa menjadi sangat lambat.</td><td class="level-analisis">Analisis</td></tr>
+                            </tbody>
+                        </table>
                         <div style="text-align: center; margin-top: 20px;">
-                            <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button" style="background-color: ${isOptional ? 'var(--color-success)' : 'var(--color-danger)'}; width: 60%;">${isOptional ? 'IKUTI REMEDIAL (OPSIONAL)' : 'KLIK DI SINI UNTUK UJIAN REMEDIAL'}</a>
+                            <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button" style="background-color: var(--color-primary); width: 50%;">KLIK DI SINI UNTUK UJIAN REMEDIAL</a>
                         </div>
                     </div>
                 </div>
@@ -615,6 +704,7 @@
         
         // --- Fungsi untuk Menghitung dan Menampilkan Statistik ---
         function calculateStats() {
+            // Harus dijalankan setelah DOMContentLoaded
             const totalSiswa = rawDataSiswa.length;
             let missingCount = 0;
             let remedialCount = 0; 
@@ -643,34 +733,48 @@
             const safePercent = ((safeCount / totalSiswa) * 100).toFixed(1);
             const rewardPercent = ((rewardCount / totalSiswa) * 100).toFixed(1);
             
+            // --- Menampilkan Statistik dalam Card Layout ---
             statsContainer.innerHTML = `
                 <div class="stats-group">
                     <h5 class="stat-title"><i class="fas fa-chart-bar"></i> Statistik Nilai SAS (KKM ${KKM})</h5>
-                    <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-question-circle"></i> Belum Ada Nilai (${missingCount})</span>
-                        <div style="width: 100%;">${remedialCount > 0 ? `<span style="color:var(--color-danger);">${remedialPercent}% Wajib</span>` : ''} 
-                            ${safeCount > 0 ? `<span style="color:var(--color-success);">${safePercent}% Lulus</span>` : ''}
+                    <div class="stats-grid">
+                        <div class="stat-card" style="border: 1px solid var(--color-secondary);">
+                            <div class="stat-label-main" style="color: var(--color-secondary);"><i class="fas fa-question-circle"></i> Nilai Kosong</div>
+                            <p class="stat-value">${missingPercent}%</p>
+                            <p class="stat-detail">(${missingCount} Siswa)</p>
                         </div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-times-circle"></i> Wajib Remedial (< ${KKM})</span>
-                        <div style="width: 100%;">${remedialCount} Siswa | <span style="font-weight: 700; color: var(--color-danger);">${remedialPercent}%</span></div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-check-circle"></i> Lulus Aman (>= ${KKM})</span>
-                        <div style="width: 100%;">${safeCount} Siswa | <span style="font-weight: 700; color: var(--color-success);">${safePercent}%</span></div>
+                        <div class="stat-card" style="border: 1px solid var(--color-danger);">
+                            <div class="stat-label-main" style="color: var(--color-danger);"><i class="fas fa-times-circle"></i> Wajib Remedial</div>
+                            <p class="stat-value">${remedialPercent}%</p>
+                            <p class="stat-detail">(${remedialCount} Siswa)</p>
+                        </div>
+                        <div class="stat-card" style="border: 1px solid var(--color-success);">
+                            <div class="stat-label-main" style="color: var(--color-success);"><i class="fas fa-check-circle"></i> Lulus KKM Aman</div>
+                            <p class="stat-value">${safePercent}%</p>
+                            <p class="stat-detail">(${safeCount} Siswa)</p>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="stats-group">
-                    <h5 class="stat-title"><i class="fas fa-star"></i> Statistik Rewards Stars (Maks. ${MAX_STARS})</h5>
-                    <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-gift"></i> Mendapatkan Reward (> ${REWARD_STAR_THRESHOLD})</span>
-                        <div style="width: 100%;">${rewardCount} Siswa | <span style="font-weight: 700; color: var(--color-reward);">${rewardPercent}%</span></div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-users"></i> Total Siswa</span>
-                        <div style="font-weight: 600; color: var(--color-primary);">${totalSiswa} Siswa</div>
+                    <h5 class="stat-title"><i class="fas fa-star"></i> Statistik Rewards Stars</h5>
+                    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="stat-card" style="grid-column: span 3; background: #e9f5ff;">
+                            <p class="stat-value" style="color: var(--color-primary);">${totalSiswa}</p>
+                            <p class="stat-detail">Total Siswa Kelas 7</p>
+                        </div>
+                        <div class="stat-card" style="background: #fdf6e6;">
+                            <div class="stat-label-main" style="color: var(--color-reward);">Top ${MAX_STARS} Stars</div>
+                            <p class="stat-value" style="color: var(--color-reward);">${nilaiTertinggiSeangkatanStars}</p>
+                        </div>
+                        <div class="stat-card" style="background: #d1fae5;">
+                            <div class="stat-label-main" style="color: var(--color-reward);">Mendapat Reward (Stars > ${REWARD_STAR_THRESHOLD})</div>
+                            <p class="stat-value" style="color: var(--color-reward);">${rewardCount} Siswa</p>
+                        </div>
+                        <div class="stat-card" style="background: #f7f7f7;">
+                            <div class="stat-label-main" style="color: var(--color-secondary);">Persentase Reward</div>
+                            <p class="stat-value" style="color: var(--color-secondary);">${rewardPercent}%</p>
+                        </div>
                     </div>
                 </div>
             `;
@@ -679,6 +783,9 @@
 
 
         function cariNilai() {
+            // Coba putar audio searching
+            // playAudio('searchAudio');
+            
             startLoadingAnimation();
             
             const rawInput = searchInput.value;
@@ -725,13 +832,14 @@
                     const starsSiswa = parseNumericValue(siswaDitemukan.stars);
 
                     // 1. Cek Nilai Tertinggi SAS Seangkatan
+                    const nilaiTertinggiSeangkatan = Math.max(...rawDataSiswa.map(s => parseNumericValue(s.nilai)).filter(n => !isNaN(n)));
                     if (nilaiSasSiswa === nilaiTertinggiSeangkatan) {
                         topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-trophy"></i> Nilai Tertinggi Seangkatan!</div>';
                     }
                     
                     // 2. Cek Nilai Tertinggi di Kelasnya
                     const siswaKelasValid = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas);
-                    const nilaiTertinggiKelas = Math.max(...siswaKelasValid.map(s => parseNumericValue(s.nilai)).filter(s => !isNaN(s)));
+                    const nilaiTertinggiKelas = Math.max(...siswaKelasValid.map(s => parseNumericValue(s.nilai)).filter(n => !isNaN(n)));
                     
                     if (nilaiSasSiswa === nilaiTertinggiKelas) {
                         topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
@@ -782,7 +890,7 @@
                                     <i class="fas fa-check-circle"></i> Nilai SAS Anda Aman (>= ${KKM}). Tidak perlu remedial.
                                 </div>`;
                              if (nilaiSasSiswa === nilaiTertinggiSeangkatan) {
-                                triggerConfetti();
+                                playAudio('successAudio');
                             }
                         }
                     } else {
@@ -822,12 +930,12 @@
                             </div>
                             
                             <div class="score-card uh-score">
-                                <div class="label">UH BAB 3</div>
+                                <div class="label">ULANGAN HARIAN BAB 3</div>
                                 <div class="value">${siswaDitemukan.uh3}</div>
                             </div>
                             
                             <div class="score-card uh-score">
-                                <div class="label">UH BAB 4</div>
+                                <div class="label">ULANGAN HARIAN BAB 4</div>
                                 <div class="value">${siswaDitemukan.uh4}</div>
                             </div>
                         </div>
@@ -858,6 +966,11 @@
         
         // Event Listener untuk memastikan DOM siap sebelum memanggil calculateStats()
         document.addEventListener('DOMContentLoaded', (event) => {
+            // Ambil referensi DOM di sini
+            window.resultDiv = document.getElementById('result');
+            window.statsContainer = document.getElementById('statsContainer'); 
+            window.searchInput = document.getElementById('searchInput');
+
             calculateStats();
         });
     </script>
