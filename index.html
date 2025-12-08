@@ -20,8 +20,8 @@
             --color-highlight: #f97316; 
             --bg-light: #f3f4f6;
             --color-remedial: #8B5CF6; /* Light Purple for buttons */
-            --color-stars: #facc15; 
-            --color-reward: #10b981; 
+            --color-stars: #facc15; /* Kuning untuk stars */
+            --color-reward: #10b981; /* Hijau untuk reward */
         }
 
         body {
@@ -112,9 +112,7 @@
         .status-aman { background-color: #e0f2f1; color: #047857; border: 1px solid #99f6e4; font-size: 0.95em; }
         .remedial-button { display: block; width: 80%; margin: 15px auto 0; padding: 10px; background-color: var(--color-remedial); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background-color 0.3s; }
         .remedial-button:hover { background-color: #6a0dad; }
-        .kisi-kisi-area { border: 1px solid #e0f7fa; background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin-top: 20px; max-height: 400px; overflow-y: auto; }
-        .kisi-kisi-area h2 { color: var(--color-remedial); border-bottom: 2px solid var(--color-secondary); margin-top: 0; padding-bottom: 5px; font-size: 1.4em; }
-
+        
         /* --- Responsiveness --- */
         @media (max-width: 500px) {
             .container { padding: 20px 15px; }
@@ -162,7 +160,7 @@
     
     <script>
         // INISIALISASI KONSTANTA DAN UTILITAS
-        const REMEDIAL_LINK = "#"; 
+        const REMEDIAL_LINK = "https://forms.gle/M5TbWfy1eXt6AMta7"; 
         const KKM = 72; // KKM TUNGGAL
         const MAX_STARS = 7;
         const REWARD_STAR_THRESHOLD = 5;
@@ -481,323 +479,252 @@
             { nis: "6803", nama: "Viola Octavia Putrie", kelas: "7.8", no_peserta: "01-019-274", nilai: 70, stars: 6, uh3: 91, uh4: 93, perbaikan: [] }
         ];
 
-        // START: LOGIKA CORE DI DALAM DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', (event) => {
-            // Re-define references inside DOMContentLoaded
-            const resultDiv = document.getElementById('result');
-            const statsContainer = document.getElementById('statsContainer'); 
-            const searchInput = document.getElementById('searchInput');
-            const confettiDiv = document.getElementById('confetti');
-
-            // Hitungan KKM dan Tertinggi (diperlukan untuk fungsi yang dipanggil)
-            const dataSiswaValid = rawDataSiswa.filter(siswa => parseNumericValue(siswa.nilai) !== null && !isNaN(parseNumericValue(siswa.nilai)));
-            const nilaiTertinggiSeangkatan = Math.max(...dataSiswaValid.map(siswa => parseNumericValue(siswa.nilai)));
-            
-            const starsValid = rawDataSiswa.map(siswa => parseNumericValue(siswa.stars));
-            const nilaiTertinggiSeangkatanStars = Math.max(...starsValid.filter(s => !isNaN(s)));
-
-
-            // Fungsi-fungsi yang sama (normalizeId, normalizeName, parseNumericValue, triggerConfetti, generatePerbaikanTable, generateRemedialKisiKisiHTML, startLoadingAnimation, calculateStats, cariNilai, checkEnter)
-            
-            // ... (Fungsi normalizeId, normalizeName, parseNumericValue, triggerConfetti, generatePerbaikanTable, generateRemedialKisiKisiHTML, startLoadingAnimation, dan checkEnter tetap sama seperti di kode lengkap sebelumnya)
-            // Saya hanya menyertakan calculateStats dan cariNilai di sini untuk menghindari pengulangan kode yang masif, karena Anda meminta perbaikan pada bagian ini.
-            
-            
-            // --- Fungsi untuk Menghitung dan Menampilkan Statistik ---
-            function calculateStats() {
-                const totalSiswa = rawDataSiswa.length;
-                let missingCount = 0;
-                let remedialCount = 0; 
-                let safeCount = 0;
-                let rewardCount = 0;
-                let starDistribution = {}; // Objek untuk menghitung frekuensi Stars
-
-                // Inisialisasi Star Distribution 0-7
-                for (let i = 0; i <= MAX_STARS; i++) {
-                    starDistribution[i] = 0;
-                }
-
-                rawDataSiswa.forEach(siswa => {
-                    const nilai = parseNumericValue(siswa.nilai);
-                    const stars = parseNumericValue(siswa.stars);
-                    
-                    if (isNaN(nilai) || siswa.nilai === null) {
-                        missingCount++;
-                    } else if (nilai < KKM) { 
-                        remedialCount++;
-                    } else {
-                        safeCount++;
-                    }
-                    
-                    if (!isNaN(stars)) {
-                        const starKey = Math.min(Math.round(stars), MAX_STARS);
-                        starDistribution[starKey] = (starDistribution[starKey] || 0) + 1;
-                        if (stars > REWARD_STAR_THRESHOLD) {
-                             rewardCount++;
-                        }
-                    }
-                });
-
-                const missingPercent = ((missingCount / totalSiswa) * 100).toFixed(1);
-                const remedialPercent = ((remedialCount / totalSiswa) * 100).toFixed(1);
-                const safePercent = ((safeCount / totalSiswa) * 100).toFixed(1);
-                const rewardPercent = ((rewardCount / totalSiswa) * 100).toFixed(1);
-                
-                // Menghasilkan Kartu Statistik SAS
-                const sasStatsHTML = `
-                    <h5 class="stat-title"><i class="fas fa-chart-bar"></i> Statistik Nilai SAS (KKM ${KKM})</h5>
-                    <div class="stats-grid">
-                        <div class="stat-card" style="border: 1px solid var(--color-secondary);">
-                            <div class="stat-label-main" style="color: var(--color-secondary);"><i class="fas fa-question-circle"></i> Kosong</div>
-                            <p class="stat-value">${missingPercent}%</p>
-                            <p class="stat-detail">(${missingCount} Siswa)</p>
-                        </div>
-                        <div class="stat-card" style="border: 1px solid var(--color-danger);">
-                            <div class="stat-label-main" style="color: var(--color-danger);"><i class="fas fa-times-circle"></i> Wajib Remidi</div>
-                            <p class="stat-value">${remedialPercent}%</p>
-                            <p class="stat-detail">(${remedialCount} Siswa)</p>
-                        </div>
-                        <div class="stat-card" style="border: 1px solid var(--color-success);">
-                            <div class="stat-label-main" style="color: var(--color-success);"><i class="fas fa-check-circle"></i> Lulus Aman</div>
-                            <p class="stat-value">${safePercent}%</p>
-                            <p class="stat-detail">(${safeCount} Siswa)</p>
-                        </div>
-                    </div>`;
-
-                // Menghasilkan Kartu Statistik Stars
-                let starsGridHTML = `<div class="stats-grid">`;
-                for (let i = MAX_STARS; i >= 0; i--) {
-                    const count = starDistribution[i] || 0;
-                    const percent = ((count / totalSiswa) * 100).toFixed(1);
-                    if (count > 0) {
-                        starsGridHTML += `
-                            <div class="stat-card" style="border: 1px solid ${i > REWARD_STAR_THRESHOLD ? 'var(--color-reward)' : '#e5e7eb'};">
-                                <div class="stat-label-main" style="color: ${i > REWARD_STAR_THRESHOLD ? 'var(--color-reward)' : 'var(--color-secondary)'};">${i} Bintang</div>
-                                <p class="stat-value">${percent}%</p>
-                                <p class="stat-detail">(${count} Siswa)</p>
-                            </div>
-                        `;
-                    }
-                }
-                starsGridHTML += `</div>`;
-
-
-                // Kompilasi Akhir
-                statsContainer.innerHTML = `
-                    <div class="stats-group"> ${sasStatsHTML} </div>
-                    <div class="stats-group">
-                        <h5 class="stat-title"><i class="fas fa-star"></i> Statistik Rewards Stars (Maks. ${MAX_STARS})</h5>
-                        <div class="stats-grid">
-                            <div class="stat-card" style="background: #e6fffa; grid-column: span 3;">
-                                <div class="stat-label-main" style="color: var(--color-reward);">Mendapatkan Reward (> ${REWARD_STAR_THRESHOLD})</div>
-                                <p class="stat-value" style="color: var(--color-reward);">${rewardCount} Siswa | ${rewardPercent}%</p>
-                            </div>
-                        </div>
-                        <h5 class="stat-title" style="margin-top: 15px;"><i class="fas fa-list-ol"></i> Distribusi Bintang</h5>
-                        ${starsGridHTML}
-                    </div>
-                `;
+        // Variabel KKM dan DOM (Didefinisikan di luar DOMContentLoaded)
+        const KKM = 72;
+        const REWARD_STAR_THRESHOLD = 5;
+        const MAX_STARS = 7;
+        
+        // --- Fungsi KISI-KISI Remedial ---
+        function generateRemedialKisiKisiHTML(isOptional) {
+            // Play fail audio if it's mandatory remedial
+            if (!isOptional) {
+                 playAudio('failAudio');
             }
-            // -----------------------------------------------------------------
+            
+            const title = isOptional ? 'Opsi Remedial (Nilai Tepat KKM)' : 'WAJIB REMEDIAL';
+            const icon = isOptional ? '💡' : '🔥';
+            
+            return `
+                <div class="reward-remedial">
+                    <h4 style="color: var(--color-danger); text-align: center; margin-bottom: 5px;"><i class="fas fa-exclamation-triangle"></i> ${title}</h4>
+                    <div class="kisi-kisi-area">
+                        <h2 style="text-align: center;">${icon} Misi Tambahan Nilai: Remedial Informatika ${icon}</h2>
+                        
+                        <p style="text-align: center; font-weight: 500; color: var(--color-primary);">Pelajari ulang materi berikut untuk ujian remedial.</p>
+                        
+                        <div style="text-align: center; margin-top: 20px;">
+                            <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button" style="background-color: var(--color-remedial); width: 60%;">${isOptional ? 'IKUTI REMEDIAL (OPSIONAL)' : 'KLIK DI SINI UNTUK UJIAN REMEDIAL'}</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
+        // --- Fungsi Utama (Cari Nilai) ---
+        function cariNilai() {
+            const resultDiv = document.getElementById('result');
+            const searchInput = document.getElementById('searchInput');
 
-            function cariNilai() {
-                // Play Audio
-                try {
-                    const searchAudio = document.getElementById('searchAudio');
-                    if(searchAudio.src && searchAudio.src !== '#') searchAudio.play();
-                } catch (e) { /* ignore */ }
+            // Play search audio
+            playAudio('searchAudio');
+            
+            // Start Animation
+            const rawInput = searchInput.value;
+            const inputNormalized = normalizeId(rawInput); 
+            const inputNameLower = normalizeName(rawInput); 
+            
+            const warningHtml = document.querySelector('.raport-warning') ? document.querySelector('.raport-warning').outerHTML : '';
+            resultDiv.innerHTML = warningHtml + '<p class="loading-state"><i class="fas fa-spinner fa-spin"></i> Sedang Mencari Data...</p>';
+            resultDiv.classList.add('show');
 
-                startLoadingAnimation();
+            
+            setTimeout(() => {
                 
-                const rawInput = searchInput.value;
-                const inputNormalized = normalizeId(rawInput); 
-                const inputNameLower = normalizeName(rawInput); 
+                if (inputNormalized === "" && inputNameLower === "") {
+                    resultDiv.innerHTML = warningHtml + '<p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>';
+                    resultDiv.classList.add('show');
+                    return;
+                }
 
-                
-                setTimeout(() => {
+                // LOGIKA PENCARIAN UTAMA
+                const siswaDitemukan = rawDataSiswa.find(siswa => {
+                    const nisNormalized = normalizeId(siswa.nis);
+                    const noPesertaNormalized = normalizeId(siswa.no_peserta);
+                    const namaNormalized = normalizeName(siswa.nama);
                     
-                    if (inputNormalized === "" && inputNameLower === "") {
-                        resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>';
-                        resultDiv.classList.add('show');
-                        return;
-                    }
-
-                    // LOGIKA PENCARIAN UTAMA
-                    const siswaDitemukan = rawDataSiswa.find(siswa => {
-                        const nisNormalized = normalizeId(siswa.nis);
-                        const noPesertaNormalized = normalizeId(siswa.no_peserta);
-                        const namaNormalized = normalizeName(siswa.nama);
-                        
-                        if (inputNormalized !== '') {
-                            if (nisNormalized === inputNormalized || noPesertaNormalized === inputNormalized) {
-                                return true;
-                            }
-                        }
-                        
-                        if (namaNormalized.includes(inputNameLower) && inputNameLower !== '') {
+                    if (inputNormalized !== '') {
+                        if (nisNormalized === inputNormalized || noPesertaNormalized === inputNormalized) {
                             return true;
                         }
+                    }
+                    
+                    if (namaNormalized.includes(inputNameLower) && inputNameLower !== '') {
+                        return true;
+                    }
 
-                        return false;
-                    });
+                    return false;
+                });
 
-                    if (siswaDitemukan) {
-                        
-                        let topScorerBadges = '';
-                        let statusKelas = '';
-                        let iconKKM = '';
-                        let pesanPeringatan = '';
-                        let remedialMessage = ''; 
-                        
-                        const nilaiSasSiswa = parseNumericValue(siswaDitemukan.nilai);
-                        const starsSiswa = parseNumericValue(siswaDitemukan.stars);
-
-                        // 1. Cek Nilai Tertinggi SAS Seangkatan
-                        const nilaiTertinggiSeangkatan = Math.max(...rawDataSiswa.map(s => parseNumericValue(s.nilai)).filter(n => !isNaN(n)));
-                        if (nilaiSasSiswa === nilaiTertinggiSeangkatan) {
-                            topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-trophy"></i> Nilai Tertinggi Seangkatan!</div>';
-                        }
-                        
-                        // 2. Cek Nilai Tertinggi di Kelasnya
-                        const siswaKelasValid = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas);
-                        const nilaiTertinggiKelas = Math.max(...siswaKelasValid.map(s => parseNumericValue(s.nilai)).filter(n => !isNaN(n)));
-                        
-                        if (nilaiSasSiswa === nilaiTertinggiKelas) {
-                            topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
-                        }
-                        
-                        // 3. Alert Rewards (Stars > 5)
-                        if (starsSiswa > REWARD_STAR_THRESHOLD) {
-                            topScorerBadges += '<div class="alert-badge" style="background-color: var(--color-reward); color: white;"><i class="fas fa-medal"></i> Berhak Bebas UH/Tugas BAB 5 SMT 2!</div>';
-                            if (nilaiSasSiswa < KKM) triggerConfetti();
-                        }
-
-                        // --- Handle Nilai Kosong (SAS) ---
-                        if (isNaN(nilaiSasSiswa)) {
-                            resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + `
-                                ${topScorerBadges}
-                                <div class="info-grid">
-                                    <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
-                                    <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
-                                    <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
-                                    <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
-                                </div>
-                                <div class="alert-badge status-fail" style="background-color: var(--color-warning); color: #856404; margin-bottom: 0;">
-                                    <i class="fas fa-exclamation-triangle"></i> DATA NILAI SAS BELUM TERSEDIA.
-                                </div>
-                            `;
-                            resultDiv.classList.add('show');
-                            return;
-                        }
-                        
-                        // 4. KKM TUNGGAL 72
-                        if (nilaiSasSiswa >= KKM) {
-                            statusKelas = 'status-success';
-                            iconKKM = '<i class="fas fa-trophy icon-win"></i>';
-                            
-                            if (nilaiSasSiswa === KKM) {
-                                // Nilai tepat KKM (72)
-                                pesanPeringatan = `LULUS KKM TEPAT! (Nilai = ${KKM})`;
-                                remedialMessage = `
-                                    <div class="reward-remedial status-aman">
-                                        Nilai SAS Anda sudah di area aman. Jika ingin meningkatkan nilai, silakan ikuti remedial.
-                                        <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button" style="background-color: var(--color-warning); color: #333;"><i class="fas fa-arrow-up"></i> Ikuti Remedial (Opsi)</a>
-                                    </div>`;
-                            } else {
-                                // Nilai di atas KKM (> 72)
-                                pesanPeringatan = `LULUS KKM AMAN! (Nilai > ${KKM})`;
-                                 remedialMessage = `
-                                    <div class="reward-remedial status-aman" style="background-color: var(--color-success); color: white;">
-                                        <i class="fas fa-check-circle"></i> Nilai SAS Anda Aman (>= ${KKM}). Tidak perlu remedial.
-                                    </div>`;
-                                 if (nilaiSasSiswa === nilaiTertinggiSeangkatan) {
-                                    triggerConfetti();
-                                }
-                            }
-                        } else {
-                            // Nilai di bawah KKM (< 72)
-                            statusKelas = 'status-fail';
-                            iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
-                            pesanPeringatan = `TIDAK LULUS KKM! (Nilai < ${KKM})`;
-                            
-                            // Menampilkan KISI-KISI Remedial langsung
-                            remedialMessage = generateRemedialKisiKisiHTML();
-                        }
-                        
-                        // 5. Generate Tabel Perbaikan
-                        const perbaikanTable = generatePerbaikanTable(siswaDitemukan.perbaikan);
+                // Stop search audio here if found/not found
+                try {
+                    const searchAudio = document.getElementById('searchAudio');
+                    searchAudio.pause();
+                    searchAudio.currentTime = 0;
+                } catch (e) { /* ignore */ }
 
 
-                        // Tampilkan hasil
-                        resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + `
+                if (siswaDitemukan) {
+                    
+                    let topScorerBadges = '';
+                    let statusKelas = '';
+                    let iconKKM = '';
+                    let pesanPeringatan = '';
+                    let remedialMessage = ''; 
+                    
+                    const nilaiSasSiswa = parseNumericValue(siswaDitemukan.nilai);
+                    const starsSiswa = parseNumericValue(siswaDitemukan.stars);
+
+                    // Re-calculate Max Values for Alerts (must be done inside cariNilai context or globally)
+                    const nilaiTertinggiSeangkatan = Math.max(...rawDataSiswa.map(s => parseNumericValue(s.nilai)).filter(n => !isNaN(n)));
+                    const nilaiTertinggiSeangkatanStars = Math.max(...rawDataSiswa.map(s => parseNumericValue(s.stars)).filter(n => !isNaN(n)));
+
+                    // 1. Cek Nilai Tertinggi SAS Seangkatan
+                    if (nilaiSasSiswa === nilaiTertinggiSeangkatan) {
+                        topScorerBadges += '<div class="alert-badge top-scorer-alert"><i class="fas fa-trophy"></i> Nilai Tertinggi Seangkatan!</div>';
+                    }
+                    
+                    // 2. Cek Nilai Tertinggi di Kelasnya
+                    const siswaKelasValid = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas);
+                    const nilaiTertinggiKelas = Math.max(...siswaKelasValid.map(s => parseNumericValue(s.nilai)).filter(n => !isNaN(n)));
+                    
+                    if (nilaiSasSiswa === nilaiTertinggiKelas) {
+                        topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
+                    }
+                    
+                    // 3. Alert Rewards (Stars > 5)
+                    if (starsSiswa > REWARD_STAR_THRESHOLD) {
+                        topScorerBadges += '<div class="alert-badge" style="background-color: var(--color-reward); color: white;"><i class="fas fa-medal"></i> Berhak Bebas UH/Tugas BAB 5 SMT 2!</div>';
+                        if (nilaiSasSiswa < KKM) triggerConfetti();
+                    }
+
+                    // --- Handle Nilai Kosong (SAS) ---
+                    if (isNaN(nilaiSasSiswa)) {
+                        resultDiv.innerHTML = warningHtml + `
                             ${topScorerBadges}
-
                             <div class="info-grid">
                                 <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
                                 <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
                                 <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
                                 <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
                             </div>
-                            
-                            <div class="score-cards-container">
-                                <div class="score-card main-score">
-                                    <div class="label">NILAI SAS (KKM ${KKM})</div>
-                                    <div class="value">${nilaiSasSiswa}</div>
-                                </div>
-                                
-                                <div class="score-card stars-score">
-                                    <div class="label">STARS (MAX ${MAX_STARS})</div>
-                                    <div class="value" style="color: ${starsSiswa > REWARD_STAR_THRESHOLD ? 'var(--color-reward)' : (starsSiswa >= 4 ? 'var(--color-highlight)' : 'var(--color-secondary)')};">${starsSiswa}<sub>/${MAX_STARS}</sub></div>
-                                </div>
-                                
-                                <div class="score-card uh-score">
-                                    <div class="label">UH BAB 3</div>
-                                    <div class="value">${siswaDitemukan.uh3}</div>
-                                </div>
-                                
-                                <div class="score-card uh-score">
-                                    <div class="label">UH BAB 4</div>
-                                    <div class="value">${siswaDitemukan.uh4}</div>
-                                </div>
+                            <div class="alert-badge status-fail" style="background-color: var(--color-warning); color: #856404; margin-bottom: 0;">
+                                <i class="fas fa-exclamation-triangle"></i> DATA NILAI SAS BELUM TERSEDIA.
                             </div>
-
-
-                            <div class="${statusKelas} alert-badge">
-                                ${iconKKM}
-                                <span>${pesanPeringatan}</span>
-                            </div>
-                            
-                            ${remedialMessage}
-                            ${perbaikanTable}
                         `;
                         resultDiv.classList.add('show');
-                    } else {
-                        resultDiv.innerHTML = document.querySelector('.raport-warning').outerHTML + '<p style="color: var(--color-warning); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-search-minus"></i> Data siswa tidak ditemukan.</p>';
-                        resultDiv.classList.add('show');
+                        return;
                     }
-                }, 800); 
-            }
+                    
+                    // 4. KKM TUNGGAL 72
+                    if (nilaiSasSiswa >= KKM) {
+                        statusKelas = 'status-success';
+                        iconKKM = '<i class="fas fa-trophy icon-win"></i>';
+                        
+                        if (nilaiSasSiswa === KKM) {
+                            // Nilai tepat KKM (72)
+                            pesanPeringatan = `LULUS KKM TEPAT! (Nilai = ${KKM})`;
+                            remedialMessage = `
+                                <div class="reward-remedial status-aman">
+                                    Nilai SAS Anda sudah di area aman. Jika ingin meningkatkan nilai, silakan ikuti remedial.
+                                    <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button" style="background-color: var(--color-warning); color: #333;"><i class="fas fa-arrow-up"></i> Ikuti Remedial (Opsi)</a>
+                                </div>`;
+                        } else {
+                            // Nilai di atas KKM (> 72)
+                            pesanPeringatan = `LULUS KKM AMAN! (Nilai > ${KKM})`;
+                             remedialMessage = `
+                                <div class="reward-remedial status-aman" style="background-color: var(--color-success); color: white;">
+                                    <i class="fas fa-check-circle"></i> Nilai SAS Anda Aman (>= ${KKM}). Tidak perlu remedial.
+                                </div>`;
+                             if (nilaiSasSiswa === nilaiTertinggiSeangkatan) {
+                                triggerConfetti();
+                            }
+                        }
+                    } else {
+                        // Nilai di bawah KKM (< 72)
+                        statusKelas = 'status-fail';
+                        iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
+                        pesanPeringatan = `TIDAK LULUS KKM! (Nilai < ${KKM})`;
+                        
+                        // Hanya menampilkan TOMBOL Remedial (kisi-kisi dihilangkan)
+                        remedialMessage = `
+                            <div class="reward-remedial">
+                                <p style="color: var(--color-danger); font-weight: 600; margin-bottom: 5px;">
+                                    Wajib Remedial untuk mencapai KKM ${KKM}.
+                                </p>
+                                <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button"><i class="fas fa-external-link-alt"></i> Klik di sini untuk Ujian Remedial</a>
+                            </div>`;
+                    }
+                    
+                    // 5. Generate Tabel Perbaikan
+                    const perbaikanTable = generatePerbaikanTable(siswaDitemukan.perbaikan);
 
-            // Fungsi untuk mengaktifkan pencarian saat menekan Enter (Diletakkan di luar)
-            function checkEnter(event) {
-                if (event.key === 'Enter') {
-                    cariNilai();
+
+                    // Tampilkan hasil
+                    resultDiv.innerHTML = warningHtml + `
+                        ${topScorerBadges}
+
+                        <div class="info-grid">
+                            <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
+                            <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
+                            <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
+                            <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
+                        </div>
+                        
+                        <div class="score-cards-container">
+                            <div class="score-card main-score">
+                                <div class="label">NILAI SAS (KKM ${KKM})</div>
+                                <div class="value">${nilaiSasSiswa}</div>
+                            </div>
+                            
+                            <div class="score-card stars-score">
+                                <div class="label">STARS (MAX ${MAX_STARS})</div>
+                                <div class="value" style="color: ${starsSiswa > REWARD_STAR_THRESHOLD ? 'var(--color-reward)' : (starsSiswa >= 4 ? 'var(--color-highlight)' : 'var(--color-secondary)')};">${starsSiswa}<sub>/${MAX_STARS}</sub></div>
+                            </div>
+                            
+                            <div class="score-card uh-score">
+                                <div class="label">ULANGAN HARIAN BAB 3</div>
+                                <div class="value">${siswaDitemukan.uh3}</div>
+                            </div>
+                            
+                            <div class="score-card uh-score">
+                                <div class="label">ULANGAN HARIAN BAB 4</div>
+                                <div class="value">${siswaDitemukan.uh4}</div>
+                            </div>
+                        </div>
+
+
+                        <div class="${statusKelas} alert-badge">
+                            ${iconKKM}
+                            <span>${pesanPeringatan}</span>
+                        </div>
+                        
+                        ${remedialMessage}
+                        ${perbaikanTable}
+                    `;
+                    resultDiv.classList.add('show');
+                } else {
+                    resultDiv.innerHTML = warningHtml + '<p style="color: var(--color-warning); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-search-minus"></i> Data siswa tidak ditemukan.</p>';
+                    resultDiv.classList.add('show');
                 }
+            }, 800); 
+        }
+
+        // Fungsi untuk mengaktifkan pencarian saat menekan Enter (Diletakkan di luar)
+        function checkEnter(event) {
+            if (event.key === 'Enter') {
+                cariNilai();
             }
-            
-            // Event Listener untuk memastikan DOM siap sebelum memanggil calculateStats()
-            document.addEventListener('DOMContentLoaded', (event) => {
-                // Ambil referensi DOM setelah DOMContentLoaded
-                window.resultDiv = document.getElementById('result');
-                window.statsContainer = document.getElementById('statsContainer'); 
-                window.searchInput = document.getElementById('searchInput');
+        }
+        
+        // Event Listener untuk memastikan DOM siap sebelum memanggil calculateStats()
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Ambil referensi DOM setelah DOMContentLoaded
+            window.resultDiv = document.getElementById('result');
+            window.statsContainer = document.getElementById('statsContainer'); 
+            window.searchInput = document.getElementById('searchInput');
 
-                calculateStats();
-            });
-
-        // Akhir dari JavaScript
-        // Pastikan tidak ada kode lain di luar penutupan tag script
+            calculateStats();
+        });
     </script>
 </body>
 </html>
