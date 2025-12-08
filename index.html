@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pengecekan Nilai - Kelas 8</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <title>Sistem Pengecekan Nilai - Kelas 7</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
@@ -12,14 +12,14 @@
         /* BAGIAN 1: CSS (Gaya, Responsif, dan Animasi) */
         /* ====================================================================== */
         :root {
-            --color-primary: #1e3a8a; 
+            --color-primary: #1e3a8a; /* Darker Blue */
             --color-secondary: #6b7280;
             --color-success: #10b981; 
             --color-danger: #ef4444; 
             --color-warning: #f59e0b; 
             --color-highlight: #f97316; 
             --bg-light: #f4f7f9;
-            --color-remedial: #8A2BE2; /* Warna tombol baru untuk Kisi-kisi */
+            --color-remedial: #8A2BE2; /* Purple */
         }
 
         body {
@@ -41,7 +41,6 @@
             width: 100%;
             max-width: 700px;
             margin-top: 30px;
-            overflow: hidden;
             border-top: 5px solid var(--color-primary);
         }
 
@@ -58,38 +57,12 @@
             margin-bottom: 5px;
         }
         
-        header p {
-            font-size: 0.9em;
-            color: var(--color-secondary);
-        }
+        /* --- Search and Buttons --- */
+        .search-area { display: flex; gap: 10px; margin-bottom: 30px; }
+        #searchInput { flex-grow: 1; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1em; transition: all 0.3s; }
+        button { padding: 12px 20px; background-color: var(--color-primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background-color 0.3s, transform 0.1s; }
+        button:hover { background-color: #1e40af; }
 
-        .search-area {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        #searchInput:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.2);
-            outline: none;
-        }
-
-        button {
-            padding: 12px 20px;
-            background-color: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: background-color 0.3s, transform 0.1s;
-        }
-
-        button:hover {
-            background-color: #1e40af;
-        }
 
         /* --- Stats Container --- */
         .stats-container {
@@ -100,163 +73,69 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
-        .stat-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            font-weight: 500;
-            font-size: 0.85em;
-            width: 200px;
-            color: #495057;
-        }
-
-        .progress-bar-container {
-            flex-grow: 1;
-            height: 14px;
-            background-color: #e9ecef;
-            border-radius: 7px;
-            overflow: hidden;
-            margin-left: 15px;
-        }
-
+        .stats-group { padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px dashed #e5e7eb; }
+        .stats-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .stat-title { font-weight: 700; color: #374151; margin-bottom: 10px; font-size: 1em; display: flex; align-items: center; gap: 8px; }
+        .stat-item { display: flex; align-items: center; margin-bottom: 8px; }
+        .stat-label { font-weight: 500; font-size: 0.85em; width: 200px; color: #495057; }
+        .progress-bar-container { flex-grow: 1; height: 14px; background-color: #e9ecef; border-radius: 7px; overflow: hidden; margin-left: 15px; }
         .progress-bar {
-            height: 100%;
-            border-radius: 7px;
-            width: 0;
-            transition: width 1s ease-out;
-            text-align: right;
-            font-size: 0.7em;
-            color: white;
-            line-height: 14px;
-            font-weight: 700;
-            padding-right: 5px;
+            height: 100%; border-radius: 7px; width: 0; transition: width 1s ease-out;
+            text-align: right; font-size: 0.7em; color: white; line-height: 14px;
+            font-weight: 700; padding-right: 5px; box-sizing: border-box;
         }
         .progress-bar.missing { background-color: var(--color-secondary); }
         .progress-bar.remedial { background-color: var(--color-danger); }
         .progress-bar.safe { background-color: var(--color-success); }
+        .progress-bar.star-reward { background-color: var(--color-reward); }
 
 
         /* --- Result Card --- */
         .result-card {
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            min-height: 120px;
-            opacity: 0; 
-            transform: translateY(20px);
+            padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            min-height: 120px; opacity: 0; transform: translateY(20px);
             transition: opacity 0.4s ease-out, transform 0.4s ease-out;
             border-left: 5px solid var(--color-primary);
         }
+        .result-card.show { opacity: 1; transform: translateY(0); }
+        .loading-state { color: var(--color-primary); font-weight: 600; padding-top: 10px; text-align: center; }
+
+        /* --- Info Grid & Main Score --- */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-bottom: 25px; padding: 10px 0; border-bottom: 1px dashed #e5e7eb; }
+        .info-grid strong { color: #333; font-weight: 600; display: block; }
+        .main-score { text-align: center; padding: 15px; border-radius: 10px; background: #f0f9ff; }
+        .main-score .label { color: var(--color-secondary); font-size: 0.9em; font-weight: 600; }
+        .main-score .value { font-size: 3.5em; font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--color-primary); line-height: 1; }
         
-        .result-card.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        /* Stars Score */
+        .stars-score { text-align: center; padding: 15px; border-radius: 10px; background: #fffbef; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .stars-score .label { color: var(--color-secondary); font-size: 0.9em; font-weight: 600; }
+        .stars-score .value { font-size: 2.8em; font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--color-stars); line-height: 1.2; display: inline-block; position: relative; }
+        .stars-score .value sub { font-size: 0.4em; vertical-align: super; position: absolute; bottom: 0.5em; right: -1.0em; color: var(--color-secondary); font-weight: 400; }
         
-        .loading-state {
-            text-align: center;
-            color: var(--color-primary);
-            font-weight: 600;
-            padding-top: 10px;
-        }
+        /* UH Score */
+        .uh-score { text-align: center; padding: 15px 0; border-radius: 10px; background: #f7f7f7; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .uh-score .label { color: var(--color-secondary); font-size: 0.8em; font-weight: 600; line-height: 1.2; }
+        .uh-score .value { font-size: 1.5em; font-weight: 700; color: #333; line-height: 1.2; }
 
-        /* Nilai SAS (Utama) */
-        .main-score {
-            text-align: center;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            background: #f0f9ff;
-        }
-
-        .main-score .label {
-            color: var(--color-secondary);
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
-        .main-score .value {
-            font-size: 3.5em;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            color: var(--color-primary);
-            line-height: 1;
-            animation: scorePop 0.5s ease-out;
-        }
-        
-        /* --- Alert Status --- */
-        .alert-badge {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 1em;
-            animation: bounceIn 0.5s ease-out;
-        }
-
+        /* --- Alerts and Remedial --- */
+        .alert-badge { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1em; }
         .status-success { background-color: #d1fae5; color: var(--color-success); }
         .status-fail { background-color: #fee2e2; color: var(--color-danger); }
-        
-        .remedial-button {
-            display: block; 
-            width: 80%; 
-            margin: 15px auto 0;
-            padding: 10px;
-            background-color: var(--color-remedial);
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
+        .status-aman { background-color: #e0f2f1; color: #047857; border: 1px solid #99f6e4; font-size: 0.95em; }
+        .remedial-button { display: block; width: 80%; margin: 15px auto 0; padding: 10px; background-color: var(--color-remedial); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background-color 0.3s; }
+        .remedial-button:hover { background-color: #6a0dad; }
+        .kisi-kisi-area { border: 1px solid #e0f7fa; background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin-top: 20px; max-height: 400px; overflow-y: auto; }
+        .kisi-kisi-area h2 { color: var(--color-remedial); border-bottom: 2px solid var(--color-secondary); margin-top: 0; padding-bottom: 5px; font-size: 1.4em; }
 
-        .remedial-button:hover {
-            background-color: #6a0dad; /* Warna ungu gelap */
-        }
-        
-        .status-aman {
-            background-color: #e0f2f1; 
-            color: #047857; 
-            border: 1px solid #99f6e4;
-            font-size: 0.95em;
-        }
-
-        /* --- KISI-KISI STYLE (di dalam Remedial Area) --- */
-        .kisi-kisi-area {
-            border: 1px solid #e0f7fa;
-            background-color: #f0f9ff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .kisi-kisi-area h2 {
-            color: var(--color-remedial); 
-            border-bottom: 2px solid var(--color-secondary); 
-            margin-top: 0;
-            padding-bottom: 5px;
-            font-size: 1.4em;
-        }
-        
-        .kisi-kisi-area table { font-size: 0.85em; }
-        .kisi-kisi-area th, .kisi-kisi-area td { padding: 8px; }
-        .level-analisis { color: #f97316; }
-        
         /* --- Responsiveness --- */
         @media (max-width: 500px) {
             .container { padding: 20px 15px; }
             .search-area { flex-direction: column; }
             .info-grid { grid-template-columns: 1fr; }
-            .main-score .value { font-size: 2.8em; }
+            .stat-label { width: 100%; }
+            .progress-bar-container { margin-left: 0; }
+            .remedial-button { width: 100%; }
         }
     </style>
 </head>
@@ -289,8 +168,10 @@
     
     <script>
         // INISIALISASI KONSTANTA DAN UTILITAS
-        const REMEDIAL_LINK = "https://forms.gle/VQvHWSyZNzd6GTeC6"; 
+        const REMEDIAL_LINK = "#"; 
         const KKM = 72; // KKM TUNGGAL
+        const MAX_STARS = 7;
+        const REWARD_STAR_THRESHOLD = 5;
 
         function normalizeId(str) {
             if (!str) return '';
@@ -315,6 +196,9 @@
 
         // Data siswa LENGKAP KELAS 7
         const rawDataSiswa = [
+            // Format: { nis, nama, kelas, no_peserta, nilai, stars, uh3, uh4, perbaikan }
+            // Nilai di sini adalah nilai SAS
+            
             // Data EC 7.1
             { nis: "6531", nama: "Andrea Victoria Kaunang", kelas: "EC 7.1", no_peserta: "01-019-001-7", nilai: 88, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
             { nis: "6532", nama: "Anindya Destyarani Sihaloho", kelas: "EC 7.1", no_peserta: "01-019-002-7", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
@@ -493,7 +377,7 @@
             { nis: "6694", nama: "I Kadek Hadi Davindra Pramana", kelas: "7.6", no_peserta: "01-019-165", nilai: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
             { nis: "6695", nama: "I Kadek Krisna Dwipayoga", kelas: "7.6", no_peserta: "01-019-166", nilai: 80, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
             { nis: "6696", nama: "I Kadek Widhika Satya Ramawan", kelas: "7.6", no_peserta: "01-019-167", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6697", nama: "I Komang Daiva Devara", kelas: "7.6", no_peserta: "01-019-168", nilai: null, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
+            { nis: "6697", nama: "I Komang Daiva Devara", kelas: "7.6", no_peserta: "01-019-168", nilai: 32, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
             { nis: "6698", nama: "I Made Dwi Putra Sedana Artha", kelas: "7.6", no_peserta: "01-019-169", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
             { nis: "6699", nama: "I Putu Bagus Prasetya Utama", kelas: "7.6", no_peserta: "01-019-170", nilai: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
             { nis: "6700", nama: "Kadek Bagus Willy Mahendras", kelas: "7.6", no_peserta: "01-019-171", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
@@ -553,7 +437,7 @@
             { nis: "6752", nama: "Ni Komang Riana Pujayanti", kelas: "7.7", no_peserta: "01-019-223", nilai: 54, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
             { nis: "6753", nama: "Ni Putu Adistya Candra Pradita", kelas: "7.7", no_peserta: "01-019-224", nilai: 72, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
             { nis: "6754", nama: "Ni Putu Dila Novita Sari", kelas: "7.7", no_peserta: "01-019-225", nilai: 44, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6755", nama: "Putri Abigail Meysha Reandra", kelas: "7.7", no_peserta: "01-019-226", nilai: null, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
+            { nis: "6755", nama: "Putri Abigail Meysha Reandra", kelas: "7.7", no_peserta: "01-019-226", nilai: 86, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
             { nis: "6756", nama: "Putu Devi Atika Pratiwi", kelas: "7.7", no_peserta: "01-019-227", nilai: 52, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
             { nis: "6757", nama: "Putu Felina Dwijayanti", kelas: "7.7", no_peserta: "01-019-228", nilai: 56, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
             { nis: "6758", nama: "Putu Susila Andyana", kelas: "7.7", no_peserta: "01-019-229", nilai: 22, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
@@ -662,15 +546,13 @@
             }, 5000);
         }
         
-        // --- NEW: Fungsi KISI-KISI Remedial (Menggunakan Data dari User) ---
+        // --- Fungsi KISI-KISI Remedial ---
         function generateRemedialKisiKisiHTML() {
             return `
                 <div class="reward-remedial">
-                    <p style="color: var(--color-danger); font-weight: 600; margin-bottom: 5px;">
-                        Wajib Remedial (Nilai di bawah ${KKM}). Pelajari kisi-kisi berikut:
-                    </p>
+                    <h4 style="color: var(--color-remedial); text-align: center; margin-bottom: 5px;"><i class="fas fa-exclamation-triangle"></i> WAJIB REMEDIAL</h4>
                     <div class="kisi-kisi-area">
-                        <h2 style="text-align: center;"><span class="icon">📝</span> KISI-KISI REMEDIAL INFORMATIKA</h2>
+                        <h2 style="text-align: center;">✨ Misi Tambahan Nilai: Remedial Informatika ✨</h2>
                         
                         <h2><span class="icon">🧭</span> Bagian A: Pemikiran Logis & Algoritma (6 Soal)</h2>
                         <table>
@@ -774,7 +656,6 @@
             `;
         }
 
-
         // Fungsi untuk membuat tabel perbaikan
         function generatePerbaikanTable(perbaikanData) {
             if (!perbaikanData || perbaikanData.length === 0) {
@@ -795,6 +676,7 @@
                                     <tbody>`;
             
             perbaikanData.forEach(p => {
+                // KKM Tunggal 72
                 const status = parseNumericValue(p.nilai_baru) >= KKM ? 
                                 `<span style="color: var(--color-success); font-weight: 700;">LULUS KKM</span>` : 
                                 `<span style="color: var(--color-danger);">BELUM LULUS</span>`;
@@ -824,7 +706,7 @@
                 
                 if (isNaN(nilai) || siswa.nilai === null) {
                     missingCount++;
-                } else if (nilai < KKM) { // KKM Tunggal 72
+                } else if (nilai < KKM) { 
                     remedialCount++;
                 } else {
                     safeCount++;
@@ -1022,6 +904,15 @@
                                 <div class="value" style="color: ${starsSiswa > REWARD_STAR_THRESHOLD ? 'var(--color-reward)' : (starsSiswa >= 4 ? 'var(--color-highlight)' : 'var(--color-secondary)')};">${starsSiswa}<sub>/${MAX_STARS}</sub></div>
                             </div>
                         </div>
+                        
+                        <div class="uh-score" style="margin-bottom: 25px;">
+                            <div class="label">DETAIL ULANGAN HARIAN</div>
+                            <div style="display: flex; justify-content: space-around; margin-top: 5px;">
+                                <div class="score-detail"><strong>UH Bab 3:</strong> ${siswaDitemukan.uh3}</div>
+                                <div class="score-detail"><strong>UH Bab 4:</strong> ${siswaDitemukan.uh4}</div>
+                            </div>
+                        </div>
+
 
                         <div class="${statusKelas} alert-badge">
                             ${iconKKM}
