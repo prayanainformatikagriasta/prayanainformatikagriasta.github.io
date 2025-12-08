@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pengecekan Nilai - Kelas 7</title>
+    <title>Sistem Pengecekan Nilai - Kelas 8</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -19,9 +19,7 @@
             --color-warning: #f59e0b; 
             --color-highlight: #f97316; 
             --bg-light: #f4f7f9;
-            --color-remedial: #e44d26; 
-            --color-stars: #facc15; /* Kuning untuk stars */
-            --color-reward: #10b981; /* Hijau untuk reward */
+            --color-remedial: #8A2BE2; /* Warna tombol baru untuk Kisi-kisi */
         }
 
         body {
@@ -71,15 +69,6 @@
             margin-bottom: 30px;
         }
 
-        #searchInput {
-            flex-grow: 1;
-            padding: 12px 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: all 0.3s;
-        }
-
         #searchInput:focus {
             border-color: var(--color-primary);
             box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.2);
@@ -111,32 +100,10 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
-        .stats-group {
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-            border-bottom: 1px dashed #e5e7eb;
-        }
-
-        .stats-group:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .stat-title {
-            font-weight: 700;
-            color: #374151;
-            margin-bottom: 10px;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
         .stat-item {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .stat-label {
@@ -170,7 +137,7 @@
         .progress-bar.missing { background-color: var(--color-secondary); }
         .progress-bar.remedial { background-color: var(--color-danger); }
         .progress-bar.safe { background-color: var(--color-success); }
-        .progress-bar.star-reward { background-color: var(--color-reward); }
+
 
         /* --- Result Card --- */
         .result-card {
@@ -196,16 +163,6 @@
             padding-top: 10px;
         }
 
-        /* --- Info Grid --- */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px 20px;
-            margin-bottom: 25px;
-            padding: 10px 0;
-            border-bottom: 1px dashed #e5e7eb;
-        }
-        
         /* Nilai SAS (Utama) */
         .main-score {
             text-align: center;
@@ -230,42 +187,6 @@
             animation: scorePop 0.5s ease-out;
         }
         
-        /* Nilai Stars dengan Superscript */
-        .stars-score {
-            text-align: center;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            background: #fffbef; /* Light Yellow */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        
-        .stars-score .label {
-            color: var(--color-secondary);
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-        
-        .stars-score .value {
-            font-size: 2.8em;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            color: var(--color-stars);
-            line-height: 1.2;
-            display: inline-block;
-            position: relative;
-        }
-
-        .stars-score .value sub {
-            font-size: 0.4em; /* Membuat /7 lebih kecil */
-            vertical-align: super;
-            position: absolute;
-            bottom: 0.5em;
-            right: -1.0em;
-            color: var(--color-secondary);
-            font-weight: 400;
-        }
-
         /* --- Alert Status --- */
         .alert-badge {
             padding: 12px;
@@ -297,7 +218,7 @@
         }
 
         .remedial-button:hover {
-            background-color: #c43d1a;
+            background-color: #6a0dad; /* Warna ungu gelap */
         }
         
         .status-aman {
@@ -306,28 +227,36 @@
             border: 1px solid #99f6e4;
             font-size: 0.95em;
         }
-        
-        /* --- Tabel Perbaikan --- */
-        .perbaikan-table-container {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px dashed #e5e7eb;
+
+        /* --- KISI-KISI STYLE (di dalam Remedial Area) --- */
+        .kisi-kisi-area {
+            border: 1px solid #e0f7fa;
+            background-color: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
         }
+        
+        .kisi-kisi-area h2 {
+            color: var(--color-remedial); 
+            border-bottom: 2px solid var(--color-secondary); 
+            margin-top: 0;
+            padding-bottom: 5px;
+            font-size: 1.4em;
+        }
+        
+        .kisi-kisi-area table { font-size: 0.85em; }
+        .kisi-kisi-area th, .kisi-kisi-area td { padding: 8px; }
+        .level-analisis { color: #f97316; }
         
         /* --- Responsiveness --- */
         @media (max-width: 500px) {
-            .container {
-                padding: 20px 15px;
-            }
-            .search-area {
-                flex-direction: column;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            .main-score .value, .stars-score .value {
-                 font-size: 2.8em;
-            }
+            .container { padding: 20px 15px; }
+            .search-area { flex-direction: column; }
+            .info-grid { grid-template-columns: 1fr; }
+            .main-score .value { font-size: 2.8em; }
         }
     </style>
 </head>
@@ -361,9 +290,7 @@
     <script>
         // INISIALISASI KONSTANTA DAN UTILITAS
         const REMEDIAL_LINK = "https://forms.gle/VQvHWSyZNzd6GTeC6"; 
-        const KKM = 60; // KKM TUNGGAL
-        const MAX_STARS = 7;
-        const REWARD_STAR_THRESHOLD = 5;
+        const KKM = 72; // KKM TUNGGAL
 
         function normalizeId(str) {
             if (!str) return '';
@@ -386,10 +313,8 @@
             return NaN;
         }
 
-        // Data siswa LENGKAP KELAS 7 (Nilai SAS, Stars, UH3, UH4)
+        // Data siswa LENGKAP KELAS 7
         const rawDataSiswa = [
-            // Format: { nis, nama, kelas, no_peserta, nilai: nilai_sas, stars, uh3, uh4, perbaikan }
-            
             // Data EC 7.1
             { nis: "6531", nama: "Andrea Victoria Kaunang", kelas: "EC 7.1", no_peserta: "01-019-001-7", nilai: 88, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
             { nis: "6532", nama: "Anindya Destyarani Sihaloho", kelas: "EC 7.1", no_peserta: "01-019-002-7", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
@@ -683,7 +608,7 @@
 
         // Filter data siswa yang nilainya valid untuk perhitungan KKM dan nilai tertinggi
         const dataSiswaValid = rawDataSiswa.filter(siswa => parseNumericValue(siswa.nilai) !== null && !isNaN(parseNumericValue(siswa.nilai)));
-        
+
         const resultDiv = document.getElementById('result');
         const statsContainer = document.getElementById('statsContainer'); 
         const searchInput = document.getElementById('searchInput');
@@ -736,6 +661,119 @@
                 confettiDiv.innerHTML = '';
             }, 5000);
         }
+        
+        // --- NEW: Fungsi KISI-KISI Remedial (Menggunakan Data dari User) ---
+        function generateRemedialKisiKisiHTML() {
+            return `
+                <div class="reward-remedial">
+                    <p style="color: var(--color-danger); font-weight: 600; margin-bottom: 5px;">
+                        Wajib Remedial (Nilai di bawah ${KKM}). Pelajari kisi-kisi berikut:
+                    </p>
+                    <div class="kisi-kisi-area">
+                        <h2 style="text-align: center;"><span class="icon">📝</span> KISI-KISI REMEDIAL INFORMATIKA</h2>
+                        
+                        <h2><span class="icon">🧭</span> Bagian A: Pemikiran Logis & Algoritma (6 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>Pengertian Algoritma</td><td>Menentukan urutan langkah yang benar agar suatu tugas berhasil.</td><td>Dasar</td></tr>
+                                <tr><td>2</td><td>Jenis Algoritma</td><td>Mengenali ciri-ciri algoritma yang tersusun rapi (terstruktur).</td><td>Dasar</td></tr>
+                                <tr><td>3</td><td>Tujuan Flowchart</td><td>Mengetahui mengapa kita perlu menggambar Flowchart (diagram alir).</td><td>Dasar</td></tr>
+                                <tr><td>4</td><td>Simbol Flowchart</td><td>Membedakan simbol yang dipakai khusus untuk <strong>Proses Perhitungan/Tindakan</strong>.</td><td>Dasar</td></tr>
+                                <tr><td>5</td><td>Pemecahan Masalah Nyata</td><td>Menentukan langkah logis untuk mengatasi masalah sehari-hari (*Contoh: Lupa Kata Sandi*).</td><td class="level-analisis">Analisis</td></tr>
+                                <tr><td>6</td><td>Keputusan (Decision)</td><td>Memilih contoh kapan kita harus membuat keputusan di dalam suatu algoritma.</td><td>Dasar</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h2 style="margin-top: 20px;"><span class="icon">🖥️</span> Bagian B: Mengenal Sistem Komputer (10 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>7</td><td>CPU</td><td>Mengidentifikasi tugas utama dari <strong>Otak Komputer (CPU)</strong>.</td><td>Dasar</td></tr>
+                                <tr><td>8</td><td>RAM</td><td>Menjelaskan kegunaan <strong>RAM</strong> (tempat penyimpanan sementara saat komputer menyala).</td><td>Dasar</td></tr>
+                                <tr><td>9</td><td>Perangkat Input</td><td>Mengenal alat-alat yang berfungsi memasukkan data ke komputer (seperti Mouse dan Keyboard).</td><td>Dasar</td></tr>
+                                <tr><td>10</td><td>Perangkat Output</td><td>Mengenal alat-alat yang menampilkan hasil dari komputer (seperti Monitor dan Printer).</td><td>Dasar</td></tr>
+                                <tr><td>11</td><td>Pemecahan Masalah</td><td>Menganalisis alasan mengapa komputer kita bisa tiba-tiba menjadi lambat.</td><td class="level-analisis">Analisis</td></tr>
+                                <tr><td>12</td><td>BIOS</td><td>Menjelaskan peran penting <strong>BIOS</strong> saat komputer pertama kali dinyalakan.</td><td>Dasar</td></tr>
+                                <tr><td>13</td><td>Media Penyimpanan</td><td>Menentukan jenis media penyimpanan yang paling cepat saat ini (*Petunjuk: SSD*).</td><td>Dasar</td></tr>
+                                <tr><td>14</td><td>Peran Sistem Operasi (OS)</td><td>Mengetahui fungsi utama dari OS (seperti Windows, Linux, atau macOS).</td><td>Dasar</td></tr>
+                                <tr><td>15</td><td>Kebutuhan OS</td><td>Menjelaskan mengapa semua komputer <strong>wajib</strong> memiliki Sistem Operasi.</td><td class="level-analisis">Analisis</td></tr>
+                                <tr><td>16</td><td>OS Mobile</td><td>Mengidentifikasi Sistem Operasi yang biasa dipakai di HP atau Tablet.</td><td>Dasar</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h2 style="margin-top: 20px;"><span class="icon">🗂️</span> Bagian C: Aplikasi & Fungsinya (5 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>17</td><td>Pengolah Kata</td><td>Menentukan aplikasi yang paling cocok untuk membuat surat atau dokumen.</td><td>Dasar</td></tr>
+                                <tr><td>18</td><td>Format File</td><td>Menjelaskan kegunaan file dengan akhiran <strong>.pptx</strong> (Presentasi).</td><td>Dasar</td></tr>
+                                <tr><td>19</td><td>Web Browser</td><td>Menentukan fungsi utama dari aplikasi untuk menjelajahi internet.</td><td>Dasar</td></tr>
+                                <tr><td>20</td><td>Memilih Aplikasi</td><td>Memilih aplikasi yang paling efektif untuk membuat laporan yang berisi banyak data dan grafik.</td><td class="level-analisis">Analisis</td></tr>
+                                <tr><td>21</td><td>Spreadsheet (Excel)</td><td>Mengidentifikasi kegunaan dasar dari aplikasi pengolah angka.</td><td>Dasar</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h2 style="margin-top: 20px;"><span class="icon">🔢</span> Bagian D: Dunia Bilangan Biner (2 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>22</td><td>Konversi Biner ke Desimal</td><td>Mengubah bilangan Biner (contoh: 1010) menjadi angka yang kita kenal (Desimal).</td><td>Dasar</td></tr>
+                                <tr><td>23</td><td>Konversi Desimal ke Biner</td><td>Mengubah angka Desimal (biasa) menjadi bilangan Biner.</td><td>Dasar</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h2 style="margin-top: 20px;"><span class="icon">📶</span> Bagian E: Jaringan & Internet (2 Soal)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">No.</th>
+                                    <th style="width: 35%;">Materi yang Dipelajari</th>
+                                    <th style="width: 45%;">Contoh Pertanyaan</th>
+                                    <th style="width: 15%;">Tingkat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>24</td><td>Perangkat Jaringan</td><td>Menentukan fungsi alat <strong>Router</strong> (pengatur lalu lintas data internet).</td><td>Dasar</td></tr>
+                                <tr><td>25</td><td>Masalah Internet</td><td>Menyimpulkan penyebab mengapa koneksi WiFi di rumah bisa menjadi sangat lambat.</td><td class="level-analisis">Analisis</td></tr>
+                            </tbody>
+                        </table>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button" style="background-color: var(--color-primary); width: 50%;">KLIK DI SINI UNTUK UJIAN REMEDIAL</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
 
         // Fungsi untuk membuat tabel perbaikan
         function generatePerbaikanTable(perbaikanData) {
@@ -757,7 +795,6 @@
                                     <tbody>`;
             
             perbaikanData.forEach(p => {
-                // KKM Tunggal 72
                 const status = parseNumericValue(p.nilai_baru) >= KKM ? 
                                 `<span style="color: var(--color-success); font-weight: 700;">LULUS KKM</span>` : 
                                 `<span style="color: var(--color-danger);">BELUM LULUS</span>`;
@@ -779,7 +816,7 @@
             let missingCount = 0;
             let remedialCount = 0; 
             let safeCount = 0;
-            let rewardCount = 0; // NEW
+            let rewardCount = 0;
 
             rawDataSiswa.forEach(siswa => {
                 const nilai = parseNumericValue(siswa.nilai);
@@ -793,7 +830,6 @@
                     safeCount++;
                 }
                 
-                // Hitung Rewards Bintang
                 if (!isNaN(stars) && stars > REWARD_STAR_THRESHOLD) {
                     rewardCount++;
                 }
@@ -813,17 +849,17 @@
 
             statsContainer.innerHTML = `
                 <div class="stats-group">
-                    <h5 class="stat-title"><i class="fas fa-chart-bar"></i> Statistik Nilai SAS</h5>
+                    <h5 class="stat-title"><i class="fas fa-chart-bar"></i> Statistik Nilai SAS (KKM ${KKM})</h5>
                     <div class="stat-item">
                         <span class="stat-label"><i class="fas fa-question-circle"></i> Belum Ada Nilai (${missingCount})</span>
                         ${renderBar(missingPercent, 'missing')}
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-times-circle"></i> Wajib Remedial (${remedialCount})</span>
+                        <span class="stat-label"><i class="fas fa-times-circle"></i> Wajib Remedial (< ${KKM}) (${remedialCount})</span>
                         ${renderBar(remedialPercent, 'remedial')}
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label"><i class="fas fa-check-circle"></i> Lulus Aman (${safeCount})</span>
+                        <span class="stat-label"><i class="fas fa-check-circle"></i> Lulus Aman (>= ${KKM}) (${safeCount})</span>
                         ${renderBar(safePercent, 'safe')}
                     </div>
                 </div>
@@ -902,6 +938,12 @@
                     if (nilaiSasSiswa === nilaiTertinggiKelas) {
                         topScorerBadges += '<div class="alert-badge top-class-alert"><i class="fas fa-star"></i> Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
                     }
+                    
+                    // 3. Alert Rewards (Stars > 5)
+                    if (starsSiswa > REWARD_STAR_THRESHOLD) {
+                        topScorerBadges += '<div class="alert-badge" style="background-color: var(--color-reward); color: white;"><i class="fas fa-medal"></i> Berhak Bebas UH/Tugas BAB 5 SMT 2!</div>';
+                        if (nilaiSasSiswa < KKM) triggerConfetti();
+                    }
 
                     // --- Handle Nilai Kosong (SAS) ---
                     if (isNaN(nilaiSasSiswa)) {
@@ -921,14 +963,14 @@
                         return;
                     }
                     
-                    // 3. Cek KKM (KKM TUNGGAL 72)
+                    // 4. KKM TUNGGAL 72
                     if (nilaiSasSiswa >= KKM) {
                         statusKelas = 'status-success';
                         iconKKM = '<i class="fas fa-trophy icon-win"></i>';
                         
                         if (nilaiSasSiswa === KKM) {
                             // Nilai tepat KKM (72)
-                            pesanPeringatan = `LULUS KKM!`;
+                            pesanPeringatan = `LULUS KKM TEPAT! (Nilai = ${KKM})`;
                             remedialMessage = `
                                 <div class="reward-remedial status-aman">
                                     Nilai SAS Anda sudah di area aman. Jika ingin meningkatkan nilai, silakan ikuti remedial.
@@ -936,7 +978,7 @@
                                 </div>`;
                         } else {
                             // Nilai di atas KKM (> 72)
-                            pesanPeringatan = `LULUS KKM AMAN!`;
+                            pesanPeringatan = `LULUS KKM AMAN! (Nilai > ${KKM})`;
                              remedialMessage = `
                                 <div class="reward-remedial status-aman" style="background-color: var(--color-success); color: white;">
                                     <i class="fas fa-check-circle"></i> Nilai SAS Anda Aman (>= ${KKM}). Tidak perlu remedial.
@@ -949,18 +991,13 @@
                         // Nilai di bawah KKM (< 72)
                         statusKelas = 'status-fail';
                         iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
-                        pesanPeringatan = `TIDAK LULUS KKM!`;
+                        pesanPeringatan = `TIDAK LULUS KKM! (Nilai < ${KKM})`;
                         
-                        remedialMessage = `
-                            <div class="reward-remedial">
-                                <p style="color: var(--color-danger); font-weight: 600; margin-bottom: 5px;">
-                                    Wajib Remedial untuk mencapai KKM.
-                                </p>
-                                <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button"><i class="fas fa-external-link-alt"></i> Klik di sini untuk Remedial</a>
-                            </div>`;
+                        // Menampilkan KISI-KISI Remedial langsung
+                        remedialMessage = generateRemedialKisiKisiHTML();
                     }
                     
-                    // 4. Generate Tabel Perbaikan
+                    // 5. Generate Tabel Perbaikan
                     const perbaikanTable = generatePerbaikanTable(siswaDitemukan.perbaikan);
 
 
@@ -977,7 +1014,7 @@
                         
                         <div style="display: flex; gap: 20px;">
                             <div class="main-score" style="flex: 1;">
-                                <div class="label">NILAI SAS</div>
+                                <div class="label">NILAI SAS (KKM ${KKM})</div>
                                 <div class="value">${nilaiSasSiswa}</div>
                             </div>
                             <div class="stars-score" style="flex: 1;">
@@ -986,7 +1023,7 @@
                             </div>
                         </div>
 
-                        <div class="alert-badge" style="background-color: ${statusKelas === 'status-success' ? 'var(--color-success)' : 'var(--color-danger)'}; color: white;">
+                        <div class="${statusKelas} alert-badge">
                             ${iconKKM}
                             <span>${pesanPeringatan}</span>
                         </div>
