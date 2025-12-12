@@ -3,852 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pengecekan Nilai - Kelas 7</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Montserrat:wght@700;900&family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <title>Quick Count Pemilihan Kepala Sekolah</title>
     <style>
-        /* [CSS DIBIARKAN SAMA] */
-        :root {
-            --color-primary: #6B21A8; /* Deep Purple */
-            --color-secondary: #4b5563; /* Gray */
-            --color-success: #10b981; 
-            --color-danger: #ef4444; 
-            --color-warning: #f59e0b; 
-            --color-highlight: #f97316; 
-            --bg-light: #f3f4f6;
-            --color-remedial: #8B5CF6; /* Light Purple for buttons */
-            --color-stars: #facc15; 
-            --color-reward: #10b981; 
-        }
-
+        /* CSS untuk Styling */
         body {
-            font-family: 'Jost', sans-serif;
-            background-color: var(--bg-light);
-            margin: 0;
-            padding: 20px 10px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f7f6;
         }
-
         .container {
-            background: #ffffff;
+            max-width: 1200px;
+            margin: auto;
+            background: white;
             padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 750px;
-            margin-top: 30px;
-            border-top: 8px solid var(--color-primary);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { color: var(--color-primary); font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 2.5em; margin-bottom: 5px; }
-        header p { color: var(--color-secondary); font-weight: 500; }
-
-        /* --- Search and Buttons --- */
-        .search-area { display: flex; gap: 10px; margin-bottom: 30px; }
-        #searchInput { flex-grow: 1; padding: 14px 18px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1.05em; transition: all 0.3s; }
-        #searchInput:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(107, 33, 168, 0.15); outline: none; }
-        button { padding: 12px 25px; background-color: var(--color-remedial); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; transition: background-color 0.3s, transform 0.1s; }
-        button:hover { background-color: #6d28d9; }
-
-        /* --- Stats Container --- */
-        .stats-container {
-            padding: 20px; border-radius: 15px; background: #fdf2f8; 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); margin-bottom: 25px;
-        }
-        .stats-group { padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px dashed #e5e7eb; }
-        .stats-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .stat-title { color: var(--color-primary); font-size: 1.1em; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-        }
-        
-        .stat-card {
-            background: white; padding: 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        h1, h2 {
+            color: #2c3e50;
             text-align: center;
         }
-        .stat-value { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.5em; margin-bottom: 0; line-height: 1.2; }
-        .stat-detail { font-size: 0.75em; color: var(--color-secondary); margin-top: 3px; }
-        .stat-label-main { font-size: 0.9em; font-weight: 600; margin-bottom: 5px; }
-
-        /* --- Result Card --- */
-        .result-card { padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); min-height: 120px; opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; border-left: 6px solid var(--color-primary); }
-        .result-card.show { opacity: 1; transform: translateY(0); }
-        .loading-state { color: var(--color-primary); font-weight: 600; padding-top: 10px; text-align: center; animation: pulse 1s infinite alternate; }
-
-        /* --- Info Grid & Score Cards --- */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #e5e7eb; }
-        .info-grid strong { color: #333; font-weight: 600; display: block; }
-
-        .score-cards-container { display: grid; grid-template-columns: 2fr repeat(2, 1fr); gap: 20px; margin-bottom: 20px; }
-        .score-card { background: #f9fafb; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .score-card .label { font-size: 0.85em; color: var(--color-secondary); margin-bottom: 5px; font-weight: 500; }
-
-        .main-score { grid-column: span 2; background: #ebf5ff; }
-        .main-score .value { font-size: 4em; font-weight: 900; color: var(--color-primary); line-height: 1; }
-        
-        /* Stars Score */
-        .stars-score { background: #fffef2; border: 1px solid var(--color-stars); }
-        .stars-score .value { font-size: 2.5em; font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--color-stars); line-height: 1.2; display: inline-block; position: relative; }
-        .stars-score .value sub { font-size: 0.5em; vertical-align: super; position: absolute; bottom: 0.5em; right: -1.0em; color: var(--color-secondary); font-weight: 400; }
-        
-        /* UH Score */
-        .uh-score { background: #f0fdf4; border: 1px solid #d1fae5; }
-        .uh-score .value { font-size: 1.8em; font-weight: 700; color: #333; }
-        
-        /* --- Alerts and Remedial --- */
-        .alert-badge { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1em; }
-        .status-success { background-color: #d1fae5; color: var(--color-success); }
-        .status-fail { background-color: #fee2e2; color: var(--color-danger); }
-        .status-aman { background-color: #e0f2f1; color: #047857; border: 1px solid #99f6e4; font-size: 0.95em; }
-        .remedial-button { display: block; width: 80%; margin: 15px auto 0; padding: 10px; background-color: var(--color-remedial); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background-color 0.3s; }
-        .remedial-button:hover { background-color: #6a0dad; }
-        .kisi-kisi-area { border: 1px solid #e0f7fa; background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin-top: 20px; max-height: 400px; overflow-y: auto; }
-        .kisi-kisi-area h4 { color: var(--color-remedial); font-size: 1.1em; margin-bottom: 10px; }
-
-        /* Perbaikan: Menambahkan style untuk perbaikan table */
-        .perbaikan-table-container { margin-top: 25px; }
-        .perbaikan-table-container h4 { color: var(--color-primary); font-size: 1.1em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .perbaikan-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-        .perbaikan-table th, .perbaikan-table td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
-        .perbaikan-table th { background-color: #f3f4f6; font-weight: 700; color: var(--color-secondary); }
-
-
-        /* --- Responsiveness --- */
-        @media (max-width: 500px) {
-            .container { padding: 20px 15px; }
-            .search-area { flex-direction: column; }
-            .info-grid { grid-template-columns: 1fr; }
-            .score-cards-container { grid-template-columns: 1fr; }
-            .main-score { grid-column: span 1; }
-            .stat-label { width: 100%; }
-            .progress-bar-container { margin-left: 0; }
-            .remedial-button { width: 100%; }
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .dapil-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #ecf0f1;
+        }
+        .dapil-card h3 {
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            color: #3498db;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        button:hover:not([disabled]) {
+            background-color: #2ecc71;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .results-section {
+            margin-top: 40px;
+            border-top: 2px solid #2c3e50;
+            padding-top: 20px;
+        }
+        .candidate-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+        .candidate-result:last-child {
+            border-bottom: none;
+        }
+        .candidate-name {
+            font-weight: bold;
+            flex: 2;
+            color: #2980b9;
+        }
+        .percentage {
+            font-size: 1.2em;
+            font-weight: bold;
+            flex: 1;
+            text-align: right;
+            color: #c0392b;
+        }
+        .total-votes {
+            font-style: italic;
+            margin-top: 10px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        .locked-message {
+            text-align: center;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container" id="mainContainer">
-        <header>
-            <h1>Sistem Pengecekan Nilai 📚</h1>
-            <p>Informatika Kelas 7 | KKM SAS: <span style="font-weight: 700;">72</span></p>
-        </header>
-        
-        <div class="search-area">
-            <input type="text" id="searchInput" placeholder="Masukkan Nama, NIS, atau No. Peserta..." onkeyup="checkEnter(event)" autofocus>
-            <button onclick="cariNilai()"><i class="fas fa-search"></i> Cari</button>
-        </div>
 
-        <div id="statsContainer" class="stats-container">
-            <p style="text-align: center; color: var(--color-secondary); margin: 0;">Memuat Statistik...</p>
-        </div>
-        
-        <div id="result" class="result-card show">
-            <div class="alert-badge raport-warning" style="opacity: 1; transform: translateY(0); margin-bottom: 25px;">
-                <i class="fas fa-exclamation-circle fa-beat"></i> 
-                <strong>PENTING:</strong> Nilai Raport Adalah Gabungan Antara Nilai SAS, Nilai Ulangan Harian, Nilai Tugas, Nilai Quiz, dan Sikap.
+<div class="container">
+    <h1>Quick Count Pemilihan Kepala Sekolah</h1>
+    <p class="locked-message" id="lock-status" style="display: none;">FORMULIR TELAH DIKUNCI. Data tersimpan di browser Anda.</p>
+    
+    <h2>1. Input Data Suara per Daerah Pemilihan (Dapil)</h2>
+    <form id="quick-count-form">
+        <div class="input-section" id="dapil-inputs">
             </div>
-            <p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian untuk melihat detail nilai.</p>
+
+        <button type="submit" id="submit-button">Hitung dan Kunci Hasil</button>
+    </form>
+
+    <div class="results-section">
+        <h2>2. Hasil Quick Count</h2>
+        <div id="quick-count-results">
+            <p style="text-align: center;">Tekan tombol **"Hitung dan Kunci Hasil"** untuk melihat hasilnya.</p>
         </div>
-        
-        <div id="confetti" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100;"></div>
+        <p class="total-votes" id="total-suara"></p>
     </div>
-    
-    <audio id="searchAudio" src="#" preload="auto"></audio>
-    <audio id="successAudio" src="#" preload="auto"></audio>
-    <audio id="failAudio" src="#" preload="auto"></audio>
+</div>
 
-    
-    <script>
-    // Membungkus seluruh skrip dalam IIFE untuk menghindari polusi global
-    (function() {
-        // INISIALISASI KONSTANTA
-        const REMEDIAL_LINK = "https://forms.gle/M5TbWfy1eXt6AMta7"; 
-        const KKM = 72; // KKM TUNGGAL
-        const MAX_STARS = 7;
-        const REWARD_STAR_THRESHOLD = 5;
+<script>
+    // --- Konfigurasi Awal ---
+    const CANDIDATES = [
+        { id: 'calon_a', name: 'Calon A - Bpk. Budiman' },
+        { id: 'calon_b', name: 'Calon B - Ibu Kartini' },
+        { id: 'calon_c', name: 'Calon C - Sdr. Hasan' }
+    ];
+    const NUM_DAPIL = 19;
+    const FORM_KEY = 'quickCountData';
+    const LOCK_KEY = 'quickCountLocked';
 
-        // REFERENCES DOM
-        const resultDiv = document.getElementById('result');
-        const statsContainer = document.getElementById('statsContainer'); 
-        const searchInput = document.getElementById('searchInput');
-        const warningHtml = document.querySelector('.raport-warning').outerHTML; // Ambil HTML Peringatan
+    // --- Fungsi Utama ---
 
-        // STUBS (Fungsi yang dipanggil tapi tidak ada definisi)
-        function triggerConfetti() { 
-            /* Logika confetti disembunyikan untuk menjaga kode tetap ringkas */
-        }
-        function startLoadingAnimation() {
-            resultDiv.classList.remove('show');
-            resultDiv.innerHTML = `<div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Mencari data...</div>`;
-            try {
-                const searchAudio = document.getElementById('searchAudio');
-                searchAudio.play();
-            } catch (e) { /* ignore */ }
-        }
-        
-        // DATA SISWA LENGKAP KELAS 7
-        const rawDataSiswa = [
-            // Data EC 7.1
-            { nis: "6531", nama: "Andrea Victoria Kaunang", kelas: "EC 7.1", no_peserta: "01-019-001-7", nilai: 88, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6532", nama: "Anindya Destyarani Sihaloho", kelas: "EC 7.1", no_peserta: "01-019-002-7", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6533", nama: "Ararya Bagus Abhinandya Putra", kelas: "EC 7.1", no_peserta: "01-019-003-7", nilai: 70, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6534", nama: "Auraliana Kimi Athena Candra", kelas: "EC 7.1", no_peserta: "01-019-004-7", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6535", nama: "Baiq Femigisya Az Zahra", kelas: "EC 7.1", no_peserta: "01-019-005-7", nilai: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6536", nama: "Boby Setya Mahendra", kelas: "EC 7.1", no_peserta: "01-019-006-7", nilai: 62, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6537", nama: "Dewa Gede Rangga Sahitya Dalem", kelas: "EC 7.1", no_peserta: "01-019-007-7", nilai: 64, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
-            { nis: "6538", nama: "Fholand Aditya Pramana", kelas: "EC 7.1", no_peserta: "01-019-008-7", nilai: 40, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6539", nama: "Gede Angga Arya Wardana", kelas: "EC 7.1", no_peserta: "01-019-009-7", nilai: 54, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6540", nama: "I Dewa Ayu Ganita Parwati", kelas: "EC 7.1", no_peserta: "01-019-010-7", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6541", nama: "I Made Bagus Panji Ari Yasa", kelas: "EC 7.1", no_peserta: "01-019-011-7", nilai: 34, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6542", nama: "I Putu Aditya Kesawa", kelas: "EC 7.1", no_peserta: "01-019-012-7", nilai: 70, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6543", nama: "Ketut Mico Prarama Suputra", kelas: "EC 7.1", no_peserta: "01-019-013-7", nilai: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6544", nama: "Lusiana Safara", kelas: "EC 7.1", no_peserta: "01-019-014-7", nilai: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6545", nama: "Ni Komang Aura Diah Gayatri", kelas: "EC 7.1", no_peserta: "01-019-015-7", nilai: 76, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6546", nama: "Ni Putu Ayu Candra Winasaputri", kelas: "EC 7.1", no_peserta: "01-019-016-7", nilai: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6548", nama: "Putu Arya Prama Wibawa", kelas: "EC 7.1", no_peserta: "01-019-017-7", nilai: 60, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6549", nama: "Putu Deni Indriani", kelas: "EC 7.1", no_peserta: "01-019-018-7", nilai: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6550", nama: "Putu Kiandra Kirana Prisha", kelas: "EC 7.1", no_peserta: "01-019-019-7", nilai: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6551", nama: "Riski Valerie Putri", kelas: "EC 7.1", no_peserta: "01-019-020-7", nilai: 74, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6552", nama: "Rubbi Ina Pui Kenetty", kelas: "EC 7.1", no_peserta: "01-019-021-7", nilai: 64, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
-            { nis: "6553", nama: "Serafim Adonai Willson Ludji", kelas: "EC 7.1", no_peserta: "01-019-022-7", nilai: 66, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6554", nama: "Sheina Adara Yumi Anzita", kelas: "EC 7.1", no_peserta: "01-019-023-7", nilai: 64, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6807", nama: "Jeslyn Felicia Vivalona Walelangi", kelas: "EC 7.1", no_peserta: "01-019-024-7", nilai: 62, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
+    // 1. Membuat Input Form Dapil
+    function generateDapilInputs() {
+        const dapilInputsDiv = document.getElementById('dapil-inputs');
+        let html = '';
 
-            // Data EC 7.2
-            { nis: "6555", nama: "Anasyalia Zevalian Syakeela", kelas: "EC 7.2", no_peserta: "01-019-025", nilai: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6556", nama: "Ayu Dewi Septiani", kelas: "EC 7.2", no_peserta: "01-019-026", nilai: 68, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6557", nama: "Cetta Anindita Saraswati", kelas: "EC 7.2", no_peserta: "01-019-027", nilai: 88, stars: 7, uh3: 92, uh4: 95, perbaikan: [] },
-            { nis: "6558", nama: "Chiyo Anaya Tjong", kelas: "EC 7.2", no_peserta: "01-019-028", nilai: 74, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6559", nama: "Denayya Syarifaqilla Ramadhan", kelas: "EC 7.2", no_peserta: "01-019-029", nilai: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6560", nama: "I Gusti Ayu Nindya Putri Kania", kelas: "EC 7.2", no_peserta: "01-019-030", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6561", nama: "I Kadek Aditya Nagata", kelas: "EC 7.2", no_peserta: "01-019-031", nilai: 80, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
-            { nis: "6562", nama: "I Putu Angga Narendra", kelas: "EC 7.2", no_peserta: "01-019-032", nilai: 90, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
-            { nis: "6563", nama: "I Wayan Giri Sastra", kelas: "EC 7.2", no_peserta: "01-019-033", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6564", nama: "Jimmy Setiawan Prasetyo", kelas: "EC 7.2", no_peserta: "01-019-034", nilai: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6565", nama: "Kadek Aira Dewina Indah", kelas: "EC 7.2", no_peserta: "01-019-035", nilai: 78, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6566", nama: "Ni Kadek Vidya Pramesvari Yoga", kelas: "EC 7.2", no_peserta: "01-019-036", nilai: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6567", nama: "Keisha Ayundya Nugroho", kelas: "EC 7.2", no_peserta: "01-019-037", nilai: 72, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6568", nama: "Kevin Aprilio Iswanto", kelas: "EC 7.2", no_peserta: "01-019-038", nilai: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6569", nama: "Komang Wina Meliani", kelas: "EC 7.2", no_peserta: "01-019-039", nilai: 56, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6570", nama: "Leon Elysium Basuki", kelas: "EC 7.2", no_peserta: "01-019-040", nilai: 78, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6571", nama: "Made Jati Putra Wiryawan", kelas: "EC 7.2", no_peserta: "01-019-041", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6572", nama: "Ni Ketut Kirsty Kinanti Sanjaya", kelas: "EC 7.2", no_peserta: "01-019-042", nilai: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6573", nama: "Ni Luh Devina Mulia", kelas: "EC 7.2", no_peserta: "01-019-043", nilai: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6574", nama: "Ni Made Ayu Widya Atalia Dewi", kelas: "EC 7.2", no_peserta: "01-019-044", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6575", nama: "Putu Keanu Nathano Yodha", kelas: "EC 7.2", no_peserta: "01-019-045", nilai: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6576", nama: "Rheananda Amora Ilham", kelas: "EC 7.2", no_peserta: "01-019-046", nilai: 82, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6577", nama: "Ni Luh Nandita Widiantari", kelas: "EC 7.2", no_peserta: "01-019-047", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6578", nama: "Theratama Nagata Pradna Dika Prasetya", kelas: "EC 7.2", no_peserta: "01-019-048", nilai: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-
-            // Data EC 7.3
-            { nis: "6579", nama: "Aghitsni Maulaya", kelas: "EC 7.3", no_peserta: "01-019-049", nilai: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6580", nama: "Aqiyla Qadisah Febrian", kelas: "EC 7.3", no_peserta: "01-019-050", nilai: 42, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6581", nama: "Christyano Arthanugraha Sukarsa", kelas: "EC 7.3", no_peserta: "01-019-051", nilai: 64, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6582", nama: "I Gede Narendra Ananda Putra", kelas: "EC 7.3", no_peserta: "01-019-052", nilai: 56, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6583", nama: "I Gusti Ayu Agung Manik Mas Swaridewi", kelas: "EC 7.3", no_peserta: "01-019-053", nilai: 70, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
-            { nis: "6584", nama: "I Gusti Putu Radheya Saguna Nugraha", kelas: "EC 7.3", no_peserta: "01-019-054", nilai: 72, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6719", nama: "Putu Gavana Kresna Widha", kelas: "EC 7.3", no_peserta: "01-019-055", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6586", nama: "I Made Dhanez Khadira Putra", kelas: "EC 7.3", no_peserta: "01-019-056", nilai: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6587", nama: "I Putu Satria Paramarta Putra", kelas: "EC 7.3", no_peserta: "01-019-057", nilai: 28, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6588", nama: "Jonathan Elbert Immanuel Liandhy", kelas: "EC 7.3", no_peserta: "01-019-058", nilai: 64, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6589", nama: "Jonathan Imanuel", kelas: "EC 7.3", no_peserta: "01-019-059", nilai: 60, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6590", nama: "Kadek Novia Asti Diantari", kelas: "EC 7.3", no_peserta: "01-019-060", nilai: 90, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6591", nama: "Made Anindha Oceania", kelas: "EC 7.3", no_peserta: "01-019-061", nilai: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6592", nama: "Made Callista Felycia Wibawa", kelas: "EC 7.3", no_peserta: "01-019-062", nilai: 84, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6593", nama: "Made Yodha Ryusandi", kelas: "EC 7.3", no_peserta: "01-019-063", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6594", nama: "Ni Kadek Candra Stiti Dewi", kelas: "EC 7.3", no_peserta: "01-019-064", nilai: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6595", nama: "Kadek Hira Amanda Putri", kelas: "EC 7.3", no_peserta: "01-019-065", nilai: 64, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6596", nama: "Ni Putu Diah Pradnya Paramitha", kelas: "EC 7.3", no_peserta: "01-019-066", nilai: 44, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6597", nama: "Ni Putu Meylia Wirapramesti", kelas: "EC 7.3", no_peserta: "01-019-067", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6598", nama: "Putu Angga Pratama Putra", kelas: "EC 7.3", no_peserta: "01-019-068", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6599", nama: "Putu Ayu Tirtawati", kelas: "EC 7.3", no_peserta: "01-019-069", nilai: 90, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6600", nama: "Sang Ayu Komang Trisnadia Artika Dewi", kelas: "EC 7.3", no_peserta: "01-019-070", nilai: 88, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6601", nama: "Sang Putu Andhika Pradana", kelas: "EC 7.3", no_peserta: "01-019-071", nilai: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6602", nama: "Zahraa Asrafunnissa De Nato", kelas: "EC 7.3", no_peserta: "01-019-072", nilai: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            
-            // Data 7.4
-            { nis: "6603", nama: "A.A Gede Wedanandyaksa Putra", kelas: "7.4", no_peserta: "01-019-073", nilai: 70, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6604", nama: "A.A Ngurah Agung Aby Putra Samirana", kelas: "7.4", no_peserta: "01-019-074", nilai: 82, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6605", nama: "Aini Salsabila", kelas: "7.4", no_peserta: "01-019-075", nilai: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6606", nama: "Alif Ismail", kelas: "7.4", no_peserta: "01-019-076", nilai: 58, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6607", nama: "Alvin Anantaka Mbura", kelas: "7.4", no_peserta: "01-019-077", nilai: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6608", nama: "Farrel Aquino Dwi Putra Adrianto", kelas: "7.4", no_peserta: "01-019-078", nilai: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6609", nama: "Gusti Putu Ananda Arya Putra", kelas: "7.4", no_peserta: "01-019-079", nilai: 34, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6610", nama: "Gracia Ananda Kasih", kelas: "7.4", no_peserta: "01-019-080", nilai: 56, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6611", nama: "Griffin Ananda Hugo Putra", kelas: "7.4", no_peserta: "01-019-081", nilai: 70, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6612", nama: "I Gede Ezra Pradhipta Ruspian", kelas: "7.4", no_peserta: "01-019-082", nilai: 30, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6613", nama: "I Gede Rama Setyawan", kelas: "7.4", no_peserta: "01-019-083", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6614", nama: "I Gusti Made Dwi Anandha Putra", kelas: "7.4", no_peserta: "01-019-084", nilai: 74, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6615", nama: "I Kadek Ardhana Dharma Putra", kelas: "7.4", no_peserta: "01-019-085", nilai: 62, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6616", nama: "I Kadek Arya Dwi Putra", kelas: "7.4", no_peserta: "01-019-086", nilai: 58, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6617", nama: "I Komang Tristan Tara Putra Dinata", kelas: "7.4", no_peserta: "01-019-087", nilai: 68, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6618", nama: "Indra Jaya Saputra", kelas: "7.4", no_peserta: "01-019-088", nilai: 34, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6619", nama: "I Putu Eri Suwardiva Artha Pratama", kelas: "7.4", no_peserta: "01-019-089", nilai: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6620", nama: "I Putu Raditya Yudhi Sinatra", kelas: "7.4", no_peserta: "01-019-090", nilai: 50, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6621", nama: "Kadek Dwi Adi Pradita", kelas: "7.4", no_peserta: "01-019-091", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6622", nama: "Ni Kadek Sintya Sriningsih", kelas: "7.4", no_peserta: "01-019-092", nilai: 36, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6623", nama: "Kenrich Ambrosius Sugiharto", kelas: "7.4", no_peserta: "01-019-093", nilai: 82, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6624", nama: "Ketut Andhini Ardanaeswari Mahaparamitha", kelas: "7.4", no_peserta: "01-019-094", nilai: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6625", nama: "Komang Nandha Maheswari", kelas: "7.4", no_peserta: "01-019-095", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6626", nama: "Maria Gracia Alicia Dahu", kelas: "7.4", no_peserta: "01-019-096", nilai: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6627", nama: "Mayrsa Anindita Putri", kelas: "7.4", no_peserta: "01-019-097", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6628", nama: "Ni Luh Devi Wulandari Putri", kelas: "7.4", no_peserta: "01-019-098", nilai: 42, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6629", nama: "Ni Putu Ayu Meilika Permata Sari", kelas: "7.4", no_peserta: "01-019-099", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6630", nama: "Ni Putu Ayutra Febby Santiani Putri", kelas: "7.4", no_peserta: "01-019-100", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6631", nama: "Ni Putu Crishnayanti Purnama Sari", kelas: "7.4", no_peserta: "01-019-101", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6632", nama: "Ni Putu Gita Aristya Devi", kelas: "7.4", no_peserta: "01-019-102", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6633", nama: "Natasya Sabrina Salsabila", kelas: "7.4", no_peserta: "01-019-103", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6634", nama: "Nur Maulidia Ayuningtyas", kelas: "7.4", no_peserta: "01-019-104", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6635", nama: "Putu Agus Suastika", kelas: "7.4", no_peserta: "01-019-105", nilai: 22, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6636", nama: "Putu Anggun Wulani", kelas: "7.4", no_peserta: "01-019-106", nilai: 98, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6637", nama: "Putu Denandra Alvi Wirawan", kelas: "7.4", no_peserta: "01-019-107", nilai: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6638", nama: "Putu Desta Pratama", kelas: "7.4", no_peserta: "01-019-108", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6639", nama: "Putu Diandra Jessica Anastasya", kelas: "7.4", no_peserta: "01-019-109", nilai: 74, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6640", nama: "Samuel Gede Pratama", kelas: "7.4", no_peserta: "01-019-110", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6641", nama: "Theresa Rizqy Putri Tristan", kelas: "7.4", no_peserta: "01-019-111", nilai: 62, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6642", nama: "Tirta Dwi Pratama", kelas: "7.4", no_peserta: "01-019-112", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6204", nama: "Muh. Musalli Habizar", kelas: "7.4", no_peserta: "01-019-113", nilai: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-
-            // Data 7.5
-            { nis: "6643", nama: "Ahmad Riwaky Hasan", kelas: "7.5", no_peserta: "01-019-114", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6644", nama: "Aline Candra Dewi", kelas: "7.5", no_peserta: "01-019-115", nilai: 72, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6645", nama: "Calista Az Zahra", kelas: "7.5", no_peserta: "01-019-116", nilai: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6646", nama: "Chrisbyan Candra Amnaska", kelas: "7.5", no_peserta: "01-019-117", nilai: 58, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6647", nama: "Dzakaneza Abbasy Kaindra", kelas: "7.5", no_peserta: "01-019-118", nilai: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6648", nama: "Erwan Rudi Sanjaya", kelas: "7.5", no_peserta: "01-019-119", nilai: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6649", nama: "Felicia Metta Joana", kelas: "7.5", no_peserta: "01-019-120", nilai: 60, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6650", nama: "Gede Gheo Adrian Saputra", kelas: "7.5", no_peserta: "01-019-121", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6651", nama: "Glory Permata Putri", kelas: "7.5", no_peserta: "01-019-122", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6652", nama: "Ida Ayu Putu Avika Prameswari", kelas: "7.5", no_peserta: "01-019-123", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6653", nama: "I Gede Christiano Marsev Pasang", kelas: "7.5", no_peserta: "01-019-124", nilai: 32, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6654", nama: "I Gede Yudana", kelas: "7.5", no_peserta: "01-019-125", nilai: 48, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6655", nama: "I Ketut Adi darmawan", kelas: "7.5", no_peserta: "01-019-126", nilai: 38, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6656", nama: "I Kadek Adnyana Suputra", kelas: "7.5", no_peserta: "01-019-127", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6657", nama: "I Made Aditya Abimanyu", kelas: "7.5", no_peserta: "01-019-128", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6658", nama: "I Made Jeremi Desta Sahdana", kelas: "7.5", no_peserta: "01-019-129", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6659", nama: "I Made Ricky Nugraha", kelas: "7.5", no_peserta: "01-019-130", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6660", nama: "I Nyoman Adimukti Putra Yasa", kelas: "7.5", no_peserta: "01-019-131", nilai: 62, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6661", nama: "I Nyoman Aditya Wistara", kelas: "7.5", no_peserta: "01-019-132", nilai: 54, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6662", nama: "Kadek Ayu Widiantari", kelas: "7.5", no_peserta: "01-019-133", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6663", nama: "Kadek Chalista Dwi Cahyani", kelas: "7.5", no_peserta: "01-019-134", nilai: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6664", nama: "Kadek Cahya Widiantari", kelas: "7.5", no_peserta: "01-019-135", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6665", nama: "Maria Anindya Indah Kinara Carbonilla", kelas: "7.5", no_peserta: "01-019-136", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6666", nama: "Maria Geressia Carolina Subu", kelas: "7.5", no_peserta: "01-019-137", nilai: 56, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6667", nama: "Micko Chandra Santosa", kelas: "7.5", no_peserta: "01-019-138", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6668", nama: "Muchammad Gabriel Aji Alvino", kelas: "7.5", no_peserta: "01-019-139", nilai: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6669", nama: "Ni Luh Eka Oktaviani", kelas: "7.5", no_peserta: "01-019-140", nilai: 58, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6670", nama: "Ni Made Amelia Maheswari", kelas: "7.5", no_peserta: "01-019-141", nilai: 78, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6671", nama: "Ni Putu Gista Pradnyandari", kelas: "7.5", no_peserta: "01-019-142", nilai: 66, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6672", nama: "Ni Putu Pranita Candra Dewi", kelas: "7.5", no_peserta: "01-019-143", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6673", nama: "Ni Putu Tia Anggraeni", kelas: "7.5", no_peserta: "01-019-144", nilai: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6674", nama: "Putri Putu Keysia Wiyono", kelas: "7.5", no_peserta: "01-019-145", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6675", nama: "Putu Agus Juliana Putra", kelas: "7.5", no_peserta: "01-019-146", nilai: 72, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6676", nama: "Putu Ayana Prishagita Adnyani Putri", kelas: "7.5", no_peserta: "01-019-147", nilai: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6677", nama: "Putu Candra Eka Nataly", kelas: "7.5", no_peserta: "01-019-148", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6678", nama: "Putu Divina Maharani", kelas: "7.5", no_peserta: "01-019-149", nilai: 62, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6679", nama: "Putu Kayla Natania Wirawan", kelas: "7.5", no_peserta: "01-019-150", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6680", nama: "Putu Okta Viona Ayunda", kelas: "7.5", no_peserta: "01-019-151", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6681", nama: "Yohanes Rafael Unab", kelas: "7.5", no_peserta: "01-019-152", nilai: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6682", nama: "Zefanya Lathisa Putri Widodo", kelas: "7.5", no_peserta: "01-019-153", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6805", nama: "Hafijatun Nurul Huda", kelas: "7.5", no_peserta: "01-019-154", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-
-            // Data 7.6
-            { nis: "6684", nama: "Alaina Tias Putri Aorora", kelas: "7.6", no_peserta: "01-019-155", nilai: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6685", nama: "Anak Agung Ary Intan Arya Dewi", kelas: "7.6", no_peserta: "01-019-156", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6686", nama: "Almira Tungga Dewi", kelas: "7.6", no_peserta: "01-019-157", nilai: 60, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6687", nama: "Daffa Rifky Azzuhri", kelas: "7.6", no_peserta: "01-019-158", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6688", nama: "Dewa Ayu Putu Santika Dewi", kelas: "7.6", no_peserta: "01-019-159", nilai: 58, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6689", nama: "Dyna Agnesia Putri", kelas: "7.6", no_peserta: "01-019-160", nilai: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6690", nama: "Earlyta Kazue Ardita Putri", kelas: "7.6", no_peserta: "01-019-161", nilai: 92, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
-            { nis: "6691", nama: "Galang Kusuma Putra", kelas: "7.6", no_peserta: "01-019-162", nilai: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6692", nama: "I Gede Eka Apriana Sadema", kelas: "7.6", no_peserta: "01-019-163", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6693", nama: "I Gede Farendra Putra Deay", kelas: "7.6", no_peserta: "01-019-164", nilai: 32, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6694", nama: "I Kadek Hadi Davindra Pramana", kelas: "7.6", no_peserta: "01-019-165", nilai: 54, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6695", nama: "I Kadek Krisna Dwipayoga", kelas: "7.6", no_peserta: "01-019-166", nilai: 80, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
-            { nis: "6696", nama: "I Kadek Widhika Satya Ramawan", kelas: "7.6", no_peserta: "01-019-167", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6697", nama: "I Komang Daiva Devara", kelas: "7.6", no_peserta: "01-019-168", nilai: 32, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6698", nama: "I Made Dwi Putra Sedana Artha", kelas: "7.6", no_peserta: "01-019-169", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6699", nama: "I Putu Bagus Prasetya Utama", kelas: "7.6", no_peserta: "01-019-170", nilai: 46, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6700", nama: "Kadek Bagus Willy Mahendras", kelas: "7.6", no_peserta: "01-019-171", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6701", nama: "Kadek Kalyana Pradnya Dewi", kelas: "7.6", no_peserta: "01-019-172", nilai: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6702", nama: "Kadek Rendra Pradana", kelas: "7.6", no_peserta: "01-019-173", nilai: 60, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6703", nama: "Kadek Ririn Diantari", kelas: "7.6", no_peserta: "01-019-174", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6704", nama: "Komang Sintya Santi", kelas: "7.6", no_peserta: "01-019-175", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6705", nama: "M. Amin Al-Kutbi", kelas: "7.6", no_peserta: "01-019-176", nilai: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6706", nama: "Made Juanita", kelas: "7.6", no_peserta: "01-019-177", nilai: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6707", nama: "Made Sambuca Raditya Pinatih", kelas: "7.6", no_peserta: "01-019-178", nilai: 80, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6708", nama: "Mochamad Iqbal Al Farisyi", kelas: "7.6", no_peserta: "01-019-179", nilai: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6709", nama: "Muhammad Ja'far Shodiq", kelas: "7.6", no_peserta: "01-019-180", nilai: 72, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
-            { nis: "6710", nama: "Ngurah Putu David Kenji Dinata", kelas: "7.6", no_peserta: "01-019-181", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6711", nama: "Ni Kadek Alya Aprilia Govardani", kelas: "7.6", no_peserta: "01-019-182", nilai: 74, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6712", nama: "Ni Made Sri Oktaviani Putri", kelas: "7.6", no_peserta: "01-019-183", nilai: 72, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6713", nama: "Ni Made Radhaswari Suputri", kelas: "7.6", no_peserta: "01-019-184", nilai: 98, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
-            { nis: "6714", nama: "Ni Putu Yuri Danisha Putri", kelas: "7.6", no_peserta: "01-019-185", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6715", nama: "Noval Indra Syaputra", kelas: "7.6", no_peserta: "01-019-186", nilai: 44, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6716", nama: "Novan Rizki Setiawan", kelas: "7.6", no_peserta: "01-019-187", nilai: 48, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6717", nama: "Putri Ristalia Anggraeni", kelas: "7.6", no_peserta: "01-019-188", nilai: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6718", nama: "Putu Ayu Mas Ratna Dewi", kelas: "7.6", no_peserta: "01-019-189", nilai: 70, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
-            { nis: "6804", nama: "Bagus Jaya Arjuna", kelas: "7.6", no_peserta: "01-019-190", nilai: 58, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6720", nama: "Putu Viana Putri Maharani", kelas: "7.6", no_peserta: "01-019-191", nilai: 76, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6721", nama: "Risqi Putra Al-Fatah", kelas: "7.6", no_peserta: "01-019-192", nilai: 76, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6722", nama: "Selvia Nur Viky Rahayu", kelas: "7.6", no_peserta: "01-019-193", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6723", nama: "Waroh", kelas: "7.6", no_peserta: "01-019-194", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-
-            // Data 7.7
-            { nis: "6724", nama: "Adelia Ragil Clauriza", kelas: "7.7", no_peserta: "01-019-195", nilai: 76, stars: 6, uh3: 92, uh4: 95, perbaikan: [] },
-            { nis: "6725", nama: "Alvin Setya Pradana", kelas: "7.7", no_peserta: "01-019-196", nilai: 50, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6726", nama: "Arcelia Fahrotul Ulfania", kelas: "7.7", no_peserta: "01-019-197", nilai: 58, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6727", nama: "Dewa Ketut Hari Parama Nanda", kelas: "7.7", no_peserta: "01-019-198", nilai: 64, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6728", nama: "Dewa Ngakan Gede Diego Putra Darma Wisesa", kelas: "7.7", no_peserta: "01-019-199", nilai: 74, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
-            { nis: "6729", nama: "Gian Filanski Hendrik", kelas: "7.7", no_peserta: "01-019-200", nilai: 56, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6730", nama: "I Gusti Ayu Sri Kusuma Dewi", kelas: "7.7", no_peserta: "01-019-201", nilai: 40, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6731", nama: "I Gusti Ngurah Arjuna Agastya Natih Putra", kelas: "7.7", no_peserta: "01-019-202", nilai: 36, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6732", nama: "I Kadek Anantha Artha Wiguna", kelas: "7.7", no_peserta: "01-019-203", nilai: 56, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6733", nama: "I Kadek Agus Raditya Witama", kelas: "7.7", no_peserta: "01-019-204", nilai: 56, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6734", nama: "I Kadek Bagus Pramana Putra", kelas: "7.7", no_peserta: "01-019-205", nilai: 70, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
-            { nis: "6735", nama: "I Komang Deva Parwata", kelas: "7.7", no_peserta: "01-019-206", nilai: 62, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6736", nama: "I Komang Sutha Widya Sena", kelas: "7.7", no_peserta: "01-019-207", nilai: 72, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
-            { nis: "6737", nama: "I Made Gio Wira Mahatma", kelas: "7.7", no_peserta: "01-019-208", nilai: 62, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6738", nama: "I Putu Eka Erlangga Saputra", kelas: "7.7", no_peserta: "01-019-209", nilai: 62, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6739", nama: "I Putu Yudha Madhusudana", kelas: "7.7", no_peserta: "01-019-210", nilai: 74, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6740", nama: "Kadek Ningnata Mertayasa", kelas: "7.7", no_peserta: "01-019-211", nilai: 32, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6741", nama: "Komang Revan Palentio", kelas: "7.7", no_peserta: "01-019-212", nilai: 48, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6742", nama: "Krsna Karuna Shindu", kelas: "7.7", no_peserta: "01-019-213", nilai: 48, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6743", nama: "Muhamad Abib Firmansyah", kelas: "7.7", no_peserta: "01-019-214", nilai: 50, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6744", nama: "Muhammad Fatir Rifatullah", kelas: "7.7", no_peserta: "01-019-215", nilai: 70, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
-            { nis: "6745", nama: "Muhammad Mifathul Huda", kelas: "7.7", no_peserta: "01-019-216", nilai: 38, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
-            { nis: "6746", nama: "Ngurah Arya Mahendra Kadjar", kelas: "7.7", no_peserta: "01-019-217", nilai: 52, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6747", nama: "Ni Kadek Devi Kania Aprilia", kelas: "7.7", no_peserta: "01-019-218", nilai: 66, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6748", nama: "Ni Kadek Diva Felisha Padmaswari", kelas: "7.7", no_peserta: "01-019-219", nilai: 76, stars: 3.5, uh3: 88.875, uh4: 90, perbaikan: [] },
-            { nis: "6749", nama: "Ni Kadek Reisya Rikha Pradita", kelas: "7.7", no_peserta: "01-019-220", nilai: 66, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6750", nama: "Ni Kadek Santhi Aurelia", kelas: "7.7", no_peserta: "01-019-221", nilai: 54, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6751", nama: "Ni Ketut Jia Jasmine Pradnya Pramesty", kelas: "7.7", no_peserta: "01-019-222", nilai: 66, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6752", nama: "Ni Komang Riana Pujayanti", kelas: "7.7", no_peserta: "01-019-223", nilai: 54, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6753", nama: "Ni Putu Adistya Candra Pradita", kelas: "7.7", no_peserta: "01-019-224", nilai: 72, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6754", nama: "Ni Putu Dila Novita Sari", kelas: "7.7", no_peserta: "01-019-225", nilai: 44, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6755", nama: "Putri Abigail Meysha Reandra", kelas: "7.7", no_peserta: "01-019-226", nilai: 86, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6756", nama: "Putu Devi Atika Pratiwi", kelas: "7.7", no_peserta: "01-019-227", nilai: 52, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6757", nama: "Putu Felina Dwijayanti", kelas: "7.7", no_peserta: "01-019-228", nilai: 56, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6758", nama: "Putu Susila Andyana", kelas: "7.7", no_peserta: "01-019-229", nilai: 22, stars: 2, uh3: 87, uh4: 87, perbaikan: [] },
-            { nis: "6759", nama: "Putu Wika Ananta Putra", kelas: "7.7", no_peserta: "01-019-230", nilai: 78, stars: 5, uh3: 91.5, uh4: 93, perbaikan: [] },
-            { nis: "6760", nama: "Qenzo Djazen Januarta", kelas: "7.7", no_peserta: "01-019-231", nilai: 68, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6761", nama: "Rifki Yoga Saputra", kelas: "7.7", no_peserta: "01-019-232", nilai: 50, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-            { nis: "6762", nama: "Silvi Afifatus Sholihah", kelas: "7.7", no_peserta: "01-019-233", nilai: 70, stars: 4, uh3: 90.5, uh4: 91, perbaikan: [] },
-            { nis: "6763", nama: "Ucca Kusuma Wicitra", kelas: "7.7", no_peserta: "01-019-234", nilai: 82, stars: 3, uh3: 88.25, uh4: 89, perbaikan: [] },
-
-            // Data 7.8
-            { nis: "6764", nama: "A.A Gede Pandu Rajendra", kelas: "7.8", no_peserta: "01-019-235", nilai: 44, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6765", nama: "Abizar Misyari Winata", kelas: "7.8", no_peserta: "01-019-236", nilai: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6766", nama: "Al Furqon Johan Prasetyo", kelas: "7.8", no_peserta: "01-019-237", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6767", nama: "Almeera Safiqha Maritza Pami", kelas: "7.8", no_peserta: "01-019-238", nilai: 60, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6768", nama: "Assyfa Nur Khasanah", kelas: "7.8", no_peserta: "01-019-239", nilai: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6769", nama: "Aun Hibatullah", kelas: "7.8", no_peserta: "01-019-240", nilai: 62, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6770", nama: "Dewa Ayu Made Indira Anindya Kusuma", kelas: "7.8", no_peserta: "01-019-241", nilai: 86, stars: 3.5, uh3: 88.5, uh4: 89, perbaikan: [] },
-            { nis: "6771", nama: "Firda Apriliyani", kelas: "7.8", no_peserta: "01-019-242", nilai: 48, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6772", nama: "Gede Marendra Wijaya", kelas: "7.8", no_peserta: "01-019-243", nilai: 76, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6773", nama: "I Dewa Putu Satya Wiguna", kelas: "7.8", no_peserta: "01-019-244", nilai: 48, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6774", nama: "I Gusti Agung Istri Gayatri", kelas: "7.8", no_peserta: "01-019-245", nilai: 48, stars: 3.5, uh3: 88.5, uh4: 89, perbaikan: [] },
-            { nis: "6775", nama: "I Gusti Ayu Septiani Putri", kelas: "7.8", no_peserta: "01-019-246", nilai: 74, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6776", nama: "I Gede Nengah Reynard Aditya", kelas: "7.8", no_peserta: "01-019-247", nilai: 56, stars: 3.5, uh3: 88.5, uh4: 89, perbaikan: [] },
-            { nis: "6777", nama: "I Kadek Adi Arya Putra", kelas: "7.8", no_peserta: "01-019-248", nilai: 70, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6778", nama: "I Kadek Bagus Krishna Dwipa Sanjaya", kelas: "7.8", no_peserta: "01-019-249", nilai: 38, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6779", nama: "I Komang Aditya Putra", kelas: "7.8", no_peserta: "01-019-250", nilai: 66, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6780", nama: "I Made Arta Wiguna", kelas: "7.8", no_peserta: "01-019-251", nilai: 50, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6781", nama: "I Putu Rehan Arta Erlangga", kelas: "7.8", no_peserta: "01-019-252", nilai: 82, stars: 7, uh3: 92, uh4: 95, perbaikan: [] },
-            { nis: "6782", nama: "Kadek Dwi Paramita", kelas: "7.8", no_peserta: "01-019-253", nilai: 56, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6783", nama: "Kesya Yudya Saka", kelas: "7.8", no_peserta: "01-019-254", nilai: 52, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6784", nama: "Lucky Indra Perdana", kelas: "7.8", no_peserta: "01-019-255", nilai: 42, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6785", nama: "Ni Luh Pande Puspaningsih", kelas: "7.8", no_peserta: "01-019-256", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6786", nama: "Muhammad Abizar", kelas: "7.8", no_peserta: "01-019-257", nilai: 36, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6787", nama: "Mohamad Arya Putra", kelas: "7.8", no_peserta: "01-019-258", nilai: 52, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6788", nama: "Ni Kadek Intan Kusuma Dewi", kelas: "7.8", no_peserta: "01-019-259", nilai: 52, stars: 4.5, uh3: 89.5, uh4: 91, perbaikan: [] },
-            { nis: "6789", nama: "Ni Kadek Dinda Dian Maharani", kelas: "7.8", no_peserta: "01-019-260", nilai: 60, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6790", nama: "Ni Ketut Kembar Alita Putri", kelas: "7.8", no_peserta: "01-019-261", nilai: 50, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6791", nama: "Nikken Pritarini Widjayanti", kelas: "7.8", no_peserta: "01-019-262", nilai: 64, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6792", nama: "Ni Komang Kembar Alika Putri", kelas: "7.8", no_peserta: "01-019-263", nilai: 58, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6793", nama: "Ni Luh Sintya Dewi", kelas: "7.8", no_peserta: "01-019-264", nilai: 62, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6794", nama: "Ni Made Anggita Prame Swari", kelas: "7.8", no_peserta: "01-019-265", nilai: 60, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6795", nama: "Ni Putu Ayudya Paramitha Swari", kelas: "7.8", no_peserta: "01-019-266", nilai: 52, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6796", nama: "Putu Altaffian Panji Pranata", kelas: "7.8", no_peserta: "01-019-267", nilai: 48, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6797", nama: "Putu Deepika Purnama Dewi", kelas: "7.8", no_peserta: "01-019-268", nilai: 76, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
-            { nis: "6798", nama: "Putu Devan Adhitya Wicaksana", kelas: "7.8", no_peserta: "01-019-269", nilai: 68, stars: 6, uh3: 91, uh4: 93, perbaikan: [] },
-            { nis: "6799", nama: "Putu Dinda Indira Putri", kelas: "7.8", no_peserta: "01-019-270", nilai: 72, stars: 5, uh3: 90, uh4: 92, perbaikan: [] },
-            { nis: "6800", nama: "Putu Yuwanda Cahayanidta", kelas: "7.8", no_peserta: "01-019-271", nilai: 68, stars: 3, uh3: 88, uh4: 89, perbaikan: [] },
-            { nis: "6801", nama: "Rahen Zakyal Maizan", kelas: "7.8", no_peserta: "01-019-272", nilai: 46, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6802", nama: "Velynzha Gealova Sweetsherien Hanton", kelas: "7.8", no_peserta: "01-019-273", nilai: 88, stars: 4, uh3: 89, uh4: 90, perbaikan: [] },
-            { nis: "6803", nama: "Viola Octavia Putrie", kelas: "7.8", no_peserta: "01-019-274", nilai: 70, stars: 6, uh3: 91, uh4: 93, perbaikan: [] }
-        ];
-
-        // FUNGSI UTILITAS
-        function normalizeId(str) {
-            if (!str) return '';
-            return String(str).replace(/\s/g, '').toLowerCase().trim();
-        }
-
-        function normalizeName(str) {
-            if (!str) return '';
-            return String(str).toLowerCase().replace(/\s+/g, ' ').trim();
-        }
-
-        function parseNumericValue(value) {
-            if (typeof value === 'string') {
-                const cleanValue = value.replace(/,/g, '.');
-                return parseFloat(cleanValue);
-            }
-            if (typeof value === 'number') {
-                return value;
-            }
-            return NaN;
-        }
-
-        // Fungsi untuk membuat tabel perbaikan
-        function generatePerbaikanTable(perbaikanData) {
-            if (!perbaikanData || perbaikanData.length === 0) {
-                return '';
-            }
-            
-            let tableHTML = `<div class="perbaikan-table-container">
-                                <h4><i class="fas fa-history"></i> Riwayat Perbaikan Nilai</h4>
-                                <table class="perbaikan-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Tanggal</th>
-                                            <th>Nilai Awal</th>
-                                            <th>Nilai Perbaikan</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`;
-            
-            perbaikanData.forEach(p => {
-                const status = parseNumericValue(p.nilai_baru) >= KKM ? 
-                                `<span style="color: var(--color-success); font-weight: 700;">LULUS KKM</span>` : 
-                                `<span style="color: var(--color-danger);">BELUM LULUS</span>`;
-                tableHTML += `<tr>
-                                <td>${p.tgl}</td>
-                                <td>${p.nilai_lama}</td>
-                                <td style="font-weight: 600;">${p.nilai_baru}</td>
-                                <td>${status}</td>
-                              </tr>`;
-            });
-
-            tableHTML += `</tbody></table></div>`;
-            return tableHTML;
-        }
-
-        // [PERBAIKAN] Menambahkan fungsi kisi-kisi remedial
-        function generateRemedialKisiKisiHTML() {
-            return `
-                <div class="alert-badge status-fail">
-                    <i class="fas fa-times-circle fa-beat"></i> WAJIB REMEDIAL! Nilai SAS Anda **di bawah KKM** (${KKM}).
-                </div>
-                <div class="kisi-kisi-area">
-                    <h4><i class="fas fa-clipboard-list"></i> Kisi-kisi Remedial SAS</h4>
-                    <p style="font-size: 0.9em; margin-bottom: 10px;">Remedial mencakup materi yang tidak dikuasai pada BAB 1, 2, 3, dan 4.</p>
-                    <ol style="padding-left: 20px;">
-                        <li>**Bab 1:** Konsep berpikir komputasional.</li>
-                        <li>**Bab 2:** Pengenalan perangkat keras (Hardware) dan perangkat lunak (Software).</li>
-                        <li>**Bab 3:** Jaringan komputer dan internet (Koneksi, protokol, keamanan).</li>
-                        <li>**Bab 4:** Analisis data dan visualisasi dasar.</li>
-                    </ol>
-                    <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button"><i class="fas fa-pencil-alt"></i> Kerjakan Remedial Sekarang</a>
-                </div>
+        for (let i = 1; i <= NUM_DAPIL; i++) {
+            html += `
+                <div class="dapil-card">
+                    <h3>Dapil ${i}</h3>
+                    <p>Total Suara Sah = (A + B + C)</p>
             `;
-        }
-
-        // Fungsi untuk Menghitung dan Menampilkan Statistik
-        function calculateStats() {
-            const dataSiswaValid = rawDataSiswa.filter(siswa => parseNumericValue(siswa.nilai) !== null && !isNaN(parseNumericValue(siswa.nilai)));
-            const totalSiswa = rawDataSiswa.length;
-            let missingCount = 0;
-            let remedialCount = 0; 
-            let safeCount = 0;
-            let rewardCount = 0;
-            let starDistribution = {}; 
-
-            // Inisialisasi Star Distribution 0-7
-            for (let i = 0; i <= MAX_STARS; i++) {
-                starDistribution[i] = 0;
-            }
-
-            rawDataSiswa.forEach(siswa => {
-                const nilai = parseNumericValue(siswa.nilai);
-                const stars = parseNumericValue(siswa.stars);
-                
-                if (isNaN(nilai) || siswa.nilai === null) {
-                    missingCount++;
-                } else if (nilai < KKM) { 
-                    remedialCount++;
-                } else {
-                    safeCount++;
-                }
-                
-                if (!isNaN(stars)) {
-                    const starKey = Math.min(Math.round(stars), MAX_STARS);
-                    starDistribution[starKey] = (starDistribution[starKey] || 0) + 1;
-                    if (stars > REWARD_STAR_THRESHOLD) {
-                        rewardCount++;
-                    }
-                }
+            CANDIDATES.forEach(candidate => {
+                const inputId = `${candidate.id}_dapil_${i}`;
+                html += `
+                    <label for="${inputId}">${candidate.name}</label>
+                    <input type="number" id="${inputId}" name="${inputId}" min="0" value="0" required>
+                `;
             });
+            html += `</div>`;
+        }
+        dapilInputsDiv.innerHTML = html;
+    }
 
-            const missingPercent = ((missingCount / totalSiswa) * 100).toFixed(1);
-            const remedialPercent = ((remedialCount / totalSiswa) * 100).toFixed(1);
-            const safePercent = ((safeCount / totalSiswa) * 100).toFixed(1);
-            const rewardPercent = ((rewardCount / totalSiswa) * 100).toFixed(1);
-            
-            // Menghasilkan Kartu Statistik Stars (0-7)
-            let starsGridHTML = `<div class="stats-grid">`;
-            // Tampilkan dari bintang tertinggi ke terendah
-            for (let i = MAX_STARS; i >= 0; i--) { 
-                const count = starDistribution[i] || 0;
-                const percent = ((count / totalSiswa) * 100).toFixed(1);
-                if (count > 0 || i === MAX_STARS) { // Tampilkan MAX_STARS meskipun 0
-                    starsGridHTML += `
-                        <div class="stat-card" style="border: 1px solid ${i > REWARD_STAR_THRESHOLD ? 'var(--color-reward)' : '#e5e7eb'};">
-                            <div class="stat-label-main" style="color: ${i > REWARD_STAR_THRESHOLD ? 'var(--color-reward)' : 'var(--color-secondary)'};">${i} Bintang</div>
-                            <p class="stat-value">${percent}%</p>
-                            <p class="stat-detail">(${count} Siswa)</p>
-                        </div>
-                    `;
-                }
-            }
-            starsGridHTML += `</div>`;
+    // 2. Menghitung dan Menampilkan Hasil
+    function calculateAndDisplayResults(formData) {
+        let totalVotes = 0;
+        let candidateTotals = CANDIDATES.reduce((acc, c) => ({ ...acc, [c.id]: 0 }), {});
 
+        // Agregasi Data
+        for (let i = 1; i <= NUM_DAPIL; i++) {
+            CANDIDATES.forEach(candidate => {
+                const key = `${candidate.id}_dapil_${i}`;
+                const votes = parseInt(formData[key] || 0); // Ambil data dari object
+                candidateTotals[candidate.id] += votes;
+                totalVotes += votes;
+            });
+        }
 
-            // Kompilasi Akhir
-            statsContainer.innerHTML = `
-                <div class="stats-group">
-                    <h5 class="stat-title"><i class="fas fa-chart-bar"></i> Statistik Nilai SAS (KKM ${KKM})</h5>
-                    <div class="stats-grid">
-                        <div class="stat-card" style="border: 1px solid var(--color-secondary);">
-                            <div class="stat-label-main" style="color: var(--color-secondary);"><i class="fas fa-question-circle"></i> Nilai Kosong</div>
-                            <p class="stat-value">${missingCount}</p>
-                            <p class="stat-detail">(${missingPercent}%)</p>
-                        </div>
-                        <div class="stat-card" style="border: 1px solid var(--color-danger);">
-                            <div class="stat-label-main" style="color: var(--color-danger);"><i class="fas fa-times-circle"></i> Wajib Remidi</div>
-                            <p class="stat-value">${remedialCount}</p>
-                            <p class="stat-detail">(${remedialPercent}%)</p>
-                        </div>
-                        <div class="stat-card" style="border: 1px solid var(--color-success);">
-                            <div class="stat-label-main" style="color: var(--color-success);"><i class="fas fa-check-circle"></i> Lulus KKM Aman</div>
-                            <p class="stat-value">${safeCount}</p>
-                            <p class="stat-detail">(${safePercent}%)</p>
-                        </div>
+        const resultsDiv = document.getElementById('quick-count-results');
+        const totalSuaraP = document.getElementById('total-suara');
+        let resultsHtml = '';
+
+        if (totalVotes === 0) {
+            resultsHtml = '<p style="text-align: center; color: #e67e22;">Belum ada suara yang dihitung.</p>';
+        } else {
+            // Hitung Persentase dan Tampilkan
+            CANDIDATES.forEach(candidate => {
+                const percentage = (candidateTotals[candidate.id] / totalVotes) * 100;
+                resultsHtml += `
+                    <div class="candidate-result">
+                        <span class="candidate-name">${candidate.name}</span>
+                        <span class="percentage">${percentage.toFixed(2)}%</span>
+                        <span class="raw-votes">(${candidateTotals[candidate.id]} suara)</span>
                     </div>
-                </div>
-                
-                <div class="stats-group">
-                    <h5 class="stat-title"><i class="fas fa-star"></i> Statistik Rewards Stars</h5>
-                    <div class="stats-grid">
-                        <div class="stat-card" style="grid-column: span 3; background: #e6fffa;">
-                            <div class="stat-label-main" style="color: var(--color-reward);">Mendapat Reward (> ${REWARD_STAR_THRESHOLD} Bintang)</div>
-                            <p class="stat-value" style="color: var(--color-reward);">${rewardCount} Siswa | ${rewardPercent}%</p>
-                        </div>
-                    </div>
-                    <h5 class="stat-title" style="margin-top: 15px;"><i class="fas fa-list-ol"></i> Distribusi Bintang</h5>
-                    ${starsGridHTML}
-                </div>
-            `;
+                `;
+            });
         }
 
-        // --- Fungsi yang Harus Diakses Secara Global (Dipanggil dari HTML) ---
-        window.cariNilai = function() {
-            startLoadingAnimation();
-            
-            const rawInput = searchInput.value;
-            const inputNormalized = normalizeId(rawInput); 
-            const inputNameLower = normalizeName(rawInput); 
+        resultsDiv.innerHTML = resultsHtml;
+        totalSuaraP.textContent = `Total Suara Quick Count (Sah): ${totalVotes.toLocaleString('id-ID')} suara dari ${NUM_DAPIL} Dapil.`;
+    }
 
-            
-            setTimeout(() => {
-                
-                if (inputNormalized === "" && inputNameLower === "") {
-                    resultDiv.innerHTML = warningHtml + '<p style="text-align: center; color: var(--color-secondary); margin: 0; font-style: italic;">Silakan masukkan data pencarian.</p>';
-                    resultDiv.classList.add('show');
-                    return;
-                }
+    // 3. Mengunci Formulir (Simpan ke Local Storage)
+    function lockAndSaveForm(event) {
+        event.preventDefault();
 
-                // LOGIKA PENCARIAN UTAMA
-                const siswaDitemukan = rawDataSiswa.find(siswa => {
-                    const nisNormalized = normalizeId(siswa.nis);
-                    const noPesertaNormalized = normalizeId(siswa.no_peserta);
-                    const namaNormalized = normalizeName(siswa.nama);
-                    
-                    if (inputNormalized !== '') {
-                        if (nisNormalized === inputNormalized || noPesertaNormalized === inputNormalized) {
-                            return true;
-                        }
-                    }
-                    
-                    if (namaNormalized.includes(inputNameLower) && inputNameLower !== '') {
-                        return true;
-                    }
+        const form = document.getElementById('quick-count-form');
+        const formData = {};
 
-                    return false;
-                });
-
-                // Stop search audio
-                try {
-                    const searchAudio = document.getElementById('searchAudio');
-                    searchAudio.pause();
-                    searchAudio.currentTime = 0;
-                } catch (e) { /* ignore */ }
-
-
-                if (siswaDitemukan) {
-                    
-                    let topScorerBadges = '';
-                    let statusKelas = '';
-                    let iconKKM = '';
-                    let pesanPeringatan = '';
-                    let remedialMessage = ''; 
-                    
-                    const nilaiSasSiswa = parseNumericValue(siswaDitemukan.nilai);
-                    const starsSiswa = parseNumericValue(siswaDitemukan.stars);
-
-                    // 1. Cek Nilai Tertinggi SAS Seangkatan
-                    const nilaiTertinggiSeangkatan = Math.max(...rawDataSiswa.map(s => parseNumericValue(s.nilai)).filter(n => !isNaN(n)));
-                    if (nilaiSasSiswa === nilaiTertinggiSeangkatan && nilaiSasSiswa >= KKM) {
-                        topScorerBadges += '<div class="alert-badge top-scorer-alert" style="background-color: var(--color-primary); color: white;"><i class="fas fa-crown"></i> NILAI TERTINGGI SEANGKATAN!</div>';
-                        triggerConfetti();
-                    }
-                    
-                    // 2. Cek Nilai Tertinggi di Kelasnya
-                    const siswaKelasValid = rawDataSiswa.filter(s => s.kelas === siswaDitemukan.kelas);
-                    const nilaiTertinggiKelas = Math.max(...siswaKelasValid.map(s => parseNumericValue(s.nilai)).filter(n => !isNaN(n)));
-                    
-                    if (nilaiSasSiswa === nilaiTertinggiKelas && nilaiSasSiswa < nilaiTertinggiSeangkatan && nilaiSasSiswa >= KKM) {
-                        topScorerBadges += '<div class="alert-badge top-class-alert" style="background-color: var(--color-remedial); color: white;"><i class="fas fa-star"></i> Tertinggi di Kelas ' + siswaDitemukan.kelas + '!</div>';
-                    }
-                    
-                    // 3. Alert Rewards (Stars > 5)
-                    if (starsSiswa > REWARD_STAR_THRESHOLD) {
-                        topScorerBadges += '<div class="alert-badge" style="background-color: var(--color-reward); color: white;"><i class="fas fa-medal"></i> Berhak Bebas UH/Tugas BAB 5 SMT 2!</div>';
-                    }
-
-                    // --- Handle Nilai Kosong (SAS) ---
-                    if (isNaN(nilaiSasSiswa)) {
-                        resultDiv.innerHTML = warningHtml + `
-                            ${topScorerBadges}
-                            <div class="info-grid">
-                                <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
-                                <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
-                                <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
-                                <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
-                            </div>
-                            <div class="alert-badge status-fail" style="background-color: var(--color-warning); color: #856404; margin-bottom: 0;">
-                                <i class="fas fa-exclamation-triangle"></i> DATA NILAI SAS BELUM TERSEDIA.
-                            </div>
-                        `;
-                        resultDiv.classList.add('show');
-                        return;
-                    }
-                    
-                    // 4. Penentuan Status KKM
-                    if (nilaiSasSiswa >= KKM) {
-                        statusKelas = 'status-success';
-                        iconKKM = '<i class="fas fa-trophy icon-win"></i>';
-                        
-                        if (nilaiSasSiswa === KKM) {
-                            pesanPeringatan = `LULUS KKM TEPAT! (Nilai = ${KKM})`;
-                            remedialMessage = `
-                                <div class="remedial-button-area status-aman">
-                                    <p style="margin-bottom: 10px;">Nilai SAS Anda sudah di area aman. Jika ingin meningkatkan nilai, silakan ikuti remedial.</p>
-                                    <a href="${REMEDIAL_LINK}" target="_blank" class="remedial-button" style="background-color: var(--color-warning); color: #333;"><i class="fas fa-arrow-up"></i> Ikuti Remedial (Opsi)</a>
-                                </div>`;
-                        } else {
-                            pesanPeringatan = `LULUS KKM AMAN! (Nilai > ${KKM})`;
-                             remedialMessage = `
-                                <div class="remedial-button-area status-aman" style="background-color: var(--color-success); color: white;">
-                                    <i class="fas fa-check-circle"></i> Nilai SAS Anda Aman (>= ${KKM}). Tidak perlu remedial.
-                                </div>`;
-                        }
-                    } else {
-                        // Nilai di bawah KKM (< 72)
-                        statusKelas = 'status-fail';
-                        iconKKM = '<i class="fas fa-siren-on icon-fail"></i>';
-                        pesanPeringatan = `TIDAK LULUS KKM! (Nilai < ${KKM})`;
-                        
-                        // Menampilkan KISI-KISI Remedial langsung
-                        remedialMessage = generateRemedialKisiKisiHTML();
-                    }
-                    
-                    // 5. Generate Tabel Perbaikan
-                    const perbaikanTable = generatePerbaikanTable(siswaDitemukan.perbaikan);
-
-
-                    // Tampilkan hasil
-                    resultDiv.innerHTML = warningHtml + `
-                        ${topScorerBadges}
-
-                        <div class="info-grid">
-                            <div><strong>Nama Siswa:</strong> ${siswaDitemukan.nama}</div>
-                            <div><strong>Kelas:</strong> ${siswaDitemukan.kelas}</div>
-                            <div><strong>NIS:</strong> ${siswaDitemukan.nis}</div>
-                            <div><strong>No. Peserta:</strong> ${siswaDitemukan.no_peserta}</div>
-                        </div>
-                        
-                        <div class="score-cards-container">
-                            <div class="score-card main-score">
-                                <div class="label">NILAI SAS (KKM ${KKM})</div>
-                                <div class="value">${nilaiSasSiswa}</div>
-                            </div>
-                            
-                            <div class="score-card stars-score">
-                                <div class="label">STARS (MAX ${MAX_STARS})</div>
-                                <div class="value" style="color: ${starsSiswa > REWARD_STAR_THRESHOLD ? 'var(--color-reward)' : (starsSiswa >= 4 ? 'var(--color-highlight)' : 'var(--color-secondary)')};">${starsSiswa}<sub>/${MAX_STARS}</sub></div>
-                            </div>
-                            
-                            <div class="score-card uh-score">
-                                <div class="label">UH BAB 3</div>
-                                <div class="value">${siswaDitemukan.uh3}</div>
-                            </div>
-                            
-                            <div class="score-card uh-score">
-                                <div class="label">UH BAB 4</div>
-                                <div class="value">${siswaDitemukan.uh4}</div>
-                            </div>
-                        </div>
-
-
-                        <div class="${statusKelas} alert-badge">
-                            ${iconKKM}
-                            <span>${pesanPeringatan}</span>
-                        </div>
-                        
-                        ${remedialMessage}
-                        ${perbaikanTable}
-                    `;
-                    resultDiv.classList.add('show');
-                } else {
-                    resultDiv.innerHTML = warningHtml + '<p style="color: var(--color-warning); font-weight: 600; text-align: center; margin: 0;"><i class="fas fa-search-minus"></i> Data siswa tidak ditemukan.</p>';
-                    resultDiv.classList.add('show');
-                }
-            }, 800); 
-        }
-
-        // Fungsi untuk mengaktifkan pencarian saat menekan Enter
-        window.checkEnter = function(event) {
-            if (event.key === 'Enter') {
-                cariNilai();
+        // Ambil semua data dari input form
+        Array.from(form.elements).forEach(element => {
+            if (element.tagName === 'INPUT' && element.type === 'number') {
+                formData[element.name] = element.value;
             }
-        }
-        
-        // Panggil statistik saat DOM selesai dimuat
-        document.addEventListener('DOMContentLoaded', (event) => {
-             calculateStats();
         });
-    })();
-    </script>
+
+        // Simpan data ke Local Storage (bertindak sebagai 'database' sementara)
+        localStorage.setItem(FORM_KEY, JSON.stringify(formData));
+        localStorage.setItem(LOCK_KEY, 'true'); // Kunci form
+
+        // Tampilkan hasil
+        calculateAndDisplayResults(formData);
+
+        // Kunci tampilan form
+        disableForm();
+    }
+
+    // 4. Memuat Data Saat Halaman Dibuka (Auto-Load)
+    function loadAndCheckLockStatus() {
+        generateDapilInputs(); // Buat struktur input Dapil terlebih dahulu
+
+        const isLocked = localStorage.getItem(LOCK_KEY) === 'true';
+        const savedData = localStorage.getItem(FORM_KEY);
+
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+            
+            // Isi kembali nilai input dari data yang tersimpan
+            Object.keys(formData).forEach(key => {
+                const input = document.querySelector(`[name="${key}"]`);
+                if (input) {
+                    input.value = formData[key];
+                }
+            });
+
+            // Hitung dan tampilkan hasil dari data tersimpan
+            calculateAndDisplayResults(formData);
+        }
+
+        if (isLocked) {
+            disableForm();
+        }
+    }
+
+    // 5. Menonaktifkan Form
+    function disableForm() {
+        const form = document.getElementById('quick-count-form');
+        const submitButton = document.getElementById('submit-button');
+        const lockStatus = document.getElementById('lock-status');
+
+        Array.from(form.elements).forEach(element => {
+            if (element.tagName === 'INPUT') {
+                element.setAttribute('disabled', 'disabled');
+            }
+        });
+
+        submitButton.setAttribute('disabled', 'disabled');
+        submitButton.textContent = 'HASIL TERKUNCI';
+        lockStatus.style.display = 'block';
+    }
+
+    // --- Inisialisasi ---
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAndCheckLockStatus();
+        document.getElementById('quick-count-form').addEventListener('submit', lockAndSaveForm);
+    });
+
+    /* * Catatan: Untuk mereset data (membuka kunci form),
+     * buka Console (F12) di browser dan jalankan:
+     * localStorage.removeItem('quickCountData'); 
+     * localStorage.removeItem('quickCountLocked'); 
+     * location.reload();
+    */
+</script>
+
 </body>
 </html>
