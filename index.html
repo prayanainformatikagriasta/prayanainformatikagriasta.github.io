@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Quick Count Pemilihan Kepala Sekolah</title>
+    <title id="page-title">Quick Count Pilwalkot Durian 2019</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
@@ -13,10 +13,10 @@
     <style>
         /* General Body & Container */
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #e0f2f7 0%, #c1e4ee 100%);
-            color: #333;
+            background: #f4f7f9; /* Light background */
+            color: #2c3e50;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -25,89 +25,83 @@
             box-sizing: border-box;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 95%;
             background: #ffffff;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            transition: all 0.5s ease-in-out;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
         }
 
         /* Headers */
         h1 {
             color: #1a2a3a;
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 2.5em;
-            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 2.8em;
+            font-weight: 900;
             line-height: 1.2;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            border-bottom: 5px solid #2980b9;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
         }
         h2 {
-            color: #2c3e50;
+            color: #2980b9;
             text-align: center;
             margin-top: 30px;
             margin-bottom: 20px;
             font-size: 1.8em;
-            font-weight: 600;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-            display: inline-block;
-            position: relative;
-            left: 50%;
-            transform: translateX(-50%);
+            font-weight: 700;
         }
         h3 {
-            color: #2980b9;
-            margin-top: 0;
-            font-size: 1.4em;
-            font-weight: 600;
+            color: #34495e;
+            font-size: 1.5em;
+            font-weight: 700;
+            border-left: 5px solid #e74c3c;
+            padding-left: 10px;
+            margin-top: 25px;
         }
 
-        /* Results Section (Chart & Info) */
+        /* Results Section */
         .results-section {
             background-color: #f8fcff;
-            border: 1px solid #e0e7eb;
-            border-radius: 10px;
-            padding: 25px;
+            border: 2px solid #dde7ee;
+            border-radius: 12px;
+            padding: 30px;
             margin-bottom: 30px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
         #chart-container {
             position: relative;
-            height: 300px;
+            height: 350px;
             width: 100%;
             margin-bottom: 20px;
         }
         .total-info {
             text-align: center;
-            font-size: 1.1em;
+            font-size: 1.2em;
             color: #555;
-            margin-top: 20px;
+            margin-top: 25px;
             font-weight: 400;
-            line-height: 1.5;
         }
         .total-info strong {
             color: #1a2a3a;
-            font-weight: 700;
+            font-weight: 900;
         }
         .dapil-processed {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #007bff;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #27ae60; /* Green for completion */
         }
-
-        /* Form Dapil Card */
+        
+        /* Dapil Card & Form */
         .dapil-card {
-            border: 2px solid #3498db;
-            padding: 30px;
-            border-radius: 10px;
-            background-color: #ecf8ff;
+            border: 1px solid #bdc3c7;
+            padding: 25px;
+            border-radius: 8px;
+            background-color: #ecf0f1;
             margin-bottom: 20px;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            opacity: 1; /* Pastikan defaultnya terlihat */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: opacity 0.3s ease;
         }
         .dapil-card.hidden {
             opacity: 0;
@@ -116,91 +110,164 @@
             overflow: hidden;
             margin-bottom: 0;
         }
-        .form-hidden {
-            display: none; /* Class untuk menyembunyikan header atau seluruh form */
-        }
-        .dapil-card p {
-            margin-bottom: 20px;
-            color: #555;
-            font-size: 0.95em;
-        }
+        .form-hidden { display: none; }
+
         label {
             display: block;
             margin-top: 15px;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
+            margin-bottom: 6px;
+            font-weight: 700;
+            color: #34495e;
             font-size: 1em;
         }
         input[type="number"] {
-            width: calc(100% - 20px);
-            padding: 12px;
-            border: 1px solid #aaddf0;
-            border-radius: 6px;
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
             font-size: 1.1em;
             box-sizing: border-box;
-            transition: border-color 0.3s, box-shadow 0.3s;
         }
         input[type="number"]:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            border-color: #2980b9;
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
             outline: none;
+        }
+
+        /* Logos and Candidate Names */
+        .candidate-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+        }
+        .logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #3498db; /* Default color for visualization */
+            display: inline-block;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .logo.paslon-1 { background-color: #e74c3c; } /* Red for Paslon 1 */
+        .logo.paslon-2 { background-color: #2ecc71; } /* Green for Paslon 2 */
+        .paslon-label {
+            font-weight: 700;
+        }
+
+        /* Party Koalisi */
+        .party-input-group {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #95a5a6;
+            border-radius: 5px;
+        }
+        .party-input-group h4 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.2em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         /* Buttons */
         button {
             width: 100%;
-            padding: 15px;
-            background-color: #28a745; 
+            padding: 18px;
+            background-color: #2980b9; 
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1.2em;
-            font-weight: 600;
+            font-size: 1.3em;
+            font-weight: 700;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 30px;
-            letter-spacing: 0.5px;
+            margin-top: 35px;
         }
         button:hover:not([disabled]) {
-            background-color: #218838;
+            background-color: #3498db;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
         }
         button:disabled {
-            background-color: #cccccc;
+            background-color: #95a5a6;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
         button.btn-finish {
-            background-color: #007bff;
+            background-color: #27ae60;
         }
         button.btn-finish:hover:not([disabled]) {
-            background-color: #0056b3;
+            background-color: #2ecc71;
         }
 
-        /* Locked State & Messages */
-        .locked-message {
-            text-align: center;
-            color: #dc3545;
-            font-weight: 700;
-            margin-top: 20px;
-            font-size: 1.3em;
-            animation: pulse 1.5s infinite;
+        /* Projected Winner Pop-up (Modal) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            padding-top: 60px;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.02); opacity: 0.9; }
-            100% { transform: scale(1); opacity: 1; }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 40px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            animation: zoomIn 0.5s;
+        }
+        .modal-content h3 {
+            color: #e74c3c;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            border-left: none;
+        }
+        .modal-content p {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2980b9;
+        }
+        .modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        @keyframes zoomIn {
+            from {transform: scale(0.5); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 id="main-title">Quick Count Pemilihan Kepala Sekolah</h1>
-    <p class="locked-message" id="lock-status" style="display: none;">🗳️ DATA TELAH LENGKAP DAN DIKUNCI 🗳️</p>
+    <h1 id="main-title">QUICK COUNT PEMILIHAN WALIKOTA DURIAN 2019-2024</h1>
+    <p class="locked-message" id="lock-status" style="display: none;">🗳️ DATA AKHIR TELAH DIKUNCI 🗳️</p>
     
     <div class="results-section">
         <h2>📊 Hasil Sementara (<span id="dapil-processed">0</span> dari 19 Dapil)</h2>
@@ -210,6 +277,18 @@
         <div class="total-info">
             Total Suara Sah Terinput: <strong id="total-suara-display">0</strong> suara dari <strong id="processed-dapil-count">0</strong> Dapil.
         </div>
+        
+        <h3 style="text-align:center; margin-top: 40px; border-left: none;">DETAIL KOALISI PARTAI</h3>
+        <div style="display: flex; justify-content: space-around; gap: 20px;">
+            <div style="flex: 1; text-align: center; border: 1px solid #e74c3c; padding: 15px; border-radius: 8px;">
+                <h4>PASLON 1</h4>
+                <p>Koalisi: **PARTAI MERAH, PARTAI INDO, PARTAI WILAD, PARTAI JENIUS**</p>
+            </div>
+            <div style="flex: 1; text-align: center; border: 1px solid #2ecc71; padding: 15px; border-radius: 8px;">
+                <h4>PASLON 2</h4>
+                <p>Koalisi: **PARTAI BESI, PARTAI KAYU**</p>
+            </div>
+        </div>
     </div>
 
     <h2 id="form-header">Input Data Dapil 1</h2>
@@ -218,20 +297,40 @@
         
         <button type="submit" id="submit-button">Simpan & Lanjut ke Dapil Berikutnya</button>
     </form>
+</div>
+
+<div id="projectedWinnerModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h3>PROJECTION ALERT!</h3>
+        <p id="winner-message"></p>
+        <p style="font-size: 1em; color: #555;">Data telah mencapai 80% (16 dari 19 Dapil) terinput.</p>
     </div>
+</div>
 
 <script>
     // --- Konfigurasi Awal ---
+    const MAX_VOTES_PER_DAPIL = 700000;
     const CANDIDATES = [
-        { id: 'calon_a', name: 'Calon A - Bpk. Budiman', color: '#3498db', hoverColor: '#2980b9' },
-        { id: 'calon_b', name: 'Calon B - Ibu Kartini', color: '#e74c3c', hoverColor: '#c0392b' },
-        { id: 'calon_c', name: 'Calon C - Sdr. Hasan', color: '#2ecc71', hoverColor: '#27ae60' }
+        { id: 'paslon_1', name: 'HJ. ARI NASUTIONAS - Prof. Husainis', color: '#e74c3c', hoverColor: '#c0392b', logoClass: 'paslon-1' }, // Merah
+        { id: 'paslon_2', name: 'SASMARA ABIGAIL - DIRRENDRA AFIF', color: '#2ecc71', hoverColor: '#27ae60', logoClass: 'paslon-2' } // Hijau
+    ];
+    const PARTIES = [
+        { id: 'partai_merah', name: 'PARTAI MERAH', color: '#e74c3c' },
+        { id: 'partai_indo', name: 'PARTAI INDO', color: '#f39c12' },
+        { id: 'partai_wilad', name: 'PARTAI WILAD', color: '#3498db' },
+        { id: 'partai_jenius', name: 'PARTAI JENIUS', color: '#9b59b6' },
+        { id: 'partai_besi', name: 'PARTAI BESI', color: '#7f8c8d' },
+        { id: 'partai_kayu', name: 'PARTAI KAYU', color: '#d35400' }
     ];
     const NUM_DAPIL = 19;
-    // Keys harus berbeda dari percobaan sebelumnya untuk menghindari konflik data lama
-    const FORM_DATA_KEY = 'quickCountDataTVStyle_v2'; 
-    const CURRENT_DAPIL_KEY = 'currentDapilIndexTVStyle_v2'; 
-    const LOCK_KEY = 'quickCountLockedTVStyle_v2'; 
+    const PROJECTED_WINNER_THRESHOLD = Math.ceil(NUM_DAPIL * 0.8); // 80% dari 19 = 16 Dapil
+    
+    // Local Storage Keys
+    const FORM_DATA_KEY = 'quickCountPilwalkotDurian_v3'; 
+    const CURRENT_DAPIL_KEY = 'currentDapilIndexPilwalkotDurian_v3'; 
+    const LOCK_KEY = 'quickCountLockedPilwalkotDurian_v3'; 
+    const PROJECTED_SHOWN_KEY = 'projectedShownPilwalkotDurian_v3'; 
     
     let currentDapilIndex = 1; 
     let allFormData = {}; 
@@ -245,7 +344,6 @@
 
     // --- Fungsi Utama ---
 
-    // 1. Inisialisasi Chart.js
     function initializeChart() {
         const ctx = document.getElementById('quickCountChart').getContext('2d');
         Chart.register(ChartDataLabels);
@@ -260,18 +358,15 @@
                     backgroundColor: CANDIDATES.map(c => c.color),
                     borderColor: CANDIDATES.map(c => c.hoverColor),
                     borderWidth: 1,
-                    barPercentage: 0.7,
-                    categoryPercentage: 0.8
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: 'y',
-                animation: {
-                    duration: 1000, 
-                    easing: 'easeOutQuart'
-                },
+                animation: { duration: 1000, easing: 'easeOutQuart' },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -279,7 +374,6 @@
                             label: function(context) {
                                 let label = context.dataset.label || '';
                                 if (context.parsed.x !== null) {
-                                    // Mengambil nilai aktual dari properti custom
                                     const actualVotes = context.dataset.actualVotes ? context.dataset.actualVotes[context.dataIndex] : 0;
                                     label += `: ${context.parsed.x.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')} suara)`;
                                 }
@@ -291,45 +385,29 @@
                         anchor: 'end',
                         align: 'end',
                         formatter: (value, context) => {
-                            // Memastikan properti custom ada sebelum mengakses
                             const actualVotes = context.dataset.actualVotes ? context.dataset.actualVotes[context.dataIndex] : 0;
                             return `${value.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')})`;
                         },
                         color: '#333',
-                        font: { weight: 'bold', size: 12 }
+                        font: { weight: 'bold', size: 14 }
                     }
                 },
                 scales: {
                     x: {
                         beginAtZero: true,
                         max: 100, 
-                        title: {
-                            display: true,
-                            text: 'Persentase (%)',
-                            font: { size: 14, weight: 'bold' }
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
+                        title: { display: true, text: 'Persentase (%)', font: { size: 14, weight: 'bold' } },
+                        ticks: { callback: function(value) { return value + '%'; } }
                     },
                     y: {
-                        title: {
-                            display: true,
-                            text: 'Calon',
-                            font: { size: 14, weight: 'bold' }
-                        }
+                        ticks: { font: { size: 12 } }
                     }
                 }
             }
         });
-        
-        // Inisialisasi array actualVotes di dataset saat chart dibuat
         quickCountChart.data.datasets[0].actualVotes = CANDIDATES.map(() => 0); 
     }
 
-    // 2. Membuat Input Form untuk Dapil saat ini
     function renderCurrentDapilForm() {
         const dapilCardDiv = document.getElementById('current-dapil-card');
         const formHeader = document.getElementById('form-header');
@@ -337,80 +415,98 @@
         const formData = getSavedData();
 
         formHeader.textContent = `Input Data Dapil ${currentDapilIndex}`;
-        formHeader.classList.remove('form-hidden'); // Pastikan header terlihat
+        formHeader.classList.remove('form-hidden');
 
         let html = `
             <div class="dapil-card" id="dapil-input-card">
-                <h3>Dapil ${currentDapilIndex}</h3>
-                <p>Total Suara Sah = (Suara Calon A + Suara Calon B + Suara Calon C)</p>
+                <h3>Suara Paslon (Wajib Diisi)</h3>
+                <p>Maksimal Total Suara Sah per Dapil: ${MAX_VOTES_PER_DAPIL.toLocaleString('id-ID')} suara.</p>
         `;
         
-        CANDIDATES.forEach(candidate => {
+        // --- Input Paslon ---
+        CANDIDATES.forEach((candidate, index) => {
             const inputId = `${candidate.id}_dapil_${currentDapilIndex}`;
-            // Memastikan nilai savedValue adalah angka (0 jika null/undefined)
-            const savedValue = parseInt(formData[inputId]) || 0; 
+            const savedValue = parseInt(formData[inputId] || 0); 
             
             html += `
-                <label for="${inputId}">${candidate.name}</label>
+                <label for="${inputId}">
+                    <span class="candidate-label">
+                        <span class="logo ${candidate.logoClass}">${index + 1}</span>
+                        <span class="paslon-label">${candidate.name}</span>
+                    </span>
+                </label>
                 <input type="number" id="${inputId}" name="${inputId}" min="0" value="${savedValue}" required>
             `;
         });
-        html += `</div>`;
+        
+        // --- Input Legislatif (Partai) ---
+        html += `
+            <div class="party-input-group">
+                <h4>Suara Partai Legislatif (LEGISLATIF)</h4>
+                <p>Input suara untuk masing-masing partai koalisi.</p>
+        `;
+        PARTIES.forEach(party => {
+            const inputId = `${party.id}_dapil_${currentDapilIndex}`;
+            const savedValue = parseInt(formData[inputId] || 0);
+            
+            html += `
+                <label for="${inputId}">${party.name}</label>
+                <input type="number" id="${inputId}" name="${inputId}" min="0" value="${savedValue}" required>
+            `;
+        });
+        html += `</div>`; // Close party-input-group
+
+        html += `</div>`; // Close dapil-card
         
         dapilCardDiv.innerHTML = html;
-        dapilCardDiv.classList.remove('hidden'); // Pastikan container card terlihat
-        
-        // Memastikan card input dapil baru muncul dengan opacity penuh setelah transisi
+        dapilCardDiv.classList.remove('hidden');
+
         const newDapilInputCard = document.getElementById('dapil-input-card');
         if (newDapilInputCard) newDapilInputCard.style.opacity = 1;
 
 
         if (currentDapilIndex === NUM_DAPIL) {
-            submitButton.textContent = 'Simpan & Lihat Hasil Akhir';
+            submitButton.textContent = 'Simpan & Lihat Hasil Akhir (KUNCI DATA)';
             submitButton.classList.add('btn-finish');
         } else {
             submitButton.textContent = `Simpan & Lanjut ke Dapil ${currentDapilIndex + 1}`;
             submitButton.classList.remove('btn-finish');
         }
-        submitButton.removeAttribute('disabled'); // Pastikan tombol aktif
+        submitButton.removeAttribute('disabled');
     }
 
-    // 3. Menghitung dan Memperbarui Hasil (Grafik)
     function calculateAndDisplayResults() {
         allFormData = getSavedData();
         let totalVotes = 0;
         let candidateTotals = CANDIDATES.reduce((acc, c) => ({ ...acc, [c.id]: 0 }), {});
         let dapilCount = 0;
         
-        // Menghitung data
         for (let i = 1; i <= NUM_DAPIL; i++) {
-            let currentDapilTotal = 0;
-            let dapilHasInput = false; // Flag untuk mengetahui apakah Dapil ini punya input
+            let currentPaslonTotal = 0;
+            let dapilHasPaslonInput = false;
 
+            // Hitung suara Paslon
             CANDIDATES.forEach(candidate => {
                 const key = `${candidate.id}_dapil_${i}`;
                 const votes = parseInt(allFormData[key] || 0);
                 
-                if (votes > 0) { // Cek jika ada suara sah
-                    dapilHasInput = true;
-                }
+                if (votes > 0) { dapilHasPaslonInput = true; }
                 
-                currentDapilTotal += votes;
+                currentPaslonTotal += votes;
                 candidateTotals[candidate.id] += votes;
             });
+
+            // Hanya hitung Dapil terproses jika ada input Paslon
+            if (dapilHasPaslonInput) { dapilCount++; }
+            totalVotes += currentPaslonTotal;
             
-            // Dapil dihitung sebagai diproses jika ada input (suara > 0)
-            if (dapilHasInput) {
-                 dapilCount++;
-            }
-            totalVotes += currentDapilTotal;
+            // NOTE: Suara legislatif tidak dimasukkan ke totalVotes Pilwalkot
         }
         
         document.getElementById('dapil-processed').textContent = dapilCount;
         document.getElementById('processed-dapil-count').textContent = dapilCount;
         document.getElementById('total-suara-display').textContent = totalVotes.toLocaleString('id-ID');
 
-        // Update Chart Data
         const chartData = CANDIDATES.map(candidate => {
             const percentage = totalVotes === 0 ? 0 : (candidateTotals[candidate.id] / totalVotes) * 100;
             return {
@@ -424,15 +520,48 @@
         
         quickCountChart.update();
         
-        // Finalisasi judul jika sudah lengkap dan terkunci
+        // Cek Projected Winner
+        checkProjectedWinner(dapilCount, candidateTotals, totalVotes);
+
         if (dapilCount === NUM_DAPIL && localStorage.getItem(LOCK_KEY) === 'true') {
-            document.getElementById('main-title').textContent = 'HASIL AKHIR PEMILIHAN KEPALA SEKOLAH';
-            document.getElementById('page-title').textContent = 'Hasil Akhir Pemilihan Kepala Sekolah';
-            document.querySelector('.results-section h2').textContent = '🏆 Hasil Final Pemilihan Kepala Sekolah';
+            document.getElementById('main-title').textContent = 'HASIL AKHIR PEMILIHAN WALIKOTA DURIAN 2019-2024';
+            document.getElementById('page-title').textContent = 'Hasil Akhir Pilwalkot Durian';
+        }
+    }
+    
+    function checkProjectedWinner(dapilCount, candidateTotals, totalVotes) {
+        if (dapilCount >= PROJECTED_WINNER_THRESHOLD && localStorage.getItem(PROJECTED_SHOWN_KEY) !== 'true') {
+            
+            let winnerId;
+            let maxVotes = -1;
+
+            CANDIDATES.forEach(candidate => {
+                if (candidateTotals[candidate.id] > maxVotes) {
+                    maxVotes = candidateTotals[candidate.id];
+                    winnerId = candidate.id;
+                }
+            });
+
+            const winnerCandidate = CANDIDATES.find(c => c.id === winnerId);
+            const winnerPercentage = (maxVotes / totalVotes) * 100;
+
+            const modal = document.getElementById('projectedWinnerModal');
+            const winnerMessage = document.getElementById('winner-message');
+
+            winnerMessage.innerHTML = `
+                **PROJECTED WINNER IS:**<br>
+                <span style="color: ${winnerCandidate.color}; font-size: 1.8em;">
+                    ${winnerCandidate.name}
+                </span>
+                <br>
+                (Memimpin dengan ${winnerPercentage.toFixed(2)}%)
+            `;
+            
+            modal.style.display = 'block';
+            localStorage.setItem(PROJECTED_SHOWN_KEY, 'true');
         }
     }
 
-    // 4. Handler Submit Form (Simpan dan Lanjut)
     function handleFormSubmit(event) {
         event.preventDefault();
 
@@ -442,55 +571,66 @@
         }
 
         const currentData = getSavedData();
-        let currentDapilTotal = 0;
+        let currentPaslonTotal = 0;
         let hasNegativeInput = false;
 
+        // 1. Validasi dan Hitung Suara Paslon
         CANDIDATES.forEach(candidate => {
             const inputId = `${candidate.id}_dapil_${currentDapilIndex}`;
             const inputElement = document.getElementById(inputId);
             const votes = parseInt(inputElement.value || 0);
 
-            if (votes < 0) {
-                 hasNegativeInput = true;
-            }
-            
+            if (votes < 0) { hasNegativeInput = true; }
             currentData[inputId] = votes;
-            currentDapilTotal += votes;
+            currentPaslonTotal += votes;
+        });
+
+        // 2. Validasi dan Simpan Suara Partai (Legislatif)
+        PARTIES.forEach(party => {
+             const inputId = `${party.id}_dapil_${currentDapilIndex}`;
+             const inputElement = document.getElementById(inputId);
+             const votes = parseInt(inputElement.value || 0);
+             
+             if (votes < 0) { hasNegativeInput = true; }
+             currentData[inputId] = votes;
         });
         
+        // --- Pop-up Validasi ---
         if (hasNegativeInput) {
             alert("Mohon masukkan angka non-negatif (0 atau lebih) untuk jumlah suara.");
             return;
         }
+        
+        if (currentPaslonTotal > MAX_VOTES_PER_DAPIL) {
+            alert(`DATA DITOLAK! Total suara Paslon (${currentPaslonTotal.toLocaleString('id-ID')} suara) melebihi batas maksimal (${MAX_VOTES_PER_DAPIL.toLocaleString('id-ID')} suara) di Dapil ${currentDapilIndex}. TIDAK MUNGKIN PENDUDUK SEGITU!`);
+            return;
+        }
 
-        if (currentDapilTotal === 0 && !confirm(`Anda memasukkan 0 suara untuk semua calon di Dapil ${currentDapilIndex}. Apakah Anda yakin ingin melanjutkan?`)) {
+        if (currentPaslonTotal === 0 && !confirm(`Anda memasukkan 0 suara untuk semua Paslon di Dapil ${currentDapilIndex}. Apakah Anda yakin ingin melanjutkan?`)) {
             return;
         }
         
         localStorage.setItem(FORM_DATA_KEY, JSON.stringify(currentData));
 
+        // --- Proses Lanjut/Kunci ---
         if (currentDapilIndex < NUM_DAPIL) {
             currentDapilIndex++;
             localStorage.setItem(CURRENT_DAPIL_KEY, currentDapilIndex);
             
-            // Animasi transisi form (sembunyikan dulu)
             const dapilInputCard = document.getElementById('dapil-input-card');
             if (dapilInputCard) dapilInputCard.style.opacity = 0;
             
             setTimeout(() => {
                 renderCurrentDapilForm();
-                // Setelah renderCurrentDapilForm, opacity akan diset ke 1 di dalamnya
             }, 300);
             
             calculateAndDisplayResults(); 
         } else {
-            // All Dapils complete
             localStorage.setItem(LOCK_KEY, 'true');
             disableForm();
         }
     }
 
-    // 5. Menonaktifkan Form & Finalisasi Tampilan
     function disableForm() {
         const form = document.getElementById('quick-count-form');
         const submitButton = document.getElementById('submit-button');
@@ -498,30 +638,26 @@
         const currentDapilCardContainer = document.getElementById('current-dapil-card');
         const formHeader = document.getElementById('form-header');
 
-        // Kunci semua input di form
         Array.from(form.elements).forEach(element => {
             if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
                 element.setAttribute('disabled', 'disabled');
             }
         });
         
-        // Sembunyikan form sections
         currentDapilCardContainer.classList.add('hidden');
         formHeader.classList.add('form-hidden');
         
-        // Kunci tombol
         submitButton.setAttribute('disabled', 'disabled');
         submitButton.textContent = 'DATA SUDAH LENGKAP DAN TERKUNCI';
         submitButton.style.backgroundColor = '#6c757d';
         submitButton.style.transform = 'none';
         
-        // Tampilkan pesan terkunci
         lockStatus.style.display = 'block';
 
-        calculateAndDisplayResults(); // Update hasil terakhir dan finalisasi judul
+        calculateAndDisplayResults(); 
     }
 
-    // 6. Inisialisasi Saat Halaman Dimuat
+    // --- Inisialisasi ---
     document.addEventListener('DOMContentLoaded', () => {
         initializeChart();
         
@@ -529,30 +665,36 @@
 
         const savedDapilIndex = parseInt(localStorage.getItem(CURRENT_DAPIL_KEY));
         
-        // LOGIKA PERBAIKAN: Memastikan currentDapilIndex kembali ke 1 setelah clear
         if (!isNaN(savedDapilIndex) && savedDapilIndex >= 1 && savedDapilIndex <= NUM_DAPIL) {
-            // Jika ada nilai tersimpan yang valid
             currentDapilIndex = savedDapilIndex;
         } else if (isLocked) {
-            // Jika terkunci, pastikan indeksnya yang terakhir
             currentDapilIndex = NUM_DAPIL; 
         } else {
-            // Default jika tidak ada data tersimpan yang valid (setelah clear)
             currentDapilIndex = 1; 
         }
-
 
         calculateAndDisplayResults();
         
         if (isLocked) {
             disableForm();
         } else {
-            // Bagian vital untuk memunculkan form
             renderCurrentDapilForm(); 
             document.getElementById('quick-count-form').addEventListener('submit', handleFormSubmit);
         }
+        
+        // Setup Modal Close Button
+        const modal = document.getElementById('projectedWinnerModal');
+        const span = document.getElementsByClassName("modal-close")[0];
+        
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     });
-
     /*
      * CARA RESET DATA (Untuk memunculkan kembali form input Dapil 1):
      * 1. Buka halaman ini di browser.
