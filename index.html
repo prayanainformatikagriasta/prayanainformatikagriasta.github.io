@@ -270,14 +270,21 @@
     <p class="locked-message" id="lock-status" style="display: none;">🗳️ DATA AKHIR TELAH DIKUNCI 🗳️</p>
     
     <div class="results-section">
-        <h2>📊 Hasil Sementara (<span id="dapil-processed">0</span> dari 19 Dapil)</h2>
+        <h2>📊 Hasil Sementara Paslon Walikota (<span id="dapil-processed">0</span> dari 19 Dapil)</h2>
         <div id="chart-container">
             <canvas id="quickCountChart"></canvas>
         </div>
         <div class="total-info">
-            Total Suara Sah Terinput: <strong id="total-suara-display">0</strong> suara dari <strong id="processed-dapil-count">0</strong> Dapil.
+            Total Suara Sah Walikota Terinput: <strong id="total-suara-display">0</strong> suara dari <strong id="processed-dapil-count">0</strong> Dapil.
         </div>
         
+        <h2 style="margin-top: 40px;">🗳️ Hasil Sementara Suara Partai (Legislatif)</h2>
+        <div id="chart-container-legislatif">
+            <canvas id="quickCountLegislatifChart"></canvas>
+        </div>
+        <div class="total-info">
+            Total Suara Sah Legislatif Terinput: <strong id="total-legislatif-display">0</strong> suara.
+        </div>
         <h3 style="text-align:center; margin-top: 40px; border-left: none;">DETAIL KOALISI PARTAI</h3>
         <div style="display: flex; justify-content: space-around; gap: 20px;">
             <div style="flex: 1; text-align: center; border: 1px solid #e74c3c; padding: 15px; border-radius: 8px;">
@@ -330,20 +337,64 @@
     const FORM_DATA_KEY = 'quickCountPilwalkotDurian_v3'; 
     const CURRENT_DAPIL_KEY = 'currentDapilIndexPilwalkotDurian_v3'; 
     const LOCK_KEY = 'quickCountLockedPilwalkotDurian_v3'; 
-    const PROJECTED_SHOWN_KEY = 'projectedShownPilwalkotDurian_v3'; 
+    const PROJECTED_SHOWN_KEY = 'projectotShownPilwalkotDurian_v3'; 
     
     let currentDapilIndex = 1; 
     let allFormData = {}; 
     let quickCountChart;
+    let quickCountLegislatifChart; // NEW CHART VARIABLE
 
     // --- Fungsi Bantuan ---
     function getSavedData() {
         const savedData = localStorage.getItem(FORM_DATA_KEY);
         return savedData ? JSON.parse(savedData) : {};
     }
+    
+    // Chart options helper (since most options are the same)
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        animation: { duration: 1000, easing: 'easeOutQuart' },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (context.parsed.x !== null) {
+                            const actualVotes = context.dataset.actualVotes ? context.dataset.actualVotes[context.dataIndex] : 0;
+                            label += `: ${context.parsed.x.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')} suara)`;
+                        }
+                        return label;
+                    }
+                }
+            },
+            datalabels: {
+                anchor: 'end',
+                align: 'end',
+                formatter: (value, context) => {
+                    const actualVotes = context.dataset.actualVotes ? context.dataset.actualVotes[context.dataIndex] : 0;
+                    return `${value.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')})`;
+                },
+                color: '#333',
+                font: { weight: 'bold', size: 14 }
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100, 
+                title: { display: true, text: 'Persentase (%)', font: { size: 14, weight: 'bold' } },
+                ticks: { callback: function(value) { return value + '%'; } }
+            },
+            y: {
+                ticks: { font: { size: 12 } }
+            }
+        }
+    };
 
-    // --- Fungsi Utama ---
-
+    // 1. Inisialisasi Chart Paslon
     function initializeChart() {
         const ctx = document.getElementById('quickCountChart').getContext('2d');
         Chart.register(ChartDataLabels);
@@ -353,7 +404,7 @@
             data: {
                 labels: CANDIDATES.map(c => c.name),
                 datasets: [{
-                    label: 'Persentase Suara',
+                    label: 'Persentase Suara Paslon',
                     data: CANDIDATES.map(() => 0), 
                     backgroundColor: CANDIDATES.map(c => c.color),
                     borderColor: CANDIDATES.map(c => c.hoverColor),
@@ -362,52 +413,41 @@
                     categoryPercentage: 0.7
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                animation: { duration: 1000, easing: 'easeOutQuart' },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (context.parsed.x !== null) {
-                                    const actualVotes = context.dataset.actualVotes ? context.dataset.actualVotes[context.dataIndex] : 0;
-                                    label += `: ${context.parsed.x.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')} suara)`;
-                                }
-                                return label;
-                            }
-                        }
-                    },
-                    datalabels: {
-                        anchor: 'end',
-                        align: 'end',
-                        formatter: (value, context) => {
-                            const actualVotes = context.dataset.actualVotes ? context.dataset.actualVotes[context.dataIndex] : 0;
-                            return `${value.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')})`;
-                        },
-                        color: '#333',
-                        font: { weight: 'bold', size: 14 }
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        max: 100, 
-                        title: { display: true, text: 'Persentase (%)', font: { size: 14, weight: 'bold' } },
-                        ticks: { callback: function(value) { return value + '%'; } }
-                    },
-                    y: {
-                        ticks: { font: { size: 12 } }
-                    }
-                }
-            }
+            options: chartOptions
         });
         quickCountChart.data.datasets[0].actualVotes = CANDIDATES.map(() => 0); 
     }
+    
+    // 1b. Inisialisasi Chart Legislatif (NEW FUNCTION)
+    function initializeLegislativeChart() {
+        const ctx = document.getElementById('quickCountLegislatifChart').getContext('2d');
+        
+        // Buat salinan options dan modifikasi jika perlu (misal: warna bar)
+        let legislativeOptions = JSON.parse(JSON.stringify(chartOptions));
+        // Ubah warna teks judul X axis
+        legislativeOptions.scales.x.title.text = 'Persentase (%) dari Total Suara Sah Legislatif';
 
+
+        quickCountLegislatifChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: PARTIES.map(p => p.name),
+                datasets: [{
+                    label: 'Persentase Suara Partai',
+                    data: PARTIES.map(() => 0), 
+                    backgroundColor: PARTIES.map(p => p.color),
+                    borderColor: PARTIES.map(p => p.color).map(c => c + 'AA'), // Border sedikit transparan
+                    borderWidth: 1,
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.9
+                }]
+            },
+            options: legislativeOptions
+        });
+        quickCountLegislatifChart.data.datasets[0].actualVotes = PARTIES.map(() => 0); 
+    }
+
+    // 2. Membuat Input Form (Tidak Berubah)
     function renderCurrentDapilForm() {
         const dapilCardDiv = document.getElementById('current-dapil-card');
         const formHeader = document.getElementById('form-header');
@@ -475,14 +515,18 @@
         submitButton.removeAttribute('disabled');
     }
 
+    // 3. Menghitung dan Memperbarui Hasil (Grafik Paslon dan Legislatif) (UPDATED)
     function calculateAndDisplayResults() {
         allFormData = getSavedData();
-        let totalVotes = 0;
+        let totalPaslonVotes = 0;
+        let totalLegislativeVotes = 0;
         let candidateTotals = CANDIDATES.reduce((acc, c) => ({ ...acc, [c.id]: 0 }), {});
+        let partyTotals = PARTIES.reduce((acc, p) => ({ ...acc, [p.id]: 0 }), {}); // NEW
         let dapilCount = 0;
         
         for (let i = 1; i <= NUM_DAPIL; i++) {
             let currentPaslonTotal = 0;
+            let currentPartyTotal = 0;
             let dapilHasPaslonInput = false;
 
             // Hitung suara Paslon
@@ -495,33 +539,57 @@
                 currentPaslonTotal += votes;
                 candidateTotals[candidate.id] += votes;
             });
+            
+            // Hitung suara Partai (NEW)
+            PARTIES.forEach(party => {
+                 const key = `${party.id}_dapil_${i}`;
+                 const votes = parseInt(allFormData[key] || 0);
+                 
+                 currentPartyTotal += votes;
+                 partyTotals[party.id] += votes;
+            });
 
             // Hanya hitung Dapil terproses jika ada input Paslon
             if (dapilHasPaslonInput) { dapilCount++; }
-            totalVotes += currentPaslonTotal;
-            
-            // NOTE: Suara legislatif tidak dimasukkan ke totalVotes Pilwalkot
+            totalPaslonVotes += currentPaslonTotal;
+            totalLegislativeVotes += currentPartyTotal; // NEW
         }
         
         document.getElementById('dapil-processed').textContent = dapilCount;
         document.getElementById('processed-dapil-count').textContent = dapilCount;
-        document.getElementById('total-suara-display').textContent = totalVotes.toLocaleString('id-ID');
+        document.getElementById('total-suara-display').textContent = totalPaslonVotes.toLocaleString('id-ID');
+        document.getElementById('total-legislatif-display').textContent = totalLegislativeVotes.toLocaleString('id-ID'); // NEW Display
 
-        const chartData = CANDIDATES.map(candidate => {
-            const percentage = totalVotes === 0 ? 0 : (candidateTotals[candidate.id] / totalVotes) * 100;
+        // --- Update Chart PASLON ---
+        const paslonChartData = CANDIDATES.map(candidate => {
+            const percentage = totalPaslonVotes === 0 ? 0 : (candidateTotals[candidate.id] / totalPaslonVotes) * 100;
             return {
                 x: percentage,
                 actualVotes: candidateTotals[candidate.id]
             };
         });
         
-        quickCountChart.data.datasets[0].data = chartData.map(d => d.x);
-        quickCountChart.data.datasets[0].actualVotes = chartData.map(d => d.actualVotes);
-        
+        quickCountChart.data.datasets[0].data = paslonChartData.map(d => d.x);
+        quickCountChart.data.datasets[0].actualVotes = paslonChartData.map(d => d.actualVotes);
         quickCountChart.update();
         
+        // --- Update Chart LEGISLATIF (NEW) ---
+        const legislativeChartData = PARTIES.map(party => {
+            const percentage = totalLegislativeVotes === 0 ? 0 : (partyTotals[party.id] / totalLegislativeVotes) * 100;
+            return {
+                x: percentage,
+                actualVotes: partyTotals[party.id]
+            };
+        });
+        
+        quickCountLegislatifChart.data.labels = PARTIES.map(p => p.name); // Pastikan label tetap terurut sesuai PARTIES
+        quickCountLegislatifChart.data.datasets[0].data = legislativeChartData.map(d => d.x);
+        quickCountLegislatifChart.data.datasets[0].actualVotes = legislativeChartData.map(d => d.actualVotes);
+        quickCountLegislatifChart.update();
+
+
         // Cek Projected Winner
-        checkProjectedWinner(dapilCount, candidateTotals, totalVotes);
+        checkProjectedWinner(dapilCount, candidateTotals, totalPaslonVotes);
 
         if (dapilCount === NUM_DAPIL && localStorage.getItem(LOCK_KEY) === 'true') {
             document.getElementById('main-title').textContent = 'HASIL AKHIR PEMILIHAN WALIKOTA DURIAN 2019-2024';
@@ -529,6 +597,7 @@
         }
     }
     
+    // 4. Check Projected Winner (Tidak Berubah)
     function checkProjectedWinner(dapilCount, candidateTotals, totalVotes) {
         if (dapilCount >= PROJECTED_WINNER_THRESHOLD && localStorage.getItem(PROJECTED_SHOWN_KEY) !== 'true') {
             
@@ -562,6 +631,7 @@
         }
     }
 
+    // 5. Handler Submit Form (Validasi Paslon dan Simpan Partai) (Tidak Berubah)
     function handleFormSubmit(event) {
         event.preventDefault();
 
@@ -631,6 +701,7 @@
         }
     }
 
+    // 6. Menonaktifkan Form & Finalisasi Tampilan (Tidak Berubah)
     function disableForm() {
         const form = document.getElementById('quick-count-form');
         const submitButton = document.getElementById('submit-button');
@@ -657,9 +728,10 @@
         calculateAndDisplayResults(); 
     }
 
-    // --- Inisialisasi ---
+    // 7. Inisialisasi Saat Halaman Dimuat (UPDATED)
     document.addEventListener('DOMContentLoaded', () => {
         initializeChart();
+        initializeLegislativeChart(); // NEW: Initialize the second chart
         
         const isLocked = localStorage.getItem(LOCK_KEY) === 'true';
 
