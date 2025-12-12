@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">Quick Count Pemilihan Kepala Sekolah</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    
     <style>
         /* General Body & Container */
         body {
@@ -16,7 +19,7 @@
             color: #333;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top */
+            align-items: flex-start;
             min-height: 100vh;
             padding: 30px 0;
             box-sizing: border-box;
@@ -73,7 +76,7 @@
         }
         #chart-container {
             position: relative;
-            height: 300px; /* Fixed height for consistency */
+            height: 300px;
             width: 100%;
             margin-bottom: 20px;
         }
@@ -112,6 +115,9 @@
             overflow: hidden;
             margin-bottom: 0;
         }
+        .form-hidden {
+            display: none; /* Class untuk menyembunyikan header atau seluruh form */
+        }
         .dapil-card p {
             margin-bottom: 20px;
             color: #555;
@@ -144,7 +150,7 @@
         button {
             width: 100%;
             padding: 15px;
-            background-color: #28a745; /* Green for save/continue */
+            background-color: #28a745; 
             color: white;
             border: none;
             border-radius: 8px;
@@ -167,7 +173,7 @@
             box-shadow: none;
         }
         button.btn-finish {
-            background-color: #007bff; /* Blue for finish */
+            background-color: #007bff;
         }
         button.btn-finish:hover:not([disabled]) {
             background-color: #0056b3;
@@ -186,9 +192,6 @@
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.02); opacity: 0.9; }
             100% { transform: scale(1); opacity: 1; }
-        }
-        .form-hidden {
-            display: none;
         }
     </style>
 </head>
@@ -214,24 +217,24 @@
         
         <button type="submit" id="submit-button">Simpan & Lanjut ke Dapil Berikutnya</button>
     </form>
-    
-</div>
+    </div>
 
 <script>
     // --- Konfigurasi Awal ---
     const CANDIDATES = [
-        { id: 'calon_a', name: 'Calon A - Bpk. Budiman', color: '#3498db', hoverColor: '#2980b9' }, // Biru
-        { id: 'calon_b', name: 'Calon B - Ibu Kartini', color: '#e74c3c', hoverColor: '#c0392b' }, // Merah
-        { id: 'calon_c', name: 'Calon C - Sdr. Hasan', color: '#2ecc71', hoverColor: '#27ae60' }  // Hijau
+        { id: 'calon_a', name: 'Calon A - Bpk. Budiman', color: '#3498db', hoverColor: '#2980b9' },
+        { id: 'calon_b', name: 'Calon B - Ibu Kartini', color: '#e74c3c', hoverColor: '#c0392b' },
+        { id: 'calon_c', name: 'Calon C - Sdr. Hasan', color: '#2ecc71', hoverColor: '#27ae60' }
     ];
     const NUM_DAPIL = 19;
-    const FORM_DATA_KEY = 'quickCountDataTVStyle'; // Key baru untuk data suara
-    const CURRENT_DAPIL_KEY = 'currentDapilIndexTVStyle'; // Key baru untuk Dapil yang sedang diinput
-    const LOCK_KEY = 'quickCountLockedTVStyle'; // Key baru untuk status kunci
+    // Keys harus berbeda dari percobaan sebelumnya untuk menghindari konflik data lama
+    const FORM_DATA_KEY = 'quickCountDataTVStyle_v2'; 
+    const CURRENT_DAPIL_KEY = 'currentDapilIndexTVStyle_v2'; 
+    const LOCK_KEY = 'quickCountLockedTVStyle_v2'; 
     
     let currentDapilIndex = 1; 
     let allFormData = {}; 
-    let quickCountChart; // Variabel untuk instance Chart.js
+    let quickCountChart;
 
     // --- Fungsi Bantuan ---
     function getSavedData() {
@@ -244,7 +247,7 @@
     // 1. Inisialisasi Chart.js
     function initializeChart() {
         const ctx = document.getElementById('quickCountChart').getContext('2d');
-        Chart.register(ChartDataLabels); // Register datalabels plugin
+        Chart.register(ChartDataLabels);
 
         quickCountChart = new Chart(ctx, {
             type: 'bar',
@@ -252,7 +255,7 @@
                 labels: CANDIDATES.map(c => c.name),
                 datasets: [{
                     label: 'Persentase Suara',
-                    data: CANDIDATES.map(() => 0), // Initial data
+                    data: CANDIDATES.map(() => 0), 
                     backgroundColor: CANDIDATES.map(c => c.color),
                     borderColor: CANDIDATES.map(c => c.hoverColor),
                     borderWidth: 1,
@@ -263,24 +266,20 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                indexAxis: 'y', // Bar horizontal
+                indexAxis: 'y',
                 animation: {
-                    duration: 1000, // Durasi animasi
-                    easing: 'easeOutQuart' // Tipe easing
+                    duration: 1000, 
+                    easing: 'easeOutQuart'
                 },
                 plugins: {
-                    legend: {
-                        display: false // Sembunyikan legend
-                    },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
                                 if (context.parsed.x !== null) {
-                                    label += context.parsed.x.toFixed(2) + '% (' + (context.raw.actualVotes || 0).toLocaleString('id-ID') + ' suara)';
+                                    const actualVotes = context.raw.actualVotes || 0;
+                                    label += `: ${context.parsed.x.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')} suara)`;
                                 }
                                 return label;
                             }
@@ -290,20 +289,17 @@
                         anchor: 'end',
                         align: 'end',
                         formatter: (value, context) => {
-                            const actualVotes = context.dataset.data[context.dataIndex].actualVotes || 0;
+                            const actualVotes = context.dataset.actualVotes[context.dataIndex] || 0;
                             return `${value.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')})`;
                         },
                         color: '#333',
-                        font: {
-                            weight: 'bold',
-                            size: 12
-                        }
+                        font: { weight: 'bold', size: 12 }
                     }
                 },
                 scales: {
                     x: {
                         beginAtZero: true,
-                        max: 100, // Max percentage
+                        max: 100, 
                         title: {
                             display: true,
                             text: 'Persentase (%)',
@@ -335,6 +331,7 @@
         const formData = getSavedData();
 
         formHeader.textContent = `Input Data Dapil ${currentDapilIndex}`;
+        formHeader.classList.remove('form-hidden'); // Pastikan header terlihat
 
         let html = `
             <div class="dapil-card" id="dapil-input-card">
@@ -354,6 +351,7 @@
         html += `</div>`;
         
         dapilCardDiv.innerHTML = html;
+        dapilCardDiv.classList.remove('hidden'); // Pastikan container card terlihat
 
         if (currentDapilIndex === NUM_DAPIL) {
             submitButton.textContent = 'Simpan & Lihat Hasil Akhir';
@@ -362,6 +360,7 @@
             submitButton.textContent = `Simpan & Lanjut ke Dapil ${currentDapilIndex + 1}`;
             submitButton.classList.remove('btn-finish');
         }
+        submitButton.removeAttribute('disabled'); // Pastikan tombol aktif
     }
 
     // 3. Menghitung dan Memperbarui Hasil (Grafik)
@@ -372,20 +371,15 @@
         let dapilCount = 0;
 
         for (let i = 1; i <= NUM_DAPIL; i++) {
-            let dapilHasData = false;
             let currentDapilTotal = 0;
             CANDIDATES.forEach(candidate => {
                 const key = `${candidate.id}_dapil_${i}`;
                 const votes = parseInt(allFormData[key] || 0);
                 
-                if (votes > 0) {
-                    dapilHasData = true;
-                }
                 currentDapilTotal += votes;
-
                 candidateTotals[candidate.id] += votes;
             });
-            if (dapilHasData || currentDapilTotal > 0) { // Dapil dianggap memiliki data jika ada input apapun
+            if (currentDapilTotal > 0 || Object.keys(allFormData).some(key => key.endsWith(`_dapil_${i}`))) {
                 dapilCount++;
             }
             totalVotes += currentDapilTotal;
@@ -399,20 +393,14 @@
         const chartData = CANDIDATES.map(candidate => {
             const percentage = totalVotes === 0 ? 0 : (candidateTotals[candidate.id] / totalVotes) * 100;
             return {
-                x: percentage, // For horizontal bar chart, x is the value
+                x: percentage,
                 actualVotes: candidateTotals[candidate.id]
             };
         });
-
-        quickCountChart.data.datasets[0].data = chartData.map(d => d.x);
-        quickCountChart.data.datasets[0].actualVotes = chartData.map(d => d.actualVotes); // Store actual votes for datalabels
         
-        // Ensure datalabels have access to actualVotes
-        quickCountChart.options.plugins.datalabels.formatter = (value, context) => {
-            const actualVotes = chartData[context.dataIndex].actualVotes || 0;
-            return `${value.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')} suara)`;
-        };
-
+        quickCountChart.data.datasets[0].data = chartData.map(d => d.x);
+        quickCountChart.data.datasets[0].actualVotes = chartData.map(d => d.actualVotes);
+        
         quickCountChart.update();
         
         if (dapilCount === NUM_DAPIL && localStorage.getItem(LOCK_KEY) === 'true') {
@@ -428,37 +416,26 @@
         const form = document.getElementById('quick-count-form');
         const currentData = getSavedData();
         let currentDapilTotal = 0;
+        let hasNegativeInput = false;
 
         CANDIDATES.forEach(candidate => {
             const inputId = `${candidate.id}_dapil_${currentDapilIndex}`;
             const inputElement = document.getElementById(inputId);
             const votes = parseInt(inputElement.value || 0);
 
+            if (votes < 0) {
+                 hasNegativeInput = true;
+            }
+            
             currentData[inputId] = votes;
             currentDapilTotal += votes;
         });
         
-        // Client-side validation for non-negative numbers
-        const inputs = form.querySelectorAll('input[type="number"]');
-        let hasNegativeInput = false;
-        inputs.forEach(input => {
-            if (parseInt(input.value) < 0) {
-                hasNegativeInput = true;
-                input.style.borderColor = 'red';
-                input.style.boxShadow = '0 0 0 3px rgba(255, 0, 0, 0.25)';
-            } else {
-                 input.style.borderColor = ''; // Reset border
-                 input.style.boxShadow = '';
-            }
-        });
-
         if (hasNegativeInput) {
             alert("Mohon masukkan angka non-negatif (0 atau lebih) untuk jumlah suara.");
             return;
         }
 
-
-        // Optional: Confirm if total votes for current Dapil is 0
         if (currentDapilTotal === 0 && !confirm(`Anda memasukkan 0 suara untuk semua calon di Dapil ${currentDapilIndex}. Apakah Anda yakin ingin melanjutkan?`)) {
             return;
         }
@@ -469,13 +446,15 @@
             currentDapilIndex++;
             localStorage.setItem(CURRENT_DAPIL_KEY, currentDapilIndex);
             
-            // Animasi transisi form (opsional, bisa ditambah CSS fade)
+            // Animasi transisi form
             const dapilInputCard = document.getElementById('dapil-input-card');
-            dapilInputCard.style.opacity = 0;
+            if (dapilInputCard) dapilInputCard.style.opacity = 0;
+            
             setTimeout(() => {
                 renderCurrentDapilForm();
-                dapilInputCard.style.opacity = 1; // Fade in new form
-            }, 300); // Waktu transisi
+                const newDapilInputCard = document.getElementById('dapil-input-card');
+                if (newDapilInputCard) newDapilInputCard.style.opacity = 1;
+            }, 300);
             
             calculateAndDisplayResults(); 
         } else {
@@ -493,26 +472,67 @@
         const currentDapilCardContainer = document.getElementById('current-dapil-card');
         const formHeader = document.getElementById('form-header');
 
+        // Kunci semua input di form
         Array.from(form.elements).forEach(element => {
             if (element.tagName === 'INPUT') {
                 element.setAttribute('disabled', 'disabled');
             }
         });
         
-        // Hide the form sections elegantly
+        // Sembunyikan form sections
         currentDapilCardContainer.classList.add('hidden');
         formHeader.classList.add('form-hidden');
-        form.classList.add('form-hidden'); // Hide the entire form wrapper too if needed
-
+        
+        // Kunci tombol
         submitButton.setAttribute('disabled', 'disabled');
         submitButton.textContent = 'DATA SUDAH LENGKAP DAN TERKUNCI';
-        submitButton.style.backgroundColor = '#6c757d'; /* Warna abu-abu untuk tombol terkunci */
+        submitButton.style.backgroundColor = '#6c757d';
         submitButton.style.transform = 'none';
+        
+        // Tampilkan pesan terkunci
         lockStatus.style.display = 'block';
 
+        // Finalisasi judul
         document.getElementById('main-title').textContent = 'HASIL AKHIR PEMILIHAN KEPALA SEKOLAH';
         document.getElementById('page-title').textContent = 'Hasil Akhir Pemilihan Kepala Sekolah';
         document.querySelector('.results-section h2').textContent = '🏆 Hasil Final Pemilihan Kepala Sekolah';
 
-        // Ensure chart updates one last time with final data
         calculateAndDisplayResults();
+    }
+
+    // 6. Inisialisasi Saat Halaman Dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeChart();
+        
+        const isLocked = localStorage.getItem(LOCK_KEY) === 'true';
+
+        const savedDapilIndex = parseInt(localStorage.getItem(CURRENT_DAPIL_KEY));
+        if (savedDapilIndex && savedDapilIndex <= NUM_DAPIL) {
+            currentDapilIndex = savedDapilIndex;
+        } else if (isLocked) {
+            currentDapilIndex = NUM_DAPIL; 
+        }
+
+        calculateAndDisplayResults();
+        
+        if (isLocked) {
+            disableForm();
+        } else {
+            // Ini adalah bagian vital untuk memastikan form muncul jika tidak terkunci
+            renderCurrentDapilForm(); 
+            document.getElementById('quick-count-form').addEventListener('submit', handleFormSubmit);
+        }
+    });
+
+    /*
+     * CARA RESET DATA (Untuk memunculkan kembali form input Dapil 1):
+     * 1. Buka halaman ini di browser.
+     * 2. Tekan F12 untuk membuka Developer Console.
+     * 3. Ketik dan jalankan perintah ini (lalu Enter):
+     * localStorage.clear(); 
+     * location.reload();
+    */
+</script>
+
+</body>
+</html>
