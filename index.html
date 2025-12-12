@@ -93,47 +93,6 @@
             color: #27ae60; /* Green for completion */
         }
         
-        /* Dapil Card & Form */
-        .dapil-card {
-            border: 1px solid #bdc3c7;
-            padding: 25px;
-            border-radius: 8px;
-            background-color: #ecf0f1;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: opacity 0.3s ease;
-        }
-        .dapil-card.hidden {
-            opacity: 0;
-            height: 0;
-            padding: 0;
-            overflow: hidden;
-            margin-bottom: 0;
-        }
-        .form-hidden { display: none; }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 6px;
-            font-weight: 700;
-            color: #34495e;
-            font-size: 1em;
-        }
-        input[type="number"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            border: 2px solid #bdc3c7;
-            border-radius: 5px;
-            font-size: 1.1em;
-            box-sizing: border-box;
-        }
-        input[type="number"]:focus {
-            border-color: #2980b9;
-            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
-            outline: none;
-        }
-
         /* Logos and Candidate Names */
         .candidate-label {
             display: flex;
@@ -145,7 +104,6 @@
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background-color: #3498db; /* Default color for visualization */
             display: inline-block;
             text-align: center;
             line-height: 30px;
@@ -153,8 +111,16 @@
             font-weight: 900;
             flex-shrink: 0;
         }
-        .logo.paslon-1 { background-color: #e74c3c; } /* Red for Paslon 1 */
-        .logo.paslon-2 { background-color: #2ecc71; } /* Green for Paslon 2 */
+        .logo.paslon-1 { background-color: #e74c3c; } 
+        .logo.paslon-2 { background-color: #2ecc71; } 
+        .party-logo {
+            width: 15px;
+            height: 15px;
+            border: 1px solid #ccc;
+            display: inline-block;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
         .paslon-label {
             font-weight: 700;
         }
@@ -166,101 +132,68 @@
             border: 1px dashed #95a5a6;
             border-radius: 5px;
         }
-        .party-input-group h4 {
-            color: #2c3e50;
-            margin-top: 0;
-            font-size: 1.2em;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-        }
 
-        /* Buttons */
-        button {
+        /* Peta Legislatif (NEW) */
+        #legislative-map-container {
             width: 100%;
-            padding: 18px;
-            background-color: #2980b9; 
-            color: white;
-            border: none;
+            max-width: 900px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); /* Atur grid untuk 19 kotak */
+            gap: 5px;
+            border: 2px solid #bdc3c7;
+            padding: 10px;
             border-radius: 8px;
-            font-size: 1.3em;
+        }
+        .dapil-region {
+            aspect-ratio: 1 / 1; 
+            background-color: #ecf0f1; /* Default/Unprocessed */
+            border: 1px solid #7f8c8d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9em;
             font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 35px;
+            color: #34495e;
+            transition: background-color 0.5s ease;
+            position: relative;
         }
-        button:hover:not([disabled]) {
-            background-color: #3498db;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        .dapil-region::after {
+            content: attr(data-winner-party); /* Tampilkan logo pemenang */
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.8em;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        button.btn-finish {
-            background-color: #27ae60;
-        }
-        button.btn-finish:hover:not([disabled]) {
-            background-color: #2ecc71;
-        }
-
-        /* Projected Winner Pop-up (Modal) */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 100; 
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
-            padding-top: 60px;
+        .region-color-placeholder {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            margin-left: 5px;
+            border: 1px solid #fff;
         }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 40px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 600px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            animation: zoomIn 0.5s;
+        /* Modals and general form styles (simplified/unchanged) */
+        .dapil-card.hidden { opacity: 0; height: 0; padding: 0; overflow: hidden; margin-bottom: 0; }
+        .form-hidden { display: none; }
+        /* (CSS untuk input, button, modal tetap seperti sebelumnya) */
+        button {
+            width: 100%; padding: 18px; background-color: #2980b9; color: white; border: none; border-radius: 8px; font-size: 1.3em; font-weight: 700; cursor: pointer; transition: background-color 0.3s ease, transform 0.2s ease; margin-top: 35px;
         }
-        .modal-content h3 {
-            color: #e74c3c;
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            border-left: none;
-        }
-        .modal-content p {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #2980b9;
-        }
-        .modal-close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .modal-close:hover,
-        .modal-close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        @keyframes zoomIn {
-            from {transform: scale(0.5); opacity: 0;}
-            to {transform: scale(1); opacity: 1;}
-        }
+        button:hover:not([disabled]) { background-color: #3498db; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        button:disabled { background-color: #95a5a6; cursor: not-allowed; transform: none; box-shadow: none; }
+        button.btn-finish { background-color: #27ae60; }
+        button.btn-finish:hover:not([disabled]) { background-color: #2ecc71; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); padding-top: 60px; }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 40px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: zoomIn 0.5s; }
+        .modal-content h3 { color: #e74c3c; font-size: 2.5em; margin-bottom: 15px; border-left: none; }
+        .modal-content p { font-size: 1.5em; font-weight: 700; color: #2980b9; }
+        .modal-close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .modal-close:hover, .modal-close:focus { color: #000; text-decoration: none; cursor: pointer; }
+        @keyframes zoomIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
     </style>
 </head>
 <body>
@@ -275,25 +208,27 @@
             <canvas id="quickCountChart"></canvas>
         </div>
         <div class="total-info">
-            Total Suara Sah Walikota Terinput: <strong id="total-suara-display">0</strong> suara dari <strong id="processed-dapil-count">0</strong> Dapil.
+            Total Suara Sah Walikota Terinput: <strong><span id="total-suara-display">0</span></strong> suara dari <strong><span id="processed-dapil-count">0</span></strong> Dapil.
         </div>
         
-        <h2 style="margin-top: 40px;">🗳️ Hasil Sementara Suara Partai (Legislatif)</h2>
-        <div id="chart-container-legislatif">
-            <canvas id="quickCountLegislatifChart"></canvas>
-        </div>
+        <h2 style="margin-top: 40px;">🗺️ Peta Kemenangan Partai Legislatif (19 Negara Bagian)</h2>
+        <p class="total-info">Warna wilayah berdasarkan Partai dengan suara tertinggi di Dapil tersebut. </p>
+        <div id="legislative-map-container">
+            </div>
         <div class="total-info">
-            Total Suara Sah Legislatif Terinput: <strong id="total-legislatif-display">0</strong> suara.
+            Total Suara Sah Legislatif Terinput: <strong><span id="total-legislatif-display">0</span></strong> suara.
         </div>
         <h3 style="text-align:center; margin-top: 40px; border-left: none;">DETAIL KOALISI PARTAI</h3>
         <div style="display: flex; justify-content: space-around; gap: 20px;">
             <div style="flex: 1; text-align: center; border: 1px solid #e74c3c; padding: 15px; border-radius: 8px;">
                 <h4>PASLON 1</h4>
-                <p>Koalisi: **PARTAI MERAH, PARTAI INDO, PARTAI WILAD, PARTAI JENIUS**</p>
+                <p>Koalisi: <span style="font-weight: 700;">PARTAI MERAH, PARTAI INDO, PARTAI WILAD, PARTAI JENIUS</span></p>
+                <p>Total Koalisi: <strong style="color: #e74c3c;"><span id="koalisi-1-total">0</span></strong> suara.</p>
             </div>
             <div style="flex: 1; text-align: center; border: 1px solid #2ecc71; padding: 15px; border-radius: 8px;">
                 <h4>PASLON 2</h4>
-                <p>Koalisi: **PARTAI BESI, PARTAI KAYU**</p>
+                <p>Koalisi: <span style="font-weight: 700;">PARTAI BESI, PARTAI KAYU</span></p>
+                <p>Total Koalisi: <strong style="color: #2ecc71;"><span id="koalisi-2-total">0</span></strong> suara.</p>
             </div>
         </div>
     </div>
@@ -311,38 +246,38 @@
         <span class="modal-close">&times;</span>
         <h3>PROJECTION ALERT!</h3>
         <p id="winner-message"></p>
-        <p style="font-size: 1em; color: #555;">Data telah mencapai 80% (16 dari 19 Dapil) terinput.</p>
+        <p style="font-size: 1em; color: #555; font-weight: normal;">Data telah mencapai 80% (16 dari 19 Dapil) terinput.</p>
     </div>
 </div>
 
 <script>
     // --- Konfigurasi Awal ---
     const MAX_VOTES_PER_DAPIL = 700000;
+    const NUM_DAPIL = 19;
+    const PROJECTED_WINNER_THRESHOLD = Math.ceil(NUM_DAPIL * 0.8);
+    
     const CANDIDATES = [
-        { id: 'paslon_1', name: 'HJ. ARI NASUTIONAS - Prof. Husainis', color: '#e74c3c', hoverColor: '#c0392b', logoClass: 'paslon-1' }, // Merah
-        { id: 'paslon_2', name: 'SASMARA ABIGAIL - DIRRENDRA AFIF', color: '#2ecc71', hoverColor: '#27ae60', logoClass: 'paslon-2' } // Hijau
+        { id: 'paslon_1', name: 'HJ. ARI NASUTIONAS - Prof. Husainis', color: '#e74c3c', hoverColor: '#c0392b', logoClass: 'paslon-1', koalisi: ['partai_merah', 'partai_indo', 'partai_wilad', 'partai_jenius'] }, // Merah
+        { id: 'paslon_2', name: 'SASMARA ABIGAIL - DIRRENDRA AFIF', color: '#2ecc71', hoverColor: '#27ae60', logoClass: 'paslon-2', koalisi: ['partai_besi', 'partai_kayu'] } // Hijau
     ];
     const PARTIES = [
-        { id: 'partai_merah', name: 'PARTAI MERAH', color: '#e74c3c' },
-        { id: 'partai_indo', name: 'PARTAI INDO', color: '#f39c12' },
-        { id: 'partai_wilad', name: 'PARTAI WILAD', color: '#3498db' },
-        { id: 'partai_jenius', name: 'PARTAI JENIUS', color: '#9b59b6' },
-        { id: 'partai_besi', name: 'PARTAI BESI', color: '#7f8c8d' },
-        { id: 'partai_kayu', name: 'PARTAI KAYU', color: '#d35400' }
+        { id: 'partai_merah', name: 'PARTAI MERAH', color: '#e74c3c', shortName: 'MRH' },
+        { id: 'partai_indo', name: 'PARTAI INDO', color: '#f39c12', shortName: 'IND' },
+        { id: 'partai_wilad', name: 'PARTAI WILAD', color: '#3498db', shortName: 'WLD' },
+        { id: 'partai_jenius', name: 'PARTAI JENIUS', color: '#9b59b6', shortName: 'JNS' },
+        { id: 'partai_besi', name: 'PARTAI BESI', color: '#7f8c8d', shortName: 'BSI' },
+        { id: 'partai_kayu', name: 'PARTAI KAYU', color: '#d35400', shortName: 'KYU' }
     ];
-    const NUM_DAPIL = 19;
-    const PROJECTED_WINNER_THRESHOLD = Math.ceil(NUM_DAPIL * 0.8); // 80% dari 19 = 16 Dapil
     
     // Local Storage Keys
-    const FORM_DATA_KEY = 'quickCountPilwalkotDurian_v3'; 
-    const CURRENT_DAPIL_KEY = 'currentDapilIndexPilwalkotDurian_v3'; 
-    const LOCK_KEY = 'quickCountLockedPilwalkotDurian_v3'; 
-    const PROJECTED_SHOWN_KEY = 'projectotShownPilwalkotDurian_v3'; 
+    const FORM_DATA_KEY = 'quickCountPilwalkotDurian_v4'; 
+    const CURRENT_DAPIL_KEY = 'currentDapilIndexPilwalkotDurian_v4'; 
+    const LOCK_KEY = 'quickCountLockedPilwalkotDurian_v4'; 
+    const PROJECTED_SHOWN_KEY = 'projectotShownPilwalkotDurian_v4'; 
     
     let currentDapilIndex = 1; 
     let allFormData = {}; 
     let quickCountChart;
-    let quickCountLegislatifChart; // NEW CHART VARIABLE
 
     // --- Fungsi Bantuan ---
     function getSavedData() {
@@ -350,7 +285,7 @@
         return savedData ? JSON.parse(savedData) : {};
     }
     
-    // Chart options helper (since most options are the same)
+    // --- Chart Options Helper ---
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -378,7 +313,7 @@
                     return `${value.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')})`;
                 },
                 color: '#333',
-                font: { weight: 'bold', size: 14 }
+                font: { weight: '900', size: 14 }
             }
         },
         scales: {
@@ -418,36 +353,27 @@
         quickCountChart.data.datasets[0].actualVotes = CANDIDATES.map(() => 0); 
     }
     
-    // 1b. Inisialisasi Chart Legislatif (NEW FUNCTION)
-    function initializeLegislativeChart() {
-        const ctx = document.getElementById('quickCountLegislatifChart').getContext('2d');
-        
-        // Buat salinan options dan modifikasi jika perlu (misal: warna bar)
-        let legislativeOptions = JSON.parse(JSON.stringify(chartOptions));
-        // Ubah warna teks judul X axis
-        legislativeOptions.scales.x.title.text = 'Persentase (%) dari Total Suara Sah Legislatif';
+    // 1b. Render Peta Legislatif (NEW FUNCTION)
+    function renderLegislativeMap() {
+        const mapContainer = document.getElementById('legislative-map-container');
+        mapContainer.innerHTML = ''; // Clear existing map
 
-
-        quickCountLegislatifChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: PARTIES.map(p => p.name),
-                datasets: [{
-                    label: 'Persentase Suara Partai',
-                    data: PARTIES.map(() => 0), 
-                    backgroundColor: PARTIES.map(p => p.color),
-                    borderColor: PARTIES.map(p => p.color).map(c => c + 'AA'), // Border sedikit transparan
-                    borderWidth: 1,
-                    barPercentage: 0.8,
-                    categoryPercentage: 0.9
-                }]
-            },
-            options: legislativeOptions
-        });
-        quickCountLegislatifChart.data.datasets[0].actualVotes = PARTIES.map(() => 0); 
+        for (let i = 1; i <= NUM_DAPIL; i++) {
+            const dapilDiv = document.createElement('div');
+            dapilDiv.className = 'dapil-region';
+            dapilDiv.id = `dapil-region-${i}`;
+            dapilDiv.textContent = `Dapil ${i}`;
+            dapilDiv.setAttribute('data-winner-party', '');
+            
+            // Set initial style (unprocessed)
+            dapilDiv.style.backgroundColor = '#ecf0ff'; 
+            dapilDiv.style.color = '#34495e';
+            
+            mapContainer.appendChild(dapilDiv);
+        }
     }
 
-    // 2. Membuat Input Form (Tidak Berubah)
+    // 2. Membuat Input Form (Updated with Party Logos)
     function renderCurrentDapilForm() {
         const dapilCardDiv = document.getElementById('current-dapil-card');
         const formHeader = document.getElementById('form-header');
@@ -460,7 +386,7 @@
         let html = `
             <div class="dapil-card" id="dapil-input-card">
                 <h3>Suara Paslon (Wajib Diisi)</h3>
-                <p>Maksimal Total Suara Sah per Dapil: ${MAX_VOTES_PER_DAPIL.toLocaleString('id-ID')} suara.</p>
+                <p>Maksimal Total Suara Sah Paslon per Dapil: ${MAX_VOTES_PER_DAPIL.toLocaleString('id-ID')} suara.</p>
         `;
         
         // --- Input Paslon ---
@@ -490,7 +416,12 @@
             const savedValue = parseInt(formData[inputId] || 0);
             
             html += `
-                <label for="${inputId}">${party.name}</label>
+                <label for="${inputId}">
+                    <span class="candidate-label">
+                        <span class="party-logo" style="background-color: ${party.color};"></span>
+                        <span class="paslon-label">${party.name}</span>
+                    </span>
+                </label>
                 <input type="number" id="${inputId}" name="${inputId}" min="0" value="${savedValue}" required>
             `;
         });
@@ -515,21 +446,27 @@
         submitButton.removeAttribute('disabled');
     }
 
-    // 3. Menghitung dan Memperbarui Hasil (Grafik Paslon dan Legislatif) (UPDATED)
+    // 3. Menghitung dan Memperbarui Hasil (Grafik Paslon dan Peta Legislatif) (UPDATED LOGIC)
     function calculateAndDisplayResults() {
         allFormData = getSavedData();
         let totalPaslonVotes = 0;
         let totalLegislativeVotes = 0;
+        let koalisi1Total = 0;
+        let koalisi2Total = 0;
+
         let candidateTotals = CANDIDATES.reduce((acc, c) => ({ ...acc, [c.id]: 0 }), {});
-        let partyTotals = PARTIES.reduce((acc, p) => ({ ...acc, [p.id]: 0 }), {}); // NEW
+        let partyTotals = PARTIES.reduce((acc, p) => ({ ...acc, [p.id]: 0 }), {}); 
         let dapilCount = 0;
         
         for (let i = 1; i <= NUM_DAPIL; i++) {
             let currentPaslonTotal = 0;
             let currentPartyTotal = 0;
             let dapilHasPaslonInput = false;
+            let dapilPartyVotes = {};
+            
+            const dapilRegionElement = document.getElementById(`dapil-region-${i}`);
 
-            // Hitung suara Paslon
+            // 1. Hitung suara Paslon
             CANDIDATES.forEach(candidate => {
                 const key = `${candidate.id}_dapil_${i}`;
                 const votes = parseInt(allFormData[key] || 0);
@@ -538,27 +475,64 @@
                 
                 currentPaslonTotal += votes;
                 candidateTotals[candidate.id] += votes;
+
+                // LOGIKA BARU: Suara Paslon masuk ke Koalisi Partai
+                if (candidate.id === 'paslon_1') { koalisi1Total += votes; }
+                if (candidate.id === 'paslon_2') { koalisi2Total += votes; }
             });
             
-            // Hitung suara Partai (NEW)
+            // 2. Hitung suara Partai (Legislatif)
             PARTIES.forEach(party => {
                  const key = `${party.id}_dapil_${i}`;
                  const votes = parseInt(allFormData[key] || 0);
                  
                  currentPartyTotal += votes;
                  partyTotals[party.id] += votes;
+                 dapilPartyVotes[party.id] = votes; // Simpan untuk penentuan pemenang Dapil
+                 
+                 // LOGIKA BARU: Suara Partai masuk ke total Koalisi
+                 if (CANDIDATES[0].koalisi.includes(party.id)) { koalisi1Total += votes; }
+                 if (CANDIDATES[1].koalisi.includes(party.id)) { koalisi2Total += votes; }
             });
 
-            // Hanya hitung Dapil terproses jika ada input Paslon
-            if (dapilHasPaslonInput) { dapilCount++; }
+            // 3. Penentuan Pemenang Dapil Legislatif (untuk Peta)
+            if (dapilHasPaslonInput || currentPartyTotal > 0) {
+                 dapilCount++; 
+                 let maxPartyVotes = -1;
+                 let winnerParty = { color: '#7f8c8d', shortName: '?' }; 
+
+                 PARTIES.forEach(party => {
+                     if (dapilPartyVotes[party.id] > maxPartyVotes) {
+                         maxPartyVotes = dapilPartyVotes[party.id];
+                         winnerParty = party;
+                     }
+                 });
+                 
+                 if (dapilRegionElement) {
+                     dapilRegionElement.style.backgroundColor = winnerParty.color;
+                     dapilRegionElement.setAttribute('data-winner-party', winnerParty.shortName);
+                     dapilRegionElement.style.color = '#fff';
+                 }
+            } else {
+                 if (dapilRegionElement) {
+                     dapilRegionElement.style.backgroundColor = '#ecf0f1';
+                     dapilRegionElement.setAttribute('data-winner-party', '');
+                     dapilRegionElement.style.color = '#34495e';
+                 }
+            }
+            
             totalPaslonVotes += currentPaslonTotal;
-            totalLegislativeVotes += currentPartyTotal; // NEW
+            totalLegislativeVotes += currentPartyTotal;
         }
         
+        // Update Display Umum
         document.getElementById('dapil-processed').textContent = dapilCount;
         document.getElementById('processed-dapil-count').textContent = dapilCount;
         document.getElementById('total-suara-display').textContent = totalPaslonVotes.toLocaleString('id-ID');
-        document.getElementById('total-legislatif-display').textContent = totalLegislativeVotes.toLocaleString('id-ID'); // NEW Display
+        document.getElementById('total-legislatif-display').textContent = totalLegislativeVotes.toLocaleString('id-ID'); 
+        document.getElementById('koalisi-1-total').textContent = koalisi1Total.toLocaleString('id-ID');
+        document.getElementById('koalisi-2-total').textContent = koalisi2Total.toLocaleString('id-ID');
+
 
         // --- Update Chart PASLON ---
         const paslonChartData = CANDIDATES.map(candidate => {
@@ -573,21 +547,6 @@
         quickCountChart.data.datasets[0].actualVotes = paslonChartData.map(d => d.actualVotes);
         quickCountChart.update();
         
-        // --- Update Chart LEGISLATIF (NEW) ---
-        const legislativeChartData = PARTIES.map(party => {
-            const percentage = totalLegislativeVotes === 0 ? 0 : (partyTotals[party.id] / totalLegislativeVotes) * 100;
-            return {
-                x: percentage,
-                actualVotes: partyTotals[party.id]
-            };
-        });
-        
-        quickCountLegislatifChart.data.labels = PARTIES.map(p => p.name); // Pastikan label tetap terurut sesuai PARTIES
-        quickCountLegislatifChart.data.datasets[0].data = legislativeChartData.map(d => d.x);
-        quickCountLegislatifChart.data.datasets[0].actualVotes = legislativeChartData.map(d => d.actualVotes);
-        quickCountLegislatifChart.update();
-
-
         // Cek Projected Winner
         checkProjectedWinner(dapilCount, candidateTotals, totalPaslonVotes);
 
@@ -597,7 +556,7 @@
         }
     }
     
-    // 4. Check Projected Winner (Tidak Berubah)
+    // 4. Check Projected Winner (Minor change to remove **)
     function checkProjectedWinner(dapilCount, candidateTotals, totalVotes) {
         if (dapilCount >= PROJECTED_WINNER_THRESHOLD && localStorage.getItem(PROJECTED_SHOWN_KEY) !== 'true') {
             
@@ -618,7 +577,7 @@
             const winnerMessage = document.getElementById('winner-message');
 
             winnerMessage.innerHTML = `
-                **PROJECTED WINNER IS:**<br>
+                <strong style="font-size: 1.3em;">PROJECTED WINNER IS:</strong><br>
                 <span style="color: ${winnerCandidate.color}; font-size: 1.8em;">
                     ${winnerCandidate.name}
                 </span>
@@ -631,7 +590,7 @@
         }
     }
 
-    // 5. Handler Submit Form (Validasi Paslon dan Simpan Partai) (Tidak Berubah)
+    // 5. Handler Submit Form (Validation unchanged)
     function handleFormSubmit(event) {
         event.preventDefault();
 
@@ -701,7 +660,7 @@
         }
     }
 
-    // 6. Menonaktifkan Form & Finalisasi Tampilan (Tidak Berubah)
+    // 6. Menonaktifkan Form & Finalisasi Tampilan (Unchanged)
     function disableForm() {
         const form = document.getElementById('quick-count-form');
         const submitButton = document.getElementById('submit-button');
@@ -728,10 +687,10 @@
         calculateAndDisplayResults(); 
     }
 
-    // 7. Inisialisasi Saat Halaman Dimuat (UPDATED)
+    // 7. Inisialisasi Saat Halaman Dimuat (Updated to include map render)
     document.addEventListener('DOMContentLoaded', () => {
         initializeChart();
-        initializeLegislativeChart(); // NEW: Initialize the second chart
+        renderLegislativeMap(); // NEW: Render the initial map structure
         
         const isLocked = localStorage.getItem(LOCK_KEY) === 'true';
 
@@ -745,7 +704,7 @@
             currentDapilIndex = 1; 
         }
 
-        calculateAndDisplayResults();
+        calculateAndDisplayResults(); // Update both charts and map based on saved data
         
         if (isLocked) {
             disableForm();
