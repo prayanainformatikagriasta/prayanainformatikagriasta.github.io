@@ -176,6 +176,32 @@
             border: 1px solid #fff;
         }
 
+        /* Perbaikan Tampilan Form Input */
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #2c3e50;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="number"]:focus {
+            border-color: #2980b9;
+            outline: none;
+            box-shadow: 0 0 8px rgba(41, 128, 185, 0.3);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 700;
+            color: #34495e;
+        }
+
         /* Modals and general form styles (simplified/unchanged) */
         .dapil-card.hidden { opacity: 0; height: 0; padding: 0; overflow: hidden; margin-bottom: 0; }
         .form-hidden { display: none; }
@@ -187,13 +213,43 @@
         button:disabled { background-color: #95a5a6; cursor: not-allowed; transform: none; box-shadow: none; }
         button.btn-finish { background-color: #27ae60; }
         button.btn-finish:hover:not([disabled]) { background-color: #2ecc71; }
+        
+        /* Tombol Koreksi Baru */
+        .btn-correct {
+            background-color: #f39c12; 
+            margin-top: 15px; 
+        }
+        .btn-correct:hover:not([disabled]) {
+            background-color: #e67e22; 
+        }
+        
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); padding-top: 60px; }
         .modal-content { background-color: #fefefe; margin: 5% auto; padding: 40px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: zoomIn 0.5s; }
         .modal-content h3 { color: #e74c3c; font-size: 2.5em; margin-bottom: 15px; border-left: none; }
         .modal-content p { font-size: 1.5em; font-weight: 700; color: #2980b9; }
-        .modal-close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
-        .modal-close:hover, .modal-close:focus { color: #000; text-decoration: none; cursor: pointer; }
+        .modal-close, .modal-close-passcode { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .modal-close:hover, .modal-close:focus, .modal-close-passcode:hover, .modal-close-passcode:focus { color: #000; text-decoration: none; cursor: pointer; }
         @keyframes zoomIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+        
+        /* Modal Passcode */
+        .modal-input {
+            padding: 10px;
+            font-size: 1.2em;
+            width: 100%;
+            max-width: 250px;
+            margin: 15px auto;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            display: block;
+        }
+        .modal-btn {
+            width: 50%;
+            padding: 10px;
+            font-size: 1em;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -212,6 +268,9 @@
         </div>
         
         <h2 style="margin-top: 40px;">🗺️ Peta Kemenangan Partai Legislatif (19 Negara Bagian)</h2>
+        <p class="total-info" style="font-style: italic; color: #e74c3c; font-weight: 700;">
+            *Peta ini hanya representasi fiktif 19 wilayah Daerah Pemilihan (Dapil), bukan peta geografis sesungguhnya seperti Indonesia.*
+        </p>
         <p class="total-info">Warna wilayah berdasarkan Partai dengan suara tertinggi di Dapil tersebut. </p>
         <div id="legislative-map-container">
             </div>
@@ -238,6 +297,9 @@
         <div id="current-dapil-card"></div>
         
         <button type="submit" id="submit-button">Simpan & Lanjut ke Dapil Berikutnya</button>
+        <button type="button" id="unlock-button" class="btn-correct" style="display: none;">
+            Buka Kunci Koreksi Data
+        </button>
     </form>
 </div>
 
@@ -250,11 +312,23 @@
     </div>
 </div>
 
+<div id="passcodeModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close-passcode">&times;</span>
+        <h3>Koreksi Data Terkunci</h3>
+        <p>Masukkan Passcode untuk membuka kunci input data:</p>
+        <input type="password" id="passcodeInput" class="modal-input" placeholder="Passcode">
+        <button type="button" id="verifyPasscodeBtn" class="modal-btn">Verifikasi</button>
+        <p style="margin-top: 15px; font-size: 0.9em; color: #7f8c8d; font-weight: normal;">*Passcode yang benar akan membuka kembali semua Dapil untuk diedit.</p>
+    </div>
+</div>
+
 <script>
     // --- Konfigurasi Awal ---
     const MAX_VOTES_PER_DAPIL = 700000;
     const NUM_DAPIL = 19;
     const PROJECTED_WINNER_THRESHOLD = Math.ceil(NUM_DAPIL * 0.8);
+    const CORRECTION_PASSCODE = '2732'; // Passcode Baru
     
     const CANDIDATES = [
         { id: 'paslon_1', name: 'HJ. ARI NASUTIONAS - Prof. Husainis', color: '#e74c3c', hoverColor: '#c0392b', logoClass: 'paslon-1', koalisi: ['partai_merah', 'partai_indo', 'partai_wilad', 'partai_jenius'] }, // Merah
@@ -353,7 +427,7 @@
         quickCountChart.data.datasets[0].actualVotes = CANDIDATES.map(() => 0); 
     }
     
-    // 1b. Render Peta Legislatif (NEW FUNCTION)
+    // 1b. Render Peta Legislatif
     function renderLegislativeMap() {
         const mapContainer = document.getElementById('legislative-map-container');
         mapContainer.innerHTML = ''; // Clear existing map
@@ -373,7 +447,7 @@
         }
     }
 
-    // 2. Membuat Input Form (Updated with Party Logos)
+    // 2. Membuat Input Form
     function renderCurrentDapilForm() {
         const dapilCardDiv = document.getElementById('current-dapil-card');
         const formHeader = document.getElementById('form-header');
@@ -446,7 +520,7 @@
         submitButton.removeAttribute('disabled');
     }
 
-    // 3. Menghitung dan Memperbarui Hasil (Grafik Paslon dan Peta Legislatif) (UPDATED LOGIC)
+    // 3. Menghitung dan Memperbarui Hasil (Grafik Paslon dan Peta Legislatif)
     function calculateAndDisplayResults() {
         allFormData = getSavedData();
         let totalPaslonVotes = 0;
@@ -476,7 +550,7 @@
                 currentPaslonTotal += votes;
                 candidateTotals[candidate.id] += votes;
 
-                // LOGIKA BARU: Suara Paslon masuk ke Koalisi Partai
+                // Suara Paslon masuk ke Koalisi Partai
                 if (candidate.id === 'paslon_1') { koalisi1Total += votes; }
                 if (candidate.id === 'paslon_2') { koalisi2Total += votes; }
             });
@@ -490,7 +564,7 @@
                  partyTotals[party.id] += votes;
                  dapilPartyVotes[party.id] = votes; // Simpan untuk penentuan pemenang Dapil
                  
-                 // LOGIKA BARU: Suara Partai masuk ke total Koalisi
+                 // Suara Partai masuk ke total Koalisi
                  if (CANDIDATES[0].koalisi.includes(party.id)) { koalisi1Total += votes; }
                  if (CANDIDATES[1].koalisi.includes(party.id)) { koalisi2Total += votes; }
             });
@@ -556,7 +630,7 @@
         }
     }
     
-    // 4. Check Projected Winner (Minor change to remove **)
+    // 4. Check Projected Winner
     function checkProjectedWinner(dapilCount, candidateTotals, totalVotes) {
         if (dapilCount >= PROJECTED_WINNER_THRESHOLD && localStorage.getItem(PROJECTED_SHOWN_KEY) !== 'true') {
             
@@ -590,12 +664,12 @@
         }
     }
 
-    // 5. Handler Submit Form (Validation unchanged)
+    // 5. Handler Submit Form
     function handleFormSubmit(event) {
         event.preventDefault();
 
         if (localStorage.getItem(LOCK_KEY) === 'true') {
-             alert("Data sudah terkunci dan tidak bisa diubah.");
+             alert("Data sudah terkunci dan tidak bisa diubah. Gunakan tombol 'Buka Kunci Koreksi Data'.");
              return;
         }
 
@@ -660,10 +734,11 @@
         }
     }
 
-    // 6. Menonaktifkan Form & Finalisasi Tampilan (Unchanged)
+    // 6. Menonaktifkan Form & Finalisasi Tampilan
     function disableForm() {
         const form = document.getElementById('quick-count-form');
         const submitButton = document.getElementById('submit-button');
+        const unlockButton = document.getElementById('unlock-button'); 
         const lockStatus = document.getElementById('lock-status');
         const currentDapilCardContainer = document.getElementById('current-dapil-card');
         const formHeader = document.getElementById('form-header');
@@ -683,14 +758,43 @@
         submitButton.style.transform = 'none';
         
         lockStatus.style.display = 'block';
+        unlockButton.style.display = 'block'; 
 
         calculateAndDisplayResults(); 
     }
+    
+    // 6b. Mengaktifkan Kembali Form (NEW FUNCTION)
+    function enableFormForCorrection() {
+        const form = document.getElementById('quick-count-form');
+        const unlockButton = document.getElementById('unlock-button');
+        const lockStatus = document.getElementById('lock-status');
+        const formHeader = document.getElementById('form-header');
 
-    // 7. Inisialisasi Saat Halaman Dimuat (Updated to include map render)
+        localStorage.setItem(LOCK_KEY, 'false');
+        localStorage.setItem(PROJECTED_SHOWN_KEY, 'false'); // Reset proyeksi
+        
+        lockStatus.style.display = 'none';
+        unlockButton.style.display = 'none';
+        formHeader.classList.remove('form-hidden');
+        
+        currentDapilIndex = NUM_DAPIL; // Kembali ke Dapil terakhir untuk Simpan & Kunci Ulang
+        localStorage.setItem(CURRENT_DAPIL_KEY, currentDapilIndex);
+        
+        renderCurrentDapilForm(); 
+
+        Array.from(form.elements).forEach(element => {
+            if (element.tagName === 'INPUT') {
+                element.removeAttribute('disabled');
+            }
+        });
+        
+        alert(`Kunci data telah dibuka! Anda sekarang berada di Dapil ${currentDapilIndex}. Tekan 'Simpan & Lihat Hasil Akhir' untuk mengunci kembali.`);
+    }
+
+    // 7. Inisialisasi Saat Halaman Dimuat
     document.addEventListener('DOMContentLoaded', () => {
         initializeChart();
-        renderLegislativeMap(); // NEW: Render the initial map structure
+        renderLegislativeMap(); 
         
         const isLocked = localStorage.getItem(LOCK_KEY) === 'true';
 
@@ -704,7 +808,7 @@
             currentDapilIndex = 1; 
         }
 
-        calculateAndDisplayResults(); // Update both charts and map based on saved data
+        calculateAndDisplayResults(); 
         
         if (isLocked) {
             disableForm();
@@ -713,18 +817,52 @@
             document.getElementById('quick-count-form').addEventListener('submit', handleFormSubmit);
         }
         
-        // Setup Modal Close Button
-        const modal = document.getElementById('projectedWinnerModal');
-        const span = document.getElementsByClassName("modal-close")[0];
+        // Setup Modal Close Button (Projected Winner)
+        const pModal = document.getElementById('projectedWinnerModal');
+        const pSpan = document.getElementsByClassName("modal-close")[0];
         
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
+        pSpan.onclick = function() { pModal.style.display = "none"; }
         window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+            if (event.target == pModal) { pModal.style.display = "none"; }
+        }
+        
+        // Setup Modal Koreksi (NEW)
+        const cModal = document.getElementById('passcodeModal');
+        const cSpan = document.getElementsByClassName("modal-close-passcode")[0];
+        const unlockButton = document.getElementById('unlock-button');
+        const verifyBtn = document.getElementById('verifyPasscodeBtn');
+        const passcodeInput = document.getElementById('passcodeInput');
+
+        if (unlockButton) { // Pastikan tombol ada (hanya muncul jika terkunci)
+            unlockButton.onclick = function() {
+                cModal.style.display = 'block';
+                passcodeInput.value = '';
+                passcodeInput.focus();
             }
         }
+        cSpan.onclick = function() { cModal.style.display = "none"; }
+        
+        // Handler Verifikasi Passcode
+        verifyBtn.onclick = function() {
+            if (passcodeInput.value === CORRECTION_PASSCODE) {
+                cModal.style.display = 'none';
+                enableFormForCorrection();
+                
+                // Hapus event listener lama dan pasang yang baru
+                document.getElementById('quick-count-form').removeEventListener('submit', handleFormSubmit);
+                document.getElementById('quick-count-form').addEventListener('submit', handleFormSubmit);
+
+            } else {
+                alert("Passcode salah! Silakan coba lagi.");
+                passcodeInput.value = '';
+            }
+        }
+        passcodeInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyBtn.click();
+            }
+        });
     });
     /*
      * CARA RESET DATA (Untuk memunculkan kembali form input Dapil 1):
