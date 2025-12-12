@@ -107,6 +107,7 @@
             margin-bottom: 20px;
             transition: all 0.3s ease-in-out;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            opacity: 1; /* Pastikan defaultnya terlihat */
         }
         .dapil-card.hidden {
             opacity: 0;
@@ -278,7 +279,8 @@
                             label: function(context) {
                                 let label = context.dataset.label || '';
                                 if (context.parsed.x !== null) {
-                                    const actualVotes = context.raw.actualVotes || 0;
+                                    // Mengambil nilai aktual dari properti custom
+                                    const actualVotes = context.dataset.actualVotes ? context.dataset.actualVotes[context.dataIndex] : 0;
                                     label += `: ${context.parsed.x.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')} suara)`;
                                 }
                                 return label;
@@ -289,7 +291,8 @@
                         anchor: 'end',
                         align: 'end',
                         formatter: (value, context) => {
-                            const actualVotes = context.dataset.actualVotes[context.dataIndex] || 0;
+                            // Memastikan properti custom ada sebelum mengakses
+                            const actualVotes = context.dataset.actualVotes ? context.dataset.actualVotes[context.dataIndex] : 0;
                             return `${value.toFixed(2)}% (${actualVotes.toLocaleString('id-ID')})`;
                         },
                         color: '#333',
@@ -321,6 +324,9 @@
                 }
             }
         });
+        
+        // Inisialisasi array actualVotes di dataset saat chart dibuat
+        quickCountChart.data.datasets[0].actualVotes = CANDIDATES.map(() => 0); 
     }
 
     // 2. Membuat Input Form untuk Dapil saat ini
@@ -341,7 +347,8 @@
         
         CANDIDATES.forEach(candidate => {
             const inputId = `${candidate.id}_dapil_${currentDapilIndex}`;
-            const savedValue = formData[inputId] || 0; 
+            // Memastikan nilai savedValue adalah angka (0 jika null/undefined)
+            const savedValue = parseInt(formData[inputId]) || 0; 
             
             html += `
                 <label for="${inputId}">${candidate.name}</label>
@@ -352,6 +359,11 @@
         
         dapilCardDiv.innerHTML = html;
         dapilCardDiv.classList.remove('hidden'); // Pastikan container card terlihat
+        
+        // Memastikan card input dapil baru muncul dengan opacity penuh setelah transisi
+        const newDapilInputCard = document.getElementById('dapil-input-card');
+        if (newDapilInputCard) newDapilInputCard.style.opacity = 1;
+
 
         if (currentDapilIndex === NUM_DAPIL) {
             submitButton.textContent = 'Simpan & Lihat Hasil Akhir';
@@ -369,18 +381,27 @@
         let totalVotes = 0;
         let candidateTotals = CANDIDATES.reduce((acc, c) => ({ ...acc, [c.id]: 0 }), {});
         let dapilCount = 0;
-
+        
+        // Menghitung data
         for (let i = 1; i <= NUM_DAPIL; i++) {
             let currentDapilTotal = 0;
+            let dapilHasInput = false; // Flag untuk mengetahui apakah Dapil ini punya input
+
             CANDIDATES.forEach(candidate => {
                 const key = `${candidate.id}_dapil_${i}`;
                 const votes = parseInt(allFormData[key] || 0);
                 
+                if (votes > 0) { // Cek jika ada suara sah
+                    dapilHasInput = true;
+                }
+                
                 currentDapilTotal += votes;
                 candidateTotals[candidate.id] += votes;
             });
-            if (currentDapilTotal > 0 || Object.keys(allFormData).some(key => key.endsWith(`_dapil_${i}`))) {
-                dapilCount++;
+            
+            // Dapil dihitung sebagai diproses jika ada input (suara > 0)
+            if (dapilHasInput) {
+                 dapilCount++;
             }
             totalVotes += currentDapilTotal;
         }
@@ -403,9 +424,11 @@
         
         quickCountChart.update();
         
+        // Finalisasi judul jika sudah lengkap dan terkunci
         if (dapilCount === NUM_DAPIL && localStorage.getItem(LOCK_KEY) === 'true') {
             document.getElementById('main-title').textContent = 'HASIL AKHIR PEMILIHAN KEPALA SEKOLAH';
             document.getElementById('page-title').textContent = 'Hasil Akhir Pemilihan Kepala Sekolah';
+            document.querySelector('.results-section h2').textContent = '🏆 Hasil Final Pemilihan Kepala Sekolah';
         }
     }
 
@@ -413,7 +436,11 @@
     function handleFormSubmit(event) {
         event.preventDefault();
 
-        const form = document.getElementById('quick-count-form');
+        if (localStorage.getItem(LOCK_KEY) === 'true') {
+             alert("Data sudah terkunci dan tidak bisa diubah.");
+             return;
+        }
+
         const currentData = getSavedData();
         let currentDapilTotal = 0;
         let hasNegativeInput = false;
@@ -446,14 +473,13 @@
             currentDapilIndex++;
             localStorage.setItem(CURRENT_DAPIL_KEY, currentDapilIndex);
             
-            // Animasi transisi form
+            // Animasi transisi form (sembunyikan dulu)
             const dapilInputCard = document.getElementById('dapil-input-card');
             if (dapilInputCard) dapilInputCard.style.opacity = 0;
             
             setTimeout(() => {
                 renderCurrentDapilForm();
-                const newDapilInputCard = document.getElementById('dapil-input-card');
-                if (newDapilInputCard) newDapilInputCard.style.opacity = 1;
+                // Setelah renderCurrentDapilForm, opacity akan diset ke 1 di dalamnya
             }, 300);
             
             calculateAndDisplayResults(); 
@@ -474,7 +500,7 @@
 
         // Kunci semua input di form
         Array.from(form.elements).forEach(element => {
-            if (element.tagName === 'INPUT') {
+            if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
                 element.setAttribute('disabled', 'disabled');
             }
         });
@@ -492,12 +518,7 @@
         // Tampilkan pesan terkunci
         lockStatus.style.display = 'block';
 
-        // Finalisasi judul
-        document.getElementById('main-title').textContent = 'HASIL AKHIR PEMILIHAN KEPALA SEKOLAH';
-        document.getElementById('page-title').textContent = 'Hasil Akhir Pemilihan Kepala Sekolah';
-        document.querySelector('.results-section h2').textContent = '🏆 Hasil Final Pemilihan Kepala Sekolah';
-
-        calculateAndDisplayResults();
+        calculateAndDisplayResults(); // Update hasil terakhir dan finalisasi judul
     }
 
     // 6. Inisialisasi Saat Halaman Dimuat
@@ -507,18 +528,26 @@
         const isLocked = localStorage.getItem(LOCK_KEY) === 'true';
 
         const savedDapilIndex = parseInt(localStorage.getItem(CURRENT_DAPIL_KEY));
-        if (savedDapilIndex && savedDapilIndex <= NUM_DAPIL) {
+        
+        // LOGIKA PERBAIKAN: Memastikan currentDapilIndex kembali ke 1 setelah clear
+        if (!isNaN(savedDapilIndex) && savedDapilIndex >= 1 && savedDapilIndex <= NUM_DAPIL) {
+            // Jika ada nilai tersimpan yang valid
             currentDapilIndex = savedDapilIndex;
         } else if (isLocked) {
+            // Jika terkunci, pastikan indeksnya yang terakhir
             currentDapilIndex = NUM_DAPIL; 
+        } else {
+            // Default jika tidak ada data tersimpan yang valid (setelah clear)
+            currentDapilIndex = 1; 
         }
+
 
         calculateAndDisplayResults();
         
         if (isLocked) {
             disableForm();
         } else {
-            // Ini adalah bagian vital untuk memastikan form muncul jika tidak terkunci
+            // Bagian vital untuk memunculkan form
             renderCurrentDapilForm(); 
             document.getElementById('quick-count-form').addEventListener('submit', handleFormSubmit);
         }
