@@ -1539,21 +1539,37 @@ let soalAktif=[];
 let nomor=0;
 let waktu=3600;
 let timerStart=false;
+let jawaban = []
+let skipChance = 12
+let skipUsed = 0
 
 function mulai(){
 
-let kode=document.getElementById("kode").value;
+let kode=document.getElementById("kode").value.toUpperCase()
 
 if(!kodePaket[kode]){
-alert("Kode paket salah");
-return;
+alert("Kode paket salah")
+return
 }
 
-soalAktif=(kodePaket[kode]=="A")?paketA:paketB;
+let paket = kodePaket[kode]
 
-render();
+document.getElementById("kodePopup").innerText = kode
+document.getElementById("paketPopup").innerText = "PAKET "+paket
 
-startTimer();
+document.getElementById("popupInfo").style.display="flex"
+
+soalAktif=(paket=="A")?paketA:paketB
+
+}
+
+function lanjutUjian(){
+
+document.getElementById("popupInfo").style.display="none"
+
+render()
+
+startTimer()
 
 }
 
@@ -1582,22 +1598,34 @@ document.getElementById("app").innerHTML=`
 Soal ${nomor+1} / ${soalAktif.length}
 </div>
 
+<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px">
+
+${Array.from({length:soalAktif.length},(_,i)=>
+`<button onclick="lompat(${i})" style="width:40px;height:40px">${i+1}</button>`
+).join("")}
+
+</div>
+
 <div class="soal">
 ${s.q}
 </div>
 
-<div class="opsi" id="opsi"></div>
+for(let i of s.o){ html+=`<div onclick="pilihJawaban(this)">${i}</div>`}
 
 <button onclick="next()">
 <i class="fa-solid fa-arrow-right"></i>
 Next Soal
 </button>
 
-</div>
+<button onclick="skipSoal()" style="background:#f59e0b">
+<i class="fa-solid fa-forward"></i>
+Gunakan Kesempatan Lompat (${skipUsed}/12)
+</button>
 
 </div>
 
-`;
+</div>
+
 
 let html="";
 
@@ -1606,6 +1634,21 @@ html+=`<div>${i}</div>`;
 }
 
 document.getElementById("opsi").innerHTML=html;
+
+}
+
+function lompat(n){
+
+if(skipUsed>=skipChance){
+alert("Kesempatan lompat sudah habis")
+return
+}
+
+skipUsed++
+
+nomor=n
+
+render()
 
 }
 
@@ -1623,6 +1666,40 @@ return;
 }
 
 render();
+
+}
+
+function skipSoal(){
+
+if(skipUsed>=skipChance){
+alert("Kesempatan lompat soal sudah habis")
+return
+}
+
+skipUsed++
+
+nomor++
+
+if(nomor>=soalAktif.length){
+
+document.body.innerHTML=
+'<div class="block"><h1>Ujian Selesai</h1></div>'
+
+return
+
+}
+
+render()
+
+}
+
+function pilihJawaban(el){
+
+let opsi=document.querySelectorAll(".opsi div")
+
+opsi.forEach(o=>o.classList.remove("selected"))
+
+el.classList.add("selected")
 
 }
 
