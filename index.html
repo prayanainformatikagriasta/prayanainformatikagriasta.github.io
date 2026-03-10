@@ -525,9 +525,58 @@ let kodePaket = {
 "INF8-S3K2":"B",
 "INF8-F5W1":"A",
 "INF8-J9L2":"B",
-"INF8-N7R1":"A"
+"INF8-N7R1":"A",
+"INF7-K7P1":"7A",
+"INF7-Q9L2":"7B",
+"INF7-M3T2":"7B",
+"INF7-V6R1":"7A",
+"INF7-X2J2":"7B",
+"INF7-H5K1":"7A",
+"INF7-Z4D1":"7A",
+"INF7-T8W2":"7B",
+"INF7-L2N1":"7A",
+"INF7-P7X1":"7A",
+"INF7-R3K2":"7B",
+"INF7-Y6J2":"7B",
+"INF7-C9M1":"7A",
+"INF7-D5Q2":"7B",
+"INF7-F8V1":"7A",
+"INF7-B7T2":"7B",
+"INF7-N4H2":"7B",
+"INF7-W2K1":"7A",
+"INF7-J6P2":"7B",
+"INF7-G3X1":"7A",
+"INF7-S8L1":"7A",
+"INF7-A9D2":"7B",
+"INF7-K4W1":"7A",
+"INF7-E6R2":"7B",
+"INF7-P2M1":"7A",
+"INF7-U5H2":"7B",
+"INF7-X7C1":"7A",
+"INF7-T9K1":"7A",
+"INF7-R4J2":"7B",
+"INF7-Z8P2":"7B",
+"INF7-V3D1":"7A",
+"INF7-L6N2":"7B",
+"INF7-Q5W1":"7A",
+"INF7-M7K2":"7B",
+"INF7-H2R1":"7A",
+"INF7-C4T2":"7B",
+"INF7-Y8P1":"7A",
+"INF7-B6D2":"7B",
+"INF7-S3K2":"7B",
+"INF7-F5W1":"7A",
+"INF7-J9L2":"7B",
+"INF7-N7R1":"7A"
 
 };
+
+let paket = kodePaket[kode]
+
+if(paket=="A") soalAktif=paketA
+if(paket=="B") soalAktif=paketB
+if(paket=="7A") soalAktif=paket7A
+if(paket=="7B") soalAktif=paket7B
 
 let paketA=[
 
@@ -1577,7 +1626,15 @@ function render(){
 
 let s = soalAktif[nomor];
 
-let htmlOpsi = "";
+let htmlOpsi="";
+
+for(let i of s.o){
+
+let selected = (jawaban[nomor] == i) ? "selected" : ""
+
+htmlOpsi += `<div class="${selected}" onclick="pilihJawaban(this)">${i}</div>`
+
+}
 
 for(let i of s.o){
 htmlOpsi += `<div onclick="pilihJawaban(this)">${i}</div>`;
@@ -1632,6 +1689,26 @@ Gunakan Kesempatan Lompat (${skipUsed}/12)
 </div>
 
 `;
+
+${Array.from({length:soalAktif.length},(_,i)=>{
+
+let warna = jawaban[i] ? "#9ca3af" : "#22c55e"
+
+return `<button 
+onclick="lompat(${i})"
+style="
+width:40px;
+height:40px;
+background:${warna};
+color:white;
+border:none;
+border-radius:8px;
+font-weight:700;
+">
+${i+1}
+</button>`
+
+}).join("")}
 
 }
 
@@ -1698,6 +1775,11 @@ let opsi=document.querySelectorAll(".opsi div")
 opsi.forEach(o=>o.classList.remove("selected"))
 
 el.classList.add("selected")
+
+// simpan jawaban
+jawaban[nomor] = el.innerText
+
+render()
 
 }
 
