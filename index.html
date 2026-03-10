@@ -1,224 +1,319 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT Informatika - Modern UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --radius: 16px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
 
-<title>Ulangan Informatika</title>
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at top right, #e0e7ff, #f8fafc);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        /* HEADER MODERN */
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-<style>
+        .header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-*{
-box-sizing:border-box;
-}
+        .timer {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }
 
-body{
-margin:0;
-font-family:system-ui;
-background:#eef3f8;
-}
+        .timer.danger {
+            background: var(--danger);
+            animation: pulse 1s infinite;
+        }
 
-/* HEADER */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
-.header{
-background:#1976d2;
-color:white;
-padding:14px 18px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-box-shadow:0 3px 10px rgba(0,0,0,0.2);
-position:sticky;
-top:0;
-z-index:10;
-}
+        /* LOGIN / WELCOME SCREEN */
+        .welcome-container {
+            height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-.header h2{
-font-size:17px;
-margin:0;
-}
+        .login-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
 
-.timer{
-background:#0d47a1;
-padding:7px 12px;
-border-radius:6px;
-font-weight:bold;
-font-size:14px;
-display:flex;
-gap:6px;
-align-items:center;
-}
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: #e0e7ff;
+            color: var(--primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
 
-.timer.danger{
-background:#c62828;
-}
+        .login-card h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
 
-/* CONTAINER */
+        .login-card p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
 
-.container{
-padding:15px;
-max-width:750px;
-margin:auto;
-}
+        /* INPUT & BUTTON */
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
 
-/* CARD */
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: var(--secondary);
+        }
 
-.card{
-background:white;
-border-radius:12px;
-padding:22px;
-box-shadow:0 3px 14px rgba(0,0,0,0.12);
-margin-bottom:15px;
-animation:fade .3s;
-}
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            background: #f1f5f9;
+            outline: none;
+        }
 
-@keyframes fade{
-from{opacity:0;transform:translateY(5px)}
-to{opacity:1}
-}
+        input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
 
-/* TITLE */
+        .btn-mulai {
+            width: 100%;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+        }
 
-.title{
-text-align:center;
-margin-bottom:15px;
-}
+        .btn-mulai:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
 
-.title h1{
-margin:0;
-font-size:22px;
-}
+        /* MAIN EXAM CONTAINER */
+        .container {
+            padding: 30px 15px;
+            max-width: 800px;
+            margin: auto;
+        }
 
-/* INPUT */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
 
-input{
-width:100%;
-padding:14px;
-font-size:16px;
-border-radius:8px;
-border:1px solid #ccc;
-margin-top:10px;
-}
+        /* PROGRESS BAR */
+        .progress-wrapper {
+            margin-bottom: 25px;
+        }
 
-/* BUTTON */
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--secondary);
+        }
 
-button{
-width:100%;
-padding:14px;
-font-size:16px;
-border:none;
-border-radius:8px;
-background:#1976d2;
-color:white;
-margin-top:15px;
-cursor:pointer;
-display:flex;
-justify-content:center;
-align-items:center;
-gap:6px;
-}
+        .bar-bg {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-button:hover{
-background:#0d47a1;
-}
+        .bar-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            border-radius: 10px;
+        }
 
-/* PROGRESS */
+        .soal {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
 
-.progress{
-font-size:14px;
-margin-bottom:12px;
-color:#666;
-display:flex;
-align-items:center;
-gap:6px;
-}
+        /* OPSI JAWABAN */
+        .opsi {
+            display: grid;
+            gap: 12px;
+        }
 
-/* SOAL */
+        .opsi div {
+            padding: 16px 20px;
+            border-radius: 14px;
+            border: 2px solid #f1f5f9;
+            font-size: 1rem;
+            background: #f8fafc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
 
-.soal{
-font-size:18px;
-font-weight:500;
-margin-bottom:16px;
-line-height:1.4;
-}
+        .opsi div:hover {
+            background: #eef2ff;
+            border-color: var(--primary);
+            color: var(--primary);
+            padding-left: 28px;
+        }
 
-/* OPSI */
+        .opsi div.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
 
-.opsi{
-display:grid;
-gap:10px;
-}
+        /* FINISH SCREEN */
+        .block {
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            background: #ffffff;
+            color: var(--text-main);
+            padding: 20px;
+        }
 
-.opsi div{
-padding:14px;
-border-radius:8px;
-border:1px solid #ddd;
-font-size:16px;
-background:white;
-cursor:pointer;
-transition:.2s;
-}
+        .block i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
 
-.opsi div:hover{
-background:#e3f2fd;
-border-color:#1976d2;
-transform:scale(1.01);
-}
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header h2 span { display: none; }
+            .login-card { padding: 25px; }
+        }
 
-/* FINISH SCREEN */
-
-.block{
-display:flex;
-height:100vh;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-text-align:center;
-background:#111;
-color:white;
-padding:20px;
-}
-
-.block h1{
-margin-bottom:10px;
-}
-
-</style>
-
+    </style>
 </head>
-
 <body>
 
 <div id="app">
+    <div class="welcome-container">
+        <div class="login-card">
+            <div class="icon-box">
+                <i class="fa-solid fa-laptop-code"></i>
+            </div>
+            <h1>ULANGAN INFORMATIKA</h1>
+            <p>Analisis Data & Algoritma Pemrograman</p>
+            
+            <div class="input-group">
+                <label>Kode Paket Soal</label>
+                <input type="text" id="kode" placeholder="Contoh: INF7A02" autocomplete="off">
+            </div>
 
-<div class="container">
-
-<div class="card">
-
-<div class="title">
-
-<h1>ULANGAN INFORMATIKA</h1>
-<p>Bab 1-2 • Kelas 7</p>
-
-</div>
-
-<p><i class="fa-solid fa-key"></i> Masukkan kode paket</p>
-
-<input id="kode" placeholder="Masukkan kode paket">
-
-<button onclick="mulai()">
-<i class="fa-solid fa-play"></i>
-Mulai Ujian
-</button>
-
-</div>
-
-</div>
-
+            <button class="btn-mulai" onclick="mulai()">
+                Mulai Ujian <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            
+            <div style="margin-top: 20px; font-size: 0.75rem; color: #94a3b8;">
+                <i class="fa-solid fa-circle-info"></i> Masukkan kode yang diberikan pengawas
+            </div>
+        </div>
+    </div>
 </div>
 
 
