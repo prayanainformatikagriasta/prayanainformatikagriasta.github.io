@@ -10,93 +10,183 @@
 <style>
 
 body{
-margin:0;
-font-family:Arial;
-background:#f5f6fa;
+:root{
+--primary:#6366f1;
+--primary2:#8b5cf6;
+--bg:#f1f5f9;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--radius:18px;
+--shadow:0 10px 40px rgba(0,0,0,0.08);
 }
+
+*{
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+margin:0;
+background:linear-gradient(135deg,#eef2ff,#f8fafc);
+color:var(--text);
+}
+
+/* HEADER */
 
 .header{
 display:flex;
 justify-content:space-between;
-padding:15px 20px;
-background:#6366f1;
-color:white;
+align-items:center;
+padding:16px 30px;
+background:rgba(255,255,255,0.7);
+backdrop-filter:blur(12px);
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.header h2{
+font-size:1rem;
+font-weight:800;
+letter-spacing:1px;
+color:var(--primary);
 }
 
 .timer{
-font-weight:bold;
+background:linear-gradient(135deg,var(--primary),var(--primary2));
+color:white;
+padding:8px 18px;
+border-radius:50px;
+font-weight:700;
+font-size:14px;
 }
 
-.container{
-max-width:700px;
+/* LAYOUT */
+
+.main{
+display:grid;
+grid-template-columns:260px 1fr;
+gap:25px;
+max-width:1200px;
 margin:auto;
-padding:20px;
+padding:25px;
 }
+
+/* SIDEBAR NOMOR SOAL */
+
+.sidebar{
+background:var(--card);
+border-radius:var(--radius);
+padding:20px;
+box-shadow:var(--shadow);
+height:fit-content;
+}
+
+.sidebar h3{
+font-size:0.8rem;
+text-transform:uppercase;
+letter-spacing:1px;
+color:var(--muted);
+margin-bottom:15px;
+}
+
+.grid-nomor{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:8px;
+}
+
+.grid-nomor button{
+height:38px;
+border-radius:10px;
+border:none;
+background:#f1f5f9;
+cursor:pointer;
+font-weight:700;
+}
+
+.grid-nomor button:hover{
+background:var(--primary);
+color:white;
+}
+
+.grid-nomor button.answered{
+background:#10b981;
+color:white;
+}
+
+/* CARD SOAL */
 
 .card{
-background:white;
-padding:25px;
-border-radius:15px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
+background:var(--card);
+padding:30px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
 }
 
-.opsi div{
-padding:12px;
-border:2px solid #eee;
-border-radius:10px;
-margin-bottom:10px;
-cursor:pointer;
-}
-
-.opsi div:hover{
-border-color:#6366f1;
-}
-
-.selected{
-background:#6366f1;
-color:white;
-}
-
-button{
-padding:12px;
-border:none;
-border-radius:10px;
-background:#6366f1;
-color:white;
-cursor:pointer;
-margin-top:10px;
-}
-
-.welcome-container{
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.login-card{
-background:white;
-padding:40px;
-border-radius:20px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
-width:350px;
-text-align:center;
-}
-
-input{
-width:100%;
-padding:12px;
-margin-top:10px;
+.soal{
+font-size:1.15rem;
+font-weight:600;
+line-height:1.6;
 margin-bottom:20px;
 }
 
-.block{
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
+/* OPSI */
+
+.opsi{
+display:grid;
+gap:12px;
 }
+
+.opsi div{
+padding:16px;
+border-radius:12px;
+border:2px solid #f1f5f9;
+cursor:pointer;
+font-weight:500;
+background:#f8fafc;
+}
+
+.opsi div:hover{
+border-color:var(--primary);
+background:#eef2ff;
+}
+
+.opsi div.selected{
+background:var(--primary);
+color:white;
+border-color:var(--primary);
+}
+
+/* BUTTON */
+
+.action{
+margin-top:25px;
+display:flex;
+gap:10px;
+}
+
+.action button{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+font-weight:700;
+cursor:pointer;
+}
+
+.next{
+background:linear-gradient(135deg,var(--primary),var(--primary2));
+color:white;
+}
+
+.skip{
+background:#f59e0b;
+color:white;
+}
+
 
 </style>
 </head>
@@ -2334,49 +2424,55 @@ let selected=(jawaban[nomor]==i)?"selected":""
 htmlOpsi+=`<div class="${selected}" onclick="pilihJawaban(this)">${i}</div>`
 
 }
-
 document.getElementById("app").innerHTML=`
 
 <div class="header">
-
-<div>Ujian Informatika</div>
-
+<h2>UJIAN INFORMATIKA</h2>
 <div class="timer" id="timer">60:00</div>
+</div>
+
+<div class="main">
+
+<div class="sidebar">
+
+<h3>Nomor Soal</h3>
+
+<div class="grid-nomor">
+
+${Array.from({length:soalAktif.length},(_,i)=>{
+
+let answered = jawaban[i] ? "answered" : ""
+
+return `<button class="${answered}" onclick="lompat(${i})">${i+1}</button>`
+
+}).join("")}
 
 </div>
 
-<div class="container">
+</div>
 
 <div class="card">
 
-<div>Soal ${nomor+1} / ${soalAktif.length}</div>
-
-<div style="margin:10px 0">
-
-${Array.from({length:soalAktif.length},(_,i)=>
-
-`<button onclick="lompat(${i})">${i+1}</button>`
-
-).join("")}
-
+<div class="soal">
+${s.q}
 </div>
 
-<div style="margin-top:20px">${s.q}</div>
+<div class="opsi">
+${htmlOpsi}
+</div>
 
-<div class="opsi">${htmlOpsi}</div>
+<div class="action">
 
-<button onclick="next()">Next Soal</button>
+<button class="next" onclick="next()">Next</button>
 
-<button onclick="skipSoal()" style="background:orange">
-Skip (${skipUsed}/12)
-</button>
+<button class="skip" onclick="skipSoal()">Skip (${skipUsed}/12)</button>
 
 </div>
 
 </div>
 
+</div>
 `
-
 }
 
 
