@@ -1575,18 +1575,22 @@ startTimer()
 
 function render(){
 
-let s=soalAktif[nomor];
+let s = soalAktif[nomor];
 
-document.getElementById("app").innerHTML=`
+let htmlOpsi = "";
+
+for(let i of s.o){
+htmlOpsi += `<div onclick="pilihJawaban(this)">${i}</div>`;
+}
+
+document.getElementById("app").innerHTML = `
 
 <div class="header">
-
 <h2><i class="fa-solid fa-laptop-code"></i> Ujian Informatika</h2>
 
 <div class="timer" id="timer">
 <i class="fa-solid fa-clock"></i> 60:00
 </div>
-
 </div>
 
 <div class="container">
@@ -1610,7 +1614,9 @@ ${Array.from({length:soalAktif.length},(_,i)=>
 ${s.q}
 </div>
 
-for(let i of s.o){ html+=`<div onclick="pilihJawaban(this)">${i}</div>`}
+<div class="opsi">
+${htmlOpsi}
+</div>
 
 <button onclick="next()">
 <i class="fa-solid fa-arrow-right"></i>
@@ -1623,17 +1629,9 @@ Gunakan Kesempatan Lompat (${skipUsed}/12)
 </button>
 
 </div>
-
 </div>
 
-
-let html="";
-
-for(let i of s.o){
-html+=`<div>${i}</div>`;
-}
-
-document.getElementById("opsi").innerHTML=html;
+`;
 
 }
 
