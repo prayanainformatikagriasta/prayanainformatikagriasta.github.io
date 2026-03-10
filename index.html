@@ -1,134 +1,1248 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spin Wheel Sederhana</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-            font-family: sans-serif;
-        }
 
-        .wheel-container {
-            position: relative;
-            width: 350px;
-            height: 350px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Jarum Penunjuk */
-        .wheel-container::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid #e74c3c;
-            z-index: 10;
-        }
+<title>Ulangan Informatika</title>
 
-        canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
-        }
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        button {
-            margin-top: 30px;
-            padding: 12px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            transition: 0.3s;
-        }
+<style>
 
-        button:hover {
-            background-color: #27ae60;
-        }
+*{
+box-sizing:border-box;
+}
 
-        button:disabled {
-            background-color: #bdc3c7;
-        }
-    </style>
+body{
+margin:0;
+font-family:system-ui;
+background:#eef3f8;
+}
+
+/* HEADER */
+
+.header{
+background:#1976d2;
+color:white;
+padding:14px 18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 3px 10px rgba(0,0,0,0.2);
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.header h2{
+font-size:17px;
+margin:0;
+}
+
+.timer{
+background:#0d47a1;
+padding:7px 12px;
+border-radius:6px;
+font-weight:bold;
+font-size:14px;
+display:flex;
+gap:6px;
+align-items:center;
+}
+
+.timer.danger{
+background:#c62828;
+}
+
+/* CONTAINER */
+
+.container{
+padding:15px;
+max-width:750px;
+margin:auto;
+}
+
+/* CARD */
+
+.card{
+background:white;
+border-radius:12px;
+padding:22px;
+box-shadow:0 3px 14px rgba(0,0,0,0.12);
+margin-bottom:15px;
+animation:fade .3s;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(5px)}
+to{opacity:1}
+}
+
+/* TITLE */
+
+.title{
+text-align:center;
+margin-bottom:15px;
+}
+
+.title h1{
+margin:0;
+font-size:22px;
+}
+
+/* INPUT */
+
+input{
+width:100%;
+padding:14px;
+font-size:16px;
+border-radius:8px;
+border:1px solid #ccc;
+margin-top:10px;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:14px;
+font-size:16px;
+border:none;
+border-radius:8px;
+background:#1976d2;
+color:white;
+margin-top:15px;
+cursor:pointer;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:6px;
+}
+
+button:hover{
+background:#0d47a1;
+}
+
+/* PROGRESS */
+
+.progress{
+font-size:14px;
+margin-bottom:12px;
+color:#666;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+/* SOAL */
+
+.soal{
+font-size:18px;
+font-weight:500;
+margin-bottom:16px;
+line-height:1.4;
+}
+
+/* OPSI */
+
+.opsi{
+display:grid;
+gap:10px;
+}
+
+.opsi div{
+padding:14px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:16px;
+background:white;
+cursor:pointer;
+transition:.2s;
+}
+
+.opsi div:hover{
+background:#e3f2fd;
+border-color:#1976d2;
+transform:scale(1.01);
+}
+
+/* FINISH SCREEN */
+
+.block{
+display:flex;
+height:100vh;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+text-align:center;
+background:#111;
+color:white;
+padding:20px;
+}
+
+.block h1{
+margin-bottom:10px;
+}
+
+</style>
+
 </head>
+
 <body>
 
-    <div class="wheel-container">
-        <canvas id="wheel" width="500" height="500"></canvas>
-    </div>
+<div id="app">
 
-    <button id="spinBtn">PUTAR SEKARANG!</button>
+<div class="container">
 
-    <script>
-        const canvas = document.getElementById("wheel");
-        const ctx = canvas.getContext("2d");
-        const spinBtn = document.getElementById("spinBtn");
+<div class="card">
 
-        const options = ["Pizza", "Burger", "Sate", "Soto", "Bakso", "Gado-gado", "Nasi Goreng", "Salad"];
-        const colors = ["#f1c40f", "#e67e22", "#e74c3c", "#9b59b6", "#3498db", "#1abc9c", "#2ecc71", "#34495e"];
-        
-        let startAngle = 0;
-        const arc = Math.PI / (options.length / 2);
-        let spinTimeout = null;
+<div class="title">
 
-        function drawWheel() {
-            options.forEach((text, i) => {
-                const angle = startAngle + i * arc;
-                ctx.fillStyle = colors[i];
-                
-                ctx.beginPath();
-                ctx.moveTo(250, 250);
-                ctx.arc(250, 250, 250, angle, angle + arc, false);
-                ctx.lineTo(250, 250);
-                ctx.fill();
+<h1>ULANGAN INFORMATIKA</h1>
+<p>Bab 1-2 • Kelas 7</p>
 
-                // Teks
-                ctx.save();
-                ctx.fillStyle = "white";
-                ctx.translate(250 + Math.cos(angle + arc / 2) * 180, 250 + Math.sin(angle + arc / 2) * 180);
-                ctx.rotate(angle + arc / 2 + Math.PI / 2);
-                ctx.font = 'bold 20px Arial';
-                ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
-                ctx.restore();
-            });
-        }
+</div>
 
-        function spin() {
-            spinBtn.disabled = true;
-            const extraDegree = Math.floor(Math.random() * 360) + 3600; // Minimal 10 putaran
-            const totalDegree = extraDegree;
-            
-            canvas.style.transform = `rotate(${totalDegree}deg)`;
+<p><i class="fa-solid fa-key"></i> Masukkan kode paket</p>
 
-            // Reset tombol setelah animasi selesai (4 detik)
-            setTimeout(() => {
-                spinBtn.disabled = false;
-                // Logika untuk menentukan pemenang bisa ditambahkan di sini
-            }, 4000);
-        }
+<input id="kode" placeholder="Masukkan kode paket">
 
-        spinBtn.addEventListener("click", () => {
-            // Karena kita pakai CSS transition, kita hanya perlu reset rotasi jika ingin putar ulang dengan clean
-            canvas.style.transition = "transform 4s cubic-bezier(0.15, 0, 0.15, 1)";
-            spin();
-        });
+<button onclick="mulai()">
+<i class="fa-solid fa-play"></i>
+Mulai Ujian
+</button>
 
-        drawWheel();
-    </script>
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let kodePaket = {
+  
+  "INF7B01": "B",
+  "INF7A02": "A",
+  "INF7A03": "A",
+  "INF7B04": "B",
+  "INF7A05": "A",
+  "INF7B06": "B",
+  "INF7A07": "A",
+  "INF7B08": "B",
+  "INF7A09": "A",
+  "INF7B10": "B",
+  "INF7A11": "A",
+  "INF7B12": "B",
+  "INF7A13": "A",
+  "INF7B14": "B",
+  "INF7A15": "A",
+  "INF7B16": "B",
+  "INF7A17": "A",
+  "INF7B18": "B",
+  "INF7A19": "A",
+  "INF7B20": "B",
+  "INF7A21": "A",
+  "INF7B22": "B",
+  "INF7A23": "A",
+  "INF7B24": "B",
+  "INF7A25": "A",
+  "INF7B26": "B",
+  "INF7A27": "A",
+  "INF7B28": "B",
+  "INF7A29": "A",
+  "INF7B30": "B",
+  "INF7A31": "A",
+  "INF7B32": "B",
+  "INF7A33": "A",
+  "INF7B34": "B",
+  "INF7A35": "A",
+  "INF7B36": "B",
+  "INF7A37": "A",
+  "INF7B38": "B",
+  "INF7A39": "A",
+  "INF7B40": "B",
+  "INF7A41": "A",
+  "INF7B42": "B"
+  
+};
+
+let paketA=[
+
+// ANALISIS DATA (1–20)
+
+{
+q:"1. Sekumpulan fakta yang menggambarkan suatu keadaan disebut ….",
+o:[
+"A. informasi",
+"B. data",
+"C. variabel",
+"D. analisis"
+]
+},
+
+{
+q:"2. Satuan penyimpanan data yang paling kecil adalah ….",
+o:[
+"A. byte",
+"B. bit",
+"C. kilobyte",
+"D. megabyte"
+]
+},
+
+{
+q:"3. Kapasitas penyimpanan 1024 MB sama dengan ….",
+o:[
+"A. 1 KB",
+"B. 1 GB",
+"C. 1 TB",
+"D. 1 PB"
+]
+},
+
+{
+q:"4. Pertemuan antara baris dan kolom pada Excel disebut ….",
+o:[
+"A. worksheet",
+"B. range",
+"C. cell",
+"D. workbook"
+]
+},
+
+{
+q:"5. Fungsi Excel untuk mencari nilai terbesar adalah ….",
+o:[
+"A. MIN",
+"B. MAX",
+"C. SUM",
+"D. COUNT"
+]
+},
+
+{
+q:"6. Data yang telah diolah sehingga memiliki makna disebut ….",
+o:[
+"A. informasi",
+"B. angka",
+"C. tabel",
+"D. variabel"
+]
+},
+
+{
+q:"7. Interpretasi data berarti ….",
+o:[
+"A. menyimpan data",
+"B. menafsirkan hasil analisis data",
+"C. menghapus data",
+"D. mengganti data"
+]
+},
+
+{
+q:"8. Contoh data kualitatif adalah ….",
+o:[
+"A. tinggi badan",
+"B. berat badan",
+"C. warna mata",
+"D. jumlah siswa"
+]
+},
+
+{
+q:"9. Fungsi COUNT pada Excel digunakan untuk ….",
+o:[
+"A. menjumlahkan data",
+"B. menghitung jumlah data angka",
+"C. mencari nilai terbesar",
+"D. mencari nilai terkecil"
+]
+},
+
+{
+q:"10. Fungsi AND menghasilkan nilai TRUE jika ….",
+o:[
+"A. salah satu kondisi benar",
+"B. semua kondisi benar",
+"C. semua kondisi salah",
+"D. hanya satu kondisi benar"
+]
+},
+
+{
+q:"11. Fungsi OR menghasilkan TRUE jika ….",
+o:[
+"A. semua kondisi benar",
+"B. salah satu kondisi benar",
+"C. semua kondisi salah",
+"D. tidak ada kondisi benar"
+]
+},
+
+{
+q:"12. Fitur Excel yang digunakan untuk mengurutkan data disebut ….",
+o:[
+"A. Filter",
+"B. Sort",
+"C. Freeze",
+"D. Validation"
+]
+},
+
+{
+q:"13. Fitur Filter pada Excel berfungsi untuk ….",
+o:[
+"A. menghapus data",
+"B. menyaring data sesuai kriteria",
+"C. menghitung data",
+"D. mengganti data"
+]
+},
+
+{
+q:"14. Analisis data dilakukan untuk ….",
+o:[
+"A. memperbesar data",
+"B. menemukan pola dalam data",
+"C. menghapus data",
+"D. menyalin data"
+]
+},
+
+{
+q:"15. Analisis data tanpa menggunakan komputer disebut ….",
+o:[
+"A. digital analysis",
+"B. online analysis",
+"C. unplugged analysis",
+"D. spreadsheet analysis"
+]
+},
+
+{
+q:"16. Rumus Excel yang benar untuk menjumlahkan nilai pada sel A1 sampai A5 adalah ….",
+o:[
+"A. =SUM(A1-A5)",
+"B. =SUM(A1:A5)",
+"C. =ADD(A1:A5)",
+"D. =TOTAL(A1:A5)"
+]
+},
+
+{
+q:"17. Jika ingin mencari nilai terkecil pada sel B1 sampai B10 maka digunakan rumus ….",
+o:[
+"A. =MAX(B1:B10)",
+"B. =SUM(B1:B10)",
+"C. =MIN(B1:B10)",
+"D. =COUNT(B1:B10)"
+]
+},
+
+{
+q:"18. Rumus Excel untuk menghitung rata-rata nilai pada sel C1 sampai C10 adalah ….",
+o:[
+"A. =SUM(C1:C10)",
+"B. =AVERAGE(C1:C10)",
+"C. =COUNT(C1:C10)",
+"D. =MIN(C1:C10)"
+]
+},
+
+{
+q:"19. Jika sel A1 berisi nilai 80 dan rumus =IF(A1>75,'Lulus','Tidak Lulus') maka hasilnya adalah ….",
+o:[
+"A. Tidak Lulus",
+"B. Lulus",
+"C. TRUE",
+"D. FALSE"
+]
+},
+
+{
+q:"20. Jika guru ingin melihat hanya siswa yang nilainya di atas 85 maka fitur Excel yang tepat digunakan adalah ….",
+o:[
+"A. Freeze Panes",
+"B. Sort",
+"C. Filter",
+"D. Validation"
+]
+},
+
+// SCRATCH (21–40)
+
+{
+q:"21. Pemrograman komputer dan coding memiliki tujuan utama yaitu …",
+o:[
+"A. Mendesain perangkat keras komputer",
+"B. Menulis instruksi agar komputer menjalankan tugas tertentu",
+"C. Membuat jaringan internet",
+"D. Mengoperasikan perangkat lunak saja"
+]
+},
+
+{
+q:"22. Coding juga melatih siswa menjadi creative thinker yang berarti …",
+o:[
+"A. membuat desain grafis",
+"B. berpikir logis dan memecahkan masalah",
+"C. bermain game komputer",
+"D. memperbaiki perangkat keras"
+]
+},
+
+{
+q:"23. Bahasa pemrograman generasi pertama disebut …",
+o:[
+"A. Assembly language",
+"B. Procedural programming",
+"C. Machine language",
+"D. Fourth generation language"
+]
+},
+
+{
+q:"24. Bahasa pemrograman generasi kedua disebut …",
+o:[
+"A. Machine language",
+"B. Assembly language",
+"C. Object oriented language",
+"D. Web programming"
+]
+},
+
+{
+q:"25. Algoritma dalam pemrograman berarti …",
+o:[
+"A. perangkat keras komputer",
+"B. langkah-langkah logis menyelesaikan masalah",
+"C. program komputer",
+"D. bahasa pemrograman"
+]
+},
+
+{
+q:"26. Scratch dirancang sebagai bahasa pemrograman visual untuk …",
+o:[
+"A. programmer profesional",
+"B. pemula belajar pemrograman",
+"C. teknisi jaringan",
+"D. pembuat sistem operasi"
+]
+},
+
+{
+q:"27. Keunggulan Scratch adalah …",
+o:[
+"A. menggunakan bahasa mesin",
+"B. menggunakan drag and drop blok kode",
+"C. harus menulis kode panjang",
+"D. tidak bisa membuat animasi"
+]
+},
+
+{
+q:"28. Website resmi Scratch adalah …",
+o:[
+"A. scratch.com",
+"B. scratch.mit.edu",
+"C. scratch.org",
+"D. mit.com"
+]
+},
+
+{
+q:"29. Area yang menampilkan animasi pada Scratch disebut …",
+o:[
+"A. Script area",
+"B. Sprite list",
+"C. Stage",
+"D. Menu bar"
+]
+},
+
+{
+q:"30. Area untuk menyusun blok kode disebut …",
+o:[
+"A. Script area",
+"B. Canvas",
+"C. Sprite list",
+"D. Menu bar"
+]
+},
+
+{
+q:"31. Sprite adalah …",
+o:[
+"A. latar belakang proyek",
+"B. objek atau karakter program",
+"C. kode program",
+"D. menu utama"
+]
+},
+
+{
+q:"32. Sprite list berfungsi untuk …",
+o:[
+"A. menyimpan kode",
+"B. menampilkan daftar sprite",
+"C. jaringan",
+"D. database"
+]
+},
+
+{
+q:"33. Blok control digunakan untuk …",
+o:[
+"A. mengatur warna sprite",
+"B. mengatur alur program",
+"C. menambahkan suara",
+"D. mengubah ukuran gambar"
+]
+},
+
+{
+q:"34. Blok sound berfungsi untuk …",
+o:[
+"A. mengatur ukuran sprite",
+"B. menambahkan efek suara",
+"C. menghapus karakter",
+"D. mengatur jaringan"
+]
+},
+
+{
+q:"35. Next Costume digunakan untuk …",
+o:[
+"A. mengganti latar belakang",
+"B. mengubah ukuran sprite",
+"C. membuat animasi pergantian kostum",
+"D. menghapus sprite"
+]
+},
+
+{
+q:"36. Perintah Say atau Think digunakan untuk …",
+o:[
+"A. menjalankan musik",
+"B. menampilkan dialog sprite",
+"C. menghapus objek",
+"D. menjalankan program utama"
+]
+},
+
+{
+q:"37. Variabel dalam Scratch digunakan untuk …",
+o:[
+"A. menyimpan data yang dapat berubah",
+"B. menjalankan suara",
+"C. menampilkan animasi",
+"D. menghapus sprite"
+]
+},
+
+{
+q:"38. Fitur My Blocks berfungsi untuk …",
+o:[
+"A. membuat blok kode baru",
+"B. menghapus semua kode",
+"C. menyimpan gambar",
+"D. menjalankan program otomatis"
+]
+},
+
+{
+q:"39. Debugging dilakukan ketika …",
+o:[
+"A. program belum dibuat",
+"B. terjadi kesalahan logika program",
+"C. program dihapus",
+"D. program selesai"
+]
+},
+
+{
+q:"40. Runtime error terjadi ketika …",
+o:[
+"A. program sedang dijalankan",
+"B. program sedang ditulis",
+"C. program disimpan",
+"D. komputer dimatikan"
+]
+}
+
+];
+
+let paketB=[
+
+// ANALISIS DATA (1-20)
+
+{
+q:"1. Data dapat diartikan sebagai ….",
+o:[
+"A. hasil penelitian",
+"B. kumpulan fakta tentang suatu keadaan",
+"C. keputusan akhir",
+"D. kesimpulan penelitian"
+]
+},
+
+{
+q:"2. 1 KB sama dengan ….",
+o:[
+"A. 1000 byte",
+"B. 1024 byte",
+"C. 1024 MB",
+"D. 1000 MB"
+]
+},
+
+{
+q:"3. Sekumpulan beberapa sel pada Excel disebut ….",
+o:[
+"A. workbook",
+"B. worksheet",
+"C. range",
+"D. column"
+]
+},
+
+{
+q:"4. Lembar kerja dalam Excel disebut ….",
+o:[
+"A. workbook",
+"B. worksheet",
+"C. range",
+"D. cell"
+]
+},
+
+{
+q:"5. Fungsi Excel untuk mencari nilai terkecil adalah ….",
+o:[
+"A. MAX",
+"B. MIN",
+"C. SUM",
+"D. COUNT"
+]
+},
+
+{
+q:"6. Data mentah yang telah diolah sehingga lebih mudah dipahami disebut ….",
+o:[
+"A. angka",
+"B. informasi",
+"C. tabel",
+"D. grafik"
+]
+},
+
+{
+q:"7. Tujuan utama interpretasi data adalah ….",
+o:[
+"A. menghapus data",
+"B. menafsirkan hasil analisis data",
+"C. mengganti data",
+"D. memperbanyak data"
+]
+},
+
+{
+q:"8. Contoh data kuantitatif adalah ….",
+o:[
+"A. warna rambut",
+"B. jenis kelamin",
+"C. jumlah siswa",
+"D. jenis kendaraan"
+]
+},
+
+{
+q:"9. Fungsi AVERAGE digunakan untuk ….",
+o:[
+"A. menghitung jumlah data",
+"B. mencari nilai terkecil",
+"C. menghitung rata-rata",
+"D. mencari nilai terbesar"
+]
+},
+
+{
+q:"10. Fungsi NOT pada Excel digunakan untuk ….",
+o:[
+"A. menjumlahkan nilai",
+"B. membalik nilai logika",
+"C. menghitung jumlah data",
+"D. mencari nilai rata-rata"
+]
+},
+
+{
+q:"11. Fungsi OR menghasilkan TRUE jika ….",
+o:[
+"A. semua kondisi benar",
+"B. salah satu kondisi benar",
+"C. semua kondisi salah",
+"D. tidak ada kondisi"
+]
+},
+
+{
+q:"12. Fitur Sort pada Excel digunakan untuk ….",
+o:[
+"A. menyaring data",
+"B. mengurutkan data",
+"C. menghitung data",
+"D. menghapus data"
+]
+},
+
+{
+q:"13. Data Validation digunakan untuk ….",
+o:[
+"A. membatasi jenis data yang boleh dimasukkan",
+"B. mengurutkan data",
+"C. menyaring data",
+"D. menghapus data"
+]
+},
+
+{
+q:"14. Analisis data penting karena dapat ….",
+o:[
+"A. memperbesar data",
+"B. menemukan pola atau tren data",
+"C. menghapus data",
+"D. menyalin data"
+]
+},
+
+{
+q:"15. Analisis data tanpa bantuan komputer disebut ….",
+o:[
+"A. manual analysis",
+"B. unplugged analysis",
+"C. spreadsheet analysis",
+"D. digital analysis"
+]
+},
+
+{
+q:"16. Rumus Excel untuk menjumlahkan nilai pada B1 sampai B6 adalah ….",
+o:[
+"A. =SUM(B1:B6)",
+"B. =ADD(B1:B6)",
+"C. =TOTAL(B1:B6)",
+"D. =COUNT(B1:B6)"
+]
+},
+
+{
+q:"17. Rumus Excel untuk mencari nilai terbesar pada A1 sampai A10 adalah ….",
+o:[
+"A. =MIN(A1:A10)",
+"B. =SUM(A1:A10)",
+"C. =MAX(A1:A10)",
+"D. =COUNT(A1:A10)"
+]
+},
+
+{
+q:"18. Jika ingin menghitung jumlah sel yang berisi angka digunakan fungsi ….",
+o:[
+"A. SUM",
+"B. COUNT",
+"C. MIN",
+"D. MAX"
+]
+},
+
+{
+q:"19. Jika nilai pada sel A1 adalah 60 dan rumus =IF(A1>=75,'Lulus','Tidak Lulus') maka hasilnya adalah ….",
+o:[
+"A. Lulus",
+"B. Tidak Lulus",
+"C. TRUE",
+"D. ERROR"
+]
+},
+
+{
+q:"20. Jika ingin menampilkan hanya data siswa yang berjenis kelamin 'Perempuan' maka fitur yang tepat adalah ….",
+o:[
+"A. Sort",
+"B. Filter",
+"C. Freeze",
+"D. Validation"
+]
+},
+
+// SCRATCH (21-40)
+
+{
+q:"21. Bahasa pemrograman digunakan untuk …",
+o:[
+"A. menghubungkan komputer internet",
+"B. memberi instruksi kepada komputer",
+"C. membuat hardware",
+"D. memperbaiki komputer"
+]
+},
+
+{
+q:"22. Coding melatih siswa untuk …",
+o:[
+"A. bermain komputer",
+"B. berpikir logis dan memecahkan masalah",
+"C. memperbaiki jaringan",
+"D. mempercepat komputer"
+]
+},
+
+{
+q:"23. Bahasa pemrograman generasi pertama memiliki ciri …",
+o:[
+"A. bahasa manusia",
+"B. kode biner",
+"C. drag and drop",
+"D. bahasa Inggris"
+]
+},
+
+{
+q:"24. Bahasa yang menggunakan simbol untuk instruksi mesin disebut …",
+o:[
+"A. Machine language",
+"B. Assembly language",
+"C. Procedural",
+"D. OOP"
+]
+},
+
+{
+q:"25. Bahasa generasi ketiga disebut bahasa …",
+o:[
+"A. prosedural",
+"B. visual",
+"C. biner",
+"D. jaringan"
+]
+},
+
+{
+q:"26. Semakin tinggi bahasa pemrograman maka …",
+o:[
+"A. semakin dekat bahasa manusia",
+"B. semakin sulit",
+"C. semakin dekat mesin",
+"D. tidak ada sintaks"
+]
+},
+
+{
+q:"27. Bahasa tingkat rendah memiliki karakteristik …",
+o:[
+"A. mudah dipahami",
+"B. dekat bahasa mesin",
+"C. GUI",
+"D. tanpa algoritma"
+]
+},
+
+{
+q:"28. Langkah logis menyelesaikan masalah disebut …",
+o:[
+"A. program",
+"B. algoritma",
+"C. software",
+"D. hardware"
+]
+},
+
+{
+q:"29. Setelah algoritma dibuat langkah berikutnya adalah …",
+o:[
+"A. menghapus program",
+"B. coding",
+"C. mematikan komputer",
+"D. mengganti hardware"
+]
+},
+
+{
+q:"30. Kesalahan sintaks disebut …",
+o:[
+"A. logical error",
+"B. runtime error",
+"C. compile-time error",
+"D. hardware error"
+]
+},
+
+{
+q:"31. Runtime error terjadi ketika …",
+o:[
+"A. program dijalankan",
+"B. program ditulis",
+"C. program disimpan",
+"D. komputer dimatikan"
+]
+},
+
+{
+q:"32. Scratch disebut bahasa visual karena …",
+o:[
+"A. kode biner",
+"B. blok grafis",
+"C. bahasa mesin",
+"D. jaringan"
+]
+},
+
+{
+q:"33. Scratch mudah dipelajari karena …",
+o:[
+"A. matematika tinggi",
+"B. sederhana untuk pemula",
+"C. profesional saja",
+"D. hanya game"
+]
+},
+
+{
+q:"34. Scratch dapat digunakan membuat …",
+o:[
+"A. animasi",
+"B. game",
+"C. kuis",
+"D. semua benar"
+]
+},
+
+{
+q:"35. Bagian melihat hasil proyek disebut …",
+o:[
+"A. Script area",
+"B. Sprite list",
+"C. Stage",
+"D. Block palette"
+]
+},
+
+{
+q:"36. Daftar semua sprite disebut …",
+o:[
+"A. Sprite list",
+"B. Menu bar",
+"C. Script area",
+"D. Canvas"
+]
+},
+
+{
+q:"37. Script area digunakan untuk …",
+o:[
+"A. background",
+"B. menyusun blok kode",
+"C. internet",
+"D. menyimpan file"
+]
+},
+
+{
+q:"38. Blok control mengatur …",
+o:[
+"A. tampilan",
+"B. suara",
+"C. alur program",
+"D. warna"
+]
+},
+
+{
+q:"39. Blok sound memungkinkan …",
+o:[
+"A. efek suara",
+"B. ubah ukuran",
+"C. pindah sprite",
+"D. hapus program"
+]
+},
+
+{
+q:"40. Next Costume digunakan untuk …",
+o:[
+"A. ubah background",
+"B. animasi pergantian kostum",
+"C. tambah suara",
+"D. hapus sprite"
+]
+}
+
+];
+
+let soalAktif=[];
+let nomor=0;
+let waktu=3600;
+let timerStart=false;
+
+function mulai(){
+
+let kode=document.getElementById("kode").value;
+
+if(!kodePaket[kode]){
+alert("Kode paket salah");
+return;
+}
+
+soalAktif=(kodePaket[kode]=="A")?paketA:paketB;
+
+render();
+
+startTimer();
+
+}
+
+function render(){
+
+let s=soalAktif[nomor];
+
+document.getElementById("app").innerHTML=`
+
+<div class="header">
+
+<h2><i class="fa-solid fa-laptop-code"></i> Ujian Informatika</h2>
+
+<div class="timer" id="timer">
+<i class="fa-solid fa-clock"></i> 60:00
+</div>
+
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<div class="progress">
+<i class="fa-solid fa-list"></i>
+Soal ${nomor+1} / ${soalAktif.length}
+</div>
+
+<div class="soal">
+${s.q}
+</div>
+
+<div class="opsi" id="opsi"></div>
+
+<button onclick="next()">
+<i class="fa-solid fa-arrow-right"></i>
+Next Soal
+</button>
+
+</div>
+
+</div>
+
+`;
+
+let html="";
+
+for(let i of s.o){
+html+=`<div>${i}</div>`;
+}
+
+document.getElementById("opsi").innerHTML=html;
+
+}
+
+function next(){
+
+nomor++;
+
+if(nomor>=soalAktif.length){
+
+document.body.innerHTML=
+'<div class="block"><h1>Ujian Selesai</h1><p>Silakan kumpulkan LJK</p></div>';
+
+return;
+
+}
+
+render();
+
+}
+
+function startTimer(){
+
+if(timerStart) return;
+
+timerStart=true;
+
+let t=setInterval(()=>{
+
+let m=Math.floor(waktu/60);
+let s=waktu%60;
+
+let el=document.getElementById("timer");
+
+if(el){
+
+el.innerHTML=`<i class="fa-solid fa-clock"></i> ${m}:${s<10?"0"+s:s}`;
+
+if(waktu<300){
+el.classList.add("danger");
+}
+
+}
+
+waktu--;
+
+if(waktu<0){
+
+clearInterval(t);
+
+document.body.innerHTML=
+'<div class="block"><h1>⏰ Waktu Habis</h1></div>';
+
+}
+
+},1000);
+
+}
+
+/* BLOCK INSPECT */
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+document.onkeydown=function(e){
+
+if(e.keyCode==123)return false;
+
+if(e.ctrlKey && e.shiftKey && e.keyCode==73)return false;
+
+};
+
+setInterval(function(){
+
+if(
+window.outerWidth-window.innerWidth>160 ||
+window.outerHeight-window.innerHeight>160
+){
+
+document.body.innerHTML=
+'<div class="block"><h1>⚠ Device Diblokir</h1><p>Inspect terdeteksi</p></div>';
+
+}
+
+},1000);
+
+</script>
+
 </body>
 </html>
