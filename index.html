@@ -1625,27 +1625,32 @@ document.body.innerHTML=
 
 }
 
-/* BLOCK INSPECT */
-
-document.addEventListener("contextmenu",e=>e.preventDefault());
-
-document.onkeydown=function(e){
-
-if(e.keyCode==123)return false;
-
-if(e.ctrlKey && e.shiftKey && e.keyCode==73)return false;
-
-};
+/* BLOCK INSPECT - DESKTOP ONLY */
 
 let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 if(!isMobile){
 
+// blok klik kanan
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+// blok shortcut inspect
+document.onkeydown=function(e){
+
+if(e.keyCode==123)return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode==73)return false; // Ctrl+Shift+I
+
+if(e.ctrlKey && e.keyCode==85)return false; // Ctrl+U
+
+};
+
+// deteksi devtools
 setInterval(function(){
 
 if(
-window.outerWidth-window.innerWidth>160 ||
-window.outerHeight-window.innerHeight>160
+window.outerWidth - window.innerWidth > 160 ||
+window.outerHeight - window.innerHeight > 160
 ){
 
 document.body.innerHTML=
