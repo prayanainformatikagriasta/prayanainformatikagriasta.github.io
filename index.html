@@ -439,6 +439,45 @@ button:hover i {
         </div>
     </div>
 </div>
+<div id="popupInfo" style="
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+">
+
+<div style="
+background:white;
+padding:30px;
+border-radius:20px;
+max-width:400px;
+text-align:center;
+box-shadow:0 10px 40px rgba(0,0,0,0.3);
+">
+
+<h2>Informasi Ujian</h2>
+
+<p>Kode Ujian Anda :</p>
+<h3 id="kodePopup"></h3>
+
+<p>Paket Anda :</p>
+<h2 id="paketPopup"></h2>
+
+<p style="font-size:14px">
+Lingkari kode paket pada kertas <b>EXAM SET</b>
+</p>
+
+<button onclick="lanjutUjian()" class="btn-action">
+Mulai Mengerjakan
+</button>
+
+</div>
 
 
 <script>
