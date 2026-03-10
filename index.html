@@ -240,7 +240,87 @@
             border-color: var(--primary);
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
         }
+/* CONTAINER OPSI JAWABAN */
+.opsi {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
 
+/* GAYA SATUAN OPSI JAWABAN */
+.opsi div {
+    padding: 16px 20px;
+    border-radius: 14px;
+    border: 2px solid #f1f5f9;
+    font-size: 1rem;
+    background: #f8fafc;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    color: #475569;
+    position: relative;
+    overflow: hidden;
+}
+
+/* EFEK HOVER (SAAT KURSOR DI ATAS OPSI) */
+.opsi div:hover {
+    border-color: #6366f1;
+    background: #f5f3ff;
+    color: #6366f1;
+    transform: translateX(5px);
+}
+
+/* EFEK SAAT OPSI DIPILIH (ACTIVE) */
+.opsi div.selected {
+    background: #6366f1;
+    color: white;
+    border-color: #6366f1;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* TOMBOL NEXT SOAL */
+button, .btn-action {
+    width: 100%;
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    background: #6366f1; /* Warna Indigo Modern */
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* EFEK TOMBOL NEXT SAAT DI-HOVER */
+button:hover {
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px -3px rgba(99, 102, 241, 0.4);
+}
+
+/* EFEK TOMBOL SAAT DI-KLIK */
+button:active {
+    transform: translateY(0);
+}
+
+/* ICON DI DALAM TOMBOL */
+button i {
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+button:hover i {
+    transform: translateX(3px);
+}
         /* PROGRESS BAR */
         .progress-container {
             margin-bottom: 15px;
