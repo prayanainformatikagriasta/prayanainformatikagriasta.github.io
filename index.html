@@ -161,30 +161,87 @@ border-color:var(--primary);
 }
 
 /* BUTTON */
-
 .action{
-margin-top:25px;
+margin-top:30px;
 display:flex;
-gap:10px;
+gap:12px;
 }
 
-.action button{
-flex:1;
+.next{
+background:linear-gradient(135deg,#6366f1,#8b5cf6);
+color:white;
 padding:14px;
 border:none;
 border-radius:12px;
 font-weight:700;
 cursor:pointer;
-}
-
-.next{
-background:linear-gradient(135deg,var(--primary),var(--primary2));
-color:white;
+flex:1;
 }
 
 .skip{
 background:#f59e0b;
 color:white;
+padding:14px;
+border:none;
+border-radius:12px;
+font-weight:700;
+cursor:pointer;
+flex:1;
+
+.login-wrapper{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.login-card{
+background:white;
+padding:40px;
+border-radius:20px;
+box-shadow:0 15px 40px rgba(0,0,0,0.1);
+width:380px;
+text-align:center;
+}
+
+.login-title{
+font-size:1.5rem;
+font-weight:800;
+color:#6366f1;
+margin-bottom:10px;
+}
+
+.login-sub{
+font-size:14px;
+color:#64748b;
+margin-bottom:25px;
+}
+
+.input-login{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:2px solid #e2e8f0;
+font-size:15px;
+margin-bottom:20px;
+}
+
+.input-login:focus{
+outline:none;
+border-color:#6366f1;
+}
+
+.btn-login{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#6366f1,#8b5cf6);
+color:white;
+font-weight:700;
+cursor:pointer;
+}
+
 }
 
 
@@ -195,15 +252,28 @@ color:white;
 
 <div id="app">
 
-<div class="welcome-container">
+<div class="login-wrapper">
 
 <div class="login-card">
 
-<h2>UJIAN INFORMATIKA</h2>
+<div class="login-title">
+UJIAN INFORMATIKA
+</div>
 
-<input id="kode" placeholder="Masukkan kode ujian">
+<div class="login-sub">
+Masukkan kode paket untuk memulai ujian
+</div>
 
-<button onclick="mulai()">Mulai Ujian</button>
+<input 
+id="kode"
+class="input-login"
+placeholder="Contoh: INF7-K7P1"
+autocomplete="off"
+>
+
+<button class="btn-login" onclick="mulai()">
+Mulai Ujian
+</button>
 
 </div>
 
@@ -2413,18 +2483,19 @@ startTimer()
 
 function render(){
 
-let s=soalAktif[nomor]
+let s = soalAktif[nomor]
 
 let htmlOpsi=""
 
 for(let i of s.o){
 
-let selected=(jawaban[nomor]==i)?"selected":""
+let selected = (jawaban[nomor] == i) ? "selected" : ""
 
-htmlOpsi+=`<div class="${selected}" onclick="pilihJawaban(this)">${i}</div>`
+htmlOpsi += `<div class="${selected}" onclick="pilihJawaban(this)">${i}</div>`
 
 }
-document.getElementById("app").innerHTML=`
+
+document.getElementById("app").innerHTML = `
 
 <div class="header">
 <h2>UJIAN INFORMATIKA</h2>
@@ -2453,6 +2524,10 @@ return `<button class="${answered}" onclick="lompat(${i})">${i+1}</button>`
 
 <div class="card">
 
+<div style="font-size:13px;color:#64748b;margin-bottom:10px">
+Soal ${nomor+1} dari ${soalAktif.length}
+</div>
+
 <div class="soal">
 ${s.q}
 </div>
@@ -2463,16 +2538,22 @@ ${htmlOpsi}
 
 <div class="action">
 
-<button class="next" onclick="next()">Next</button>
+<button class="skip" onclick="skipSoal()">
+Skip (${skipUsed}/12)
+</button>
 
-<button class="skip" onclick="skipSoal()">Skip (${skipUsed}/12)</button>
+<button class="next" onclick="next()">
+Next Soal →
+</button>
 
 </div>
 
 </div>
 
 </div>
+
 `
+
 }
 
 
