@@ -1637,6 +1637,10 @@ if(e.ctrlKey && e.shiftKey && e.keyCode==73)return false;
 
 };
 
+let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+if(!isMobile){
+
 setInterval(function(){
 
 if(
@@ -1650,6 +1654,8 @@ document.body.innerHTML=
 }
 
 },1000);
+
+}
 
 </script>
 
