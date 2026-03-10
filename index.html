@@ -571,12 +571,6 @@ let kodePaket = {
 
 };
 
-let paket = kodePaket[kode]
-
-if(paket=="A") soalAktif=paketA
-if(paket=="B") soalAktif=paketB
-if(paket=="7A") soalAktif=paket7A
-if(paket=="7B") soalAktif=paket7B
 
 let paket7A=[
 
@@ -2604,7 +2598,7 @@ let skipUsed = 0
 
 function mulai(){
 
-let kode=document.getElementById("kode").value.toUpperCase()
+let kode=document.getElementById("kode").value.trim().toUpperCase()
 
 if(!kodePaket[kode]){
 alert("Kode paket salah")
@@ -2613,12 +2607,15 @@ return
 
 let paket = kodePaket[kode]
 
+if(paket=="A") soalAktif=paketA
+if(paket=="B") soalAktif=paketB
+if(paket=="7A") soalAktif=paket7A
+if(paket=="7B") soalAktif=paket7B
+
 document.getElementById("kodePopup").innerText = kode
 document.getElementById("paketPopup").innerText = "PAKET "+paket
 
 document.getElementById("popupInfo").style.display="flex"
-
-soalAktif=(paket=="A")?paketA:paketB
 
 }
 
@@ -2644,10 +2641,6 @@ let selected = (jawaban[nomor] == i) ? "selected" : ""
 
 htmlOpsi += `<div class="${selected}" onclick="pilihJawaban(this)">${i}</div>`
 
-}
-
-for(let i of s.o){
-htmlOpsi += `<div onclick="pilihJawaban(this)">${i}</div>`;
 }
 
 document.getElementById("app").innerHTML = `
@@ -2700,25 +2693,6 @@ Gunakan Kesempatan Lompat (${skipUsed}/12)
 
 `;
 
-${Array.from({length:soalAktif.length},(_,i)=>{
-
-let warna = jawaban[i] ? "#9ca3af" : "#22c55e"
-
-return `<button 
-onclick="lompat(${i})"
-style="
-width:40px;
-height:40px;
-background:${warna};
-color:white;
-border:none;
-border-radius:8px;
-font-weight:700;
-">
-${i+1}
-</button>`
-
-}).join("")}
 
 }
 
@@ -2786,10 +2760,7 @@ opsi.forEach(o=>o.classList.remove("selected"))
 
 el.classList.add("selected")
 
-// simpan jawaban
 jawaban[nomor] = el.innerText
-
-render()
 
 }
 
