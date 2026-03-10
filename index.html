@@ -1,484 +1,153 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBT Informatika</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #64748b;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --danger: #ef4444;
-            --success: #10b981;
-            --radius: 16px;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBT Informatika</title>
 
-        * {
-            box-sizing: border-box;
-            transition: all 0.25s ease;
-        }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top right, #e0e7ff, #f8fafc);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+<style>
 
-        /* HEADER */
-        .header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header h2 {
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin: 0;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .timer {
-            background: var(--primary);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .timer.danger {
-            background: var(--danger);
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* CONTAINER UTAMA */
-        #app {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .container {
-            padding: 25px 15px;
-            max-width: 700px;
-            margin: auto;
-            width: 100%;
-        }
-
-        /* LOGIN CARD */
-        .welcome-container {
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .login-card {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.7);
-        }
-
-        .icon-box {
-            width: 70px;
-            height: 70px;
-            background: #eef2ff;
-            color: var(--primary);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 20px;
-        }
-
-        /* INPUT & BUTTONS */
-        .input-group {
-            text-align: left;
-            margin-bottom: 25px;
-        }
-
-        label {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--secondary);
-            margin-bottom: 8px;
-            display: block;
-            text-transform: uppercase;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            font-size: 1rem;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            background: #f8fafc;
-            outline: none;
-            font-weight: 600;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        }
-
-        .btn-action {
-            width: 100%;
-            padding: 16px;
-            font-size: 1rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 14px;
-            background: var(--primary);
-            color: white;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-action:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 20px -3px rgba(99, 102, 241, 0.4);
-        }
-
-        /* SOAL CARD */
-        .card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: var(--shadow);
-            margin-top: 10px;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .soal {
-            font-size: 1.2rem;
-            font-weight: 600;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: var(--text-main);
-        }
-
-        /* OPSI JAWABAN */
-        .opsi {
-            display: grid;
-            gap: 12px;
-        }
-
-        .opsi div {
-            padding: 16px 20px;
-            border-radius: 14px;
-            border: 2px solid #f1f5f9;
-            font-size: 1rem;
-            background: #f8fafc;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-        }
-
-        .opsi div:hover {
-            border-color: var(--primary);
-            background: #eef2ff;
-            color: var(--primary);
-        }
-
-        .opsi div.selected {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-        }
-/* CONTAINER OPSI JAWABAN */
-.opsi {
-    display: grid;
-    gap: 12px;
-    margin-top: 20px;
+body{
+margin:0;
+font-family:Arial;
+background:#f5f6fa;
 }
 
-/* GAYA SATUAN OPSI JAWABAN */
-.opsi div {
-    padding: 16px 20px;
-    border-radius: 14px;
-    border: 2px solid #f1f5f9;
-    font-size: 1rem;
-    background: #f8fafc;
-    cursor: pointer;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    transition: all 0.2s ease;
-    color: #475569;
-    position: relative;
-    overflow: hidden;
+.header{
+display:flex;
+justify-content:space-between;
+padding:15px 20px;
+background:#6366f1;
+color:white;
 }
 
-/* EFEK HOVER (SAAT KURSOR DI ATAS OPSI) */
-.opsi div:hover {
-    border-color: #6366f1;
-    background: #f5f3ff;
-    color: #6366f1;
-    transform: translateX(5px);
+.timer{
+font-weight:bold;
 }
 
-/* EFEK SAAT OPSI DIPILIH (ACTIVE) */
-.opsi div.selected {
-    background: #6366f1;
-    color: white;
-    border-color: #6366f1;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+.container{
+max-width:700px;
+margin:auto;
+padding:20px;
 }
 
-/* TOMBOL NEXT SOAL */
-button, .btn-action {
-    width: 100%;
-    padding: 16px;
-    font-size: 1rem;
-    font-weight: 700;
-    border: none;
-    border-radius: 14px;
-    background: #6366f1; /* Warna Indigo Modern */
-    color: white;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 25px;
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
-    transition: all 0.3s ease;
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 
-/* EFEK TOMBOL NEXT SAAT DI-HOVER */
-button:hover {
-    background: #4f46e5;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 20px -3px rgba(99, 102, 241, 0.4);
+.opsi div{
+padding:12px;
+border:2px solid #eee;
+border-radius:10px;
+margin-bottom:10px;
+cursor:pointer;
 }
 
-/* EFEK TOMBOL SAAT DI-KLIK */
-button:active {
-    transform: translateY(0);
+.opsi div:hover{
+border-color:#6366f1;
 }
 
-/* ICON DI DALAM TOMBOL */
-button i {
-    font-size: 0.9rem;
-    transition: transform 0.3s ease;
+.selected{
+background:#6366f1;
+color:white;
 }
 
-button:hover i {
-    transform: translateX(3px);
+button{
+padding:12px;
+border:none;
+border-radius:10px;
+background:#6366f1;
+color:white;
+cursor:pointer;
+margin-top:10px;
 }
-        /* PROGRESS BAR */
-        .progress-container {
-            margin-bottom: 15px;
-        }
 
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--secondary);
-            margin-bottom: 8px;
-        }
+.welcome-container{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
 
-        .progress-bar-bg {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
+.login-card{
+background:white;
+padding:40px;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+width:350px;
+text-align:center;
+}
 
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            border-radius: 10px;
-        }
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:20px;
+}
 
-        /* FINISH SCREEN */
-        .finish-card {
-            background: white;
-            padding: 50px 30px;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            max-width: 500px;
-            margin: 40px auto;
-            animation: slideUp 0.5s ease-out;
-        }
+.block{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+}
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .finish-icon {
-            width: 90px;
-            height: 90px;
-            background: #ecfdf5;
-            color: var(--success);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            margin: 0 auto 20px;
-        }
-
-        .summary-box {
-            background: #f1f5f9;
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            justify-content: space-around;
-            margin: 25px 0;
-        }
-
-        .summary-item strong {
-            display: block;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
-
-        .summary-item span {
-            font-size: 0.75rem;
-            color: var(--secondary);
-            font-weight: 700;
-        }
-
-        /* BLOCK SCREEN */
-        .block-screen {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-        }
-    </style>
+</style>
 </head>
+
 <body>
 
 <div id="app">
-    <div class="welcome-container">
-        <div class="login-card">
-            <div class="icon-box">
-                <i class="fa-solid fa-code"></i>
-            </div>
-            <h1 style="margin:0; font-size:1.5rem; font-weight:800;">UJIAN INFORMATIKA</h1>
-            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:30px;">Analisis Data & Algoritma Pemrograman</p>
-            
-            <div class="input-group">
-                <label>Kode Paket Soal</label>
-                <input type="text" id="kode" placeholder="Masukkan Kode (Contoh: INF7A02)" autocomplete="off">
-            </div>
 
-            <button class="btn-action" onclick="mulai()">
-                Mulai Ujian <i class="fa-solid fa-play"></i>
-            </button>
-            
-            <p style="margin-top: 20px; font-size: 0.75rem; color: #94a3b8;">
-                <i class="fa-solid fa-shield-halved"></i> Ujian ini diawasi secara sistem
-            </p>
-        </div>
-    </div>
+<div class="welcome-container">
+
+<div class="login-card">
+
+<h2>UJIAN INFORMATIKA</h2>
+
+<input id="kode" placeholder="Masukkan kode ujian">
+
+<button onclick="mulai()">Mulai Ujian</button>
+
 </div>
+
+</div>
+
+</div>
+
+
 <div id="popupInfo" style="
 position:fixed;
 top:0;
 left:0;
 right:0;
 bottom:0;
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.5);
 display:none;
 align-items:center;
 justify-content:center;
-z-index:9999;
 ">
 
-<div style="
-background:white;
-padding:30px;
-border-radius:20px;
-max-width:400px;
-text-align:center;
-box-shadow:0 10px 40px rgba(0,0,0,0.3);
-">
+<div style="background:white;padding:30px;border-radius:15px;text-align:center">
 
 <h2>Informasi Ujian</h2>
 
-<p>Kode Ujian Anda :</p>
+<p>Kode Anda :</p>
 <h3 id="kodePopup"></h3>
 
 <p>Paket Anda :</p>
 <h2 id="paketPopup"></h2>
 
-<p style="font-size:14px">
-Lingkari kode paket pada kertas <b>EXAM SET</b>
-</p>
-
-<button onclick="lanjutUjian()" class="btn-action">
-Mulai Mengerjakan
-</button>
+<button onclick="lanjutUjian()">Mulai Mengerjakan</button>
 
 </div>
-
+</div>
 
 <script>
 
@@ -2588,36 +2257,53 @@ o:[
 
 ];
 
-let soalAktif=[];
-let nomor=0;
-let waktu=3600;
-let timerStart=false;
-let jawaban = []
-let skipChance = 12
-let skipUsed = 0
+let soalAktif=[]
+let nomor=0
+let waktu=3600
+let timerStart=false
+let jawaban=[]
+let skipChance=12
+let skipUsed=0
+
+
+
+/* ===================== */
+/* LOGIN */
+/* ===================== */
 
 function mulai(){
 
 let kode=document.getElementById("kode").value.trim().toUpperCase()
 
-if(!kodePaket[kode]){
-alert("Kode paket salah")
+if(kode==""){
+alert("Masukkan kode ujian")
 return
 }
 
-let paket = kodePaket[kode]
+if(!kodePaket[kode]){
+alert("Kode tidak valid")
+return
+}
+
+let paket=kodePaket[kode]
 
 if(paket=="A") soalAktif=paketA
 if(paket=="B") soalAktif=paketB
 if(paket=="7A") soalAktif=paket7A
 if(paket=="7B") soalAktif=paket7B
 
-document.getElementById("kodePopup").innerText = kode
-document.getElementById("paketPopup").innerText = "PAKET "+paket
+document.getElementById("kodePopup").innerText=kode
+document.getElementById("paketPopup").innerText="PAKET "+paket
 
 document.getElementById("popupInfo").style.display="flex"
 
 }
+
+
+
+/* ===================== */
+/* MULAI UJIAN */
+/* ===================== */
 
 function lanjutUjian(){
 
@@ -2629,113 +2315,95 @@ startTimer()
 
 }
 
+
+
+/* ===================== */
+/* RENDER SOAL */
+/* ===================== */
+
 function render(){
 
-let s = soalAktif[nomor];
+let s=soalAktif[nomor]
 
-let htmlOpsi="";
+let htmlOpsi=""
 
 for(let i of s.o){
 
-let selected = (jawaban[nomor] == i) ? "selected" : ""
+let selected=(jawaban[nomor]==i)?"selected":""
 
-htmlOpsi += `<div class="${selected}" onclick="pilihJawaban(this)">${i}</div>`
+htmlOpsi+=`<div class="${selected}" onclick="pilihJawaban(this)">${i}</div>`
 
 }
 
-document.getElementById("app").innerHTML = `
+document.getElementById("app").innerHTML=`
 
 <div class="header">
-<h2><i class="fa-solid fa-laptop-code"></i> Ujian Informatika</h2>
 
-<div class="timer" id="timer">
-<i class="fa-solid fa-clock"></i> 60:00
-</div>
+<div>Ujian Informatika</div>
+
+<div class="timer" id="timer">60:00</div>
+
 </div>
 
 <div class="container">
 
 <div class="card">
 
-<div class="progress">
-<i class="fa-solid fa-list"></i>
-Soal ${nomor+1} / ${soalAktif.length}
-</div>
+<div>Soal ${nomor+1} / ${soalAktif.length}</div>
 
-<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px">
+<div style="margin:10px 0">
 
 ${Array.from({length:soalAktif.length},(_,i)=>
-`<button onclick="lompat(${i})" style="width:40px;height:40px">${i+1}</button>`
+
+`<button onclick="lompat(${i})">${i+1}</button>`
+
 ).join("")}
 
 </div>
 
-<div class="soal">
-${s.q}
-</div>
+<div style="margin-top:20px">${s.q}</div>
 
-<div class="opsi">
-${htmlOpsi}
-</div>
+<div class="opsi">${htmlOpsi}</div>
 
-<button onclick="next()">
-<i class="fa-solid fa-arrow-right"></i>
-Next Soal
-</button>
+<button onclick="next()">Next Soal</button>
 
-<button onclick="skipSoal()" style="background:#f59e0b">
-<i class="fa-solid fa-forward"></i>
-Gunakan Kesempatan Lompat (${skipUsed}/12)
+<button onclick="skipSoal()" style="background:orange">
+Skip (${skipUsed}/12)
 </button>
 
 </div>
+
 </div>
 
-`;
+`
 
+}
+
+
+
+/* ===================== */
+/* PILIH JAWABAN */
+/* ===================== */
+
+function pilihJawaban(el){
+
+let opsi=document.querySelectorAll(".opsi div")
+
+opsi.forEach(o=>o.classList.remove("selected"))
+
+el.classList.add("selected")
+
+jawaban[nomor]=el.innerText
 
 }
 
-function lompat(n){
 
-if(skipUsed>=skipChance){
-alert("Kesempatan lompat sudah habis")
-return
-}
 
-skipUsed++
-
-nomor=n
-
-render()
-
-}
+/* ===================== */
+/* NEXT */
+/* ===================== */
 
 function next(){
-
-nomor++;
-
-if(nomor>=soalAktif.length){
-
-document.body.innerHTML=
-'<div class="block"><h1>Ujian Selesai</h1><p>Silakan kumpulkan LJK</p></div>';
-
-return;
-
-}
-
-render();
-
-}
-
-function skipSoal(){
-
-if(skipUsed>=skipChance){
-alert("Kesempatan lompat soal sudah habis")
-return
-}
-
-skipUsed++
 
 nomor++
 
@@ -2752,90 +2420,109 @@ render()
 
 }
 
-function pilihJawaban(el){
 
-let opsi=document.querySelectorAll(".opsi div")
 
-opsi.forEach(o=>o.classList.remove("selected"))
+/* ===================== */
+/* LOMPAT */
+/* ===================== */
 
-el.classList.add("selected")
+function lompat(n){
 
-jawaban[nomor] = el.innerText
+if(skipUsed>=skipChance){
+alert("Kesempatan lompat habis")
+return
+}
+
+skipUsed++
+
+nomor=n
+
+render()
 
 }
+
+
+
+/* ===================== */
+/* SKIP */
+/* ===================== */
+
+function skipSoal(){
+
+if(skipUsed>=skipChance){
+alert("Kesempatan lompat habis")
+return
+}
+
+skipUsed++
+
+nomor++
+
+render()
+
+}
+
+
+
+/* ===================== */
+/* TIMER */
+/* ===================== */
 
 function startTimer(){
 
-if(timerStart) return;
+if(timerStart)return
 
-timerStart=true;
+timerStart=true
 
 let t=setInterval(()=>{
 
-let m=Math.floor(waktu/60);
-let s=waktu%60;
+let m=Math.floor(waktu/60)
+let s=waktu%60
 
-let el=document.getElementById("timer");
+let el=document.getElementById("timer")
 
 if(el){
 
-el.innerHTML=`<i class="fa-solid fa-clock"></i> ${m}:${s<10?"0"+s:s}`;
-
-if(waktu<300){
-el.classList.add("danger");
-}
+el.innerText=m+":"+(s<10?"0"+s:s)
 
 }
 
-waktu--;
+waktu--
 
 if(waktu<0){
 
-clearInterval(t);
+clearInterval(t)
 
 document.body.innerHTML=
-'<div class="block"><h1>⏰ Waktu Habis</h1></div>';
+'<div class="block"><h1>Waktu Habis</h1></div>'
 
 }
 
-},1000);
+},1000)
 
 }
 
-/* BLOCK INSPECT - DESKTOP ONLY */
 
-let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+/* ===================== */
+/* BLOCK INSPECT */
+/* ===================== */
+
+let isMobile=/Android|iPhone/i.test(navigator.userAgent)
 
 if(!isMobile){
 
-// blok klik kanan
-document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("contextmenu",e=>e.preventDefault())
 
-// blok shortcut inspect
 document.onkeydown=function(e){
 
-if(e.keyCode==123)return false; // F12
+if(e.keyCode==123)return false
 
-if(e.ctrlKey && e.shiftKey && e.keyCode==73)return false; // Ctrl+Shift+I
+if(e.ctrlKey && e.shiftKey && e.keyCode==73)return false
 
-if(e.ctrlKey && e.keyCode==85)return false; // Ctrl+U
-
-};
-
-// deteksi devtools
-setInterval(function(){
-
-if(
-window.outerWidth - window.innerWidth > 160 ||
-window.outerHeight - window.innerHeight > 160
-){
-
-document.body.innerHTML=
-'<div class="block"><h1>⚠ Device Diblokir</h1><p>Inspect terdeteksi</p></div>';
+if(e.ctrlKey && e.keyCode==85)return false
 
 }
-
-},1000);
 
 }
 
