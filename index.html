@@ -2433,6 +2433,11 @@ let skipUsed=0
 
 function mulai(){
 
+if(!cekJadwal()){
+alert("Ujian hanya dapat diakses sesuai jadwal.")
+return
+}
+
 let kode=document.getElementById("kode").value.trim().toUpperCase()
 
 if(kode==""){
@@ -2676,6 +2681,63 @@ document.body.innerHTML=
 }
 
 },1000)
+
+}
+
+function cekJadwal(){
+
+let now = new Date()
+
+let hari = now.getDay() // 0 Minggu, 4 Kamis, 5 Jumat
+
+let jam = now.getHours()
+let menit = now.getMinutes()
+
+let waktu = jam*60 + menit
+
+/* ================= */
+/* KAMIS */
+/* ================= */
+
+if(hari==4){
+
+let sesi1_start = 9*60 + 35
+let sesi1_end   = 10*60 + 45
+
+let sesi2_start = 13*60 + 55
+let sesi2_end   = 15*60 + 5
+
+if(
+(waktu>=sesi1_start && waktu<=sesi1_end) ||
+(waktu>=sesi2_start && waktu<=sesi2_end)
+){
+return true
+}
+
+}
+
+/* ================= */
+/* JUMAT */
+/* ================= */
+
+if(hari==5){
+
+let sesi1_start = 7*60 + 25
+let sesi1_end   = 8*60 + 20
+
+let sesi2_start = 8*60 + 30
+let sesi2_end   = 9*60 + 20
+
+if(
+(waktu>=sesi1_start && waktu<=sesi1_end) ||
+(waktu>=sesi2_start && waktu<=sesi2_end)
+){
+return true
+}
+
+}
+
+return false
 
 }
 
