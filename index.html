@@ -1,107 +1,128 @@
 <!DOCTYPE html>
+
 <html lang="id">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LATIHAN SUMATIF AKHIR SEMESTER INFORMATIKA VIII</title>
+
+<title>ANBK Informatika</title>
 
 <style>
+
 body{font-family:'Segoe UI';margin:0;background:#f0f4f8}
 
-/* LOGIN */
 .start{display:flex;justify-content:center;align-items:center;height:100vh}
+
 .card{background:#fff;padding:25px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,.1);width:90%;max-width:380px}
+
 input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc}
 
-/* LAYOUT */
 .container{display:flex}
+
 .sidebar{width:90px;background:#fff;padding:10px;height:100vh;overflow:auto}
+
 .sidebar button{width:38px;height:38px;margin:5px;border:none;border-radius:50%;background:#e0e7ff}
+
 .sidebar button.active{background:#6366f1;color:#fff}
+
+.answered{background:#22c55e !important;color:white}
+
+.doubt{background:orange !important;color:white}
+
 .main{flex:1;padding:20px}
 
-  .answered{
-  background:#22c55e !important;
-  color:white;
-}
-.doubt{
-  background:orange !important;
-  color:white;
-}
-
-/* SOAL */
 .option{display:block;padding:12px;margin:10px 0;border:2px solid #ddd;border-radius:10px;cursor:pointer}
+
 .option:hover{background:#eef2ff}
+
 .locked{opacity:.6;pointer-events:none}
 
-/* BUTTON */
 .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+
 button{flex:1;padding:10px;border:none;border-radius:10px;background:#6366f1;color:#fff}
+
 .ragu{background:orange}
 
-/* TIMER */
-.timer{position:fixed;top:10px;right:10px;background:#111;color:#fff;padding:10px;border-radius:10px;text-align:center;font-size:14px}
+.timer{position:fixed;top:10px;right:10px;background:#111;color:#fff;padding:10px;border-radius:10px}
 
-@media(max-width:768px){
-.container{flex-direction:column}
-.sidebar{width:100%;height:auto;display:flex;flex-wrap:wrap}
-}
 </style>
+
 </head>
 
 <body>
 
-<!-- LOGIN -->
 <div class="start" id="start">
+
 <div class="card">
+
 <h3 id="greet"></h3>
+
 <input id="nama" placeholder="Nama">
+
 <input id="absen" placeholder="No Absen">
+
 <input id="kelas" placeholder="Kelas">
 
-<p style="font-size:13px">
-• Waktu 75 menit<br>
-• Jawaban terkunci 10 detik<br>
-• Upload hasil ke Google Form<br>
-<a href="https://forms.gle/vXp4zsKaW8PW6vtEA" target="_blank">Link Form</a>
-</p>
-
 <button onclick="mulai()">Mulai</button>
-</div>
+
 </div>
 
-<!-- QUIZ -->
+</div>
+
 <div class="container" id="quiz" style="display:none">
+
 <div class="sidebar" id="nav"></div>
 
 <div class="main">
-<h2>ANBK Informatika</h2>
+
+<h2>SUMATIF AKHIR SEMESTER LATIHAN</h2>
 
 <div id="box" class="card"></div>
 
 <div class="btns">
+
 <button onclick="prev()">Prev</button>
+
 <button onclick="next()">Next</button>
+
 <button class="ragu" onclick="ragu()">Ragu</button>
+
 <button onclick="submit()">Submit</button>
+
 </div>
 
 <div id="hasil" class="card" style="display:none"></div>
-</div>
+
 </div>
 
-<div class="timer">
-<div id="timer"></div>
-<div id="clock" style="font-size:12px"></div>
 </div>
+
+<div class="timer" id="timer"></div>
 
 <script>
 
-// GREETING
-let h=new Date().getHours();
-document.getElementById("greet").innerText=
-h<12?"Selamat Pagi":h<15?"Selamat Siang":h<18?"Selamat Sore":"Selamat Malam";
+// ================= GOOGLE FORM CONFIG =================
 
+const FORM_ID = "1FAIpQLScxRpVWUsg9DGZwvYXkIqeJ";
+
+const ENTRY_NAMA = "entry.111111111";
+
+const ENTRY_ABSEN = "entry.222222222";
+
+const ENTRY_KELAS = "entry.333333333";
+
+const ENTRY_NILAI = "entry.444444444";
+
+// ================= GREETING =================
+
+let h=new Date().getHours();
+
+document.getElementById("greet").innerText=
+
+h<12?"Selamat Pagi":h<15?"Selamat Siang":h<18?"Selamat Sore":"Selamat Malam";
   const pembahasan = [
 
 "Data adalah fakta mentah yang belum mengalami proses pengolahan. Setelah diolah barulah menjadi informasi.",
@@ -265,191 +286,220 @@ let questions = [
 ];
 
 
-// VALIDASI
-questions.forEach((q,i)=>{
-if(q.exp!==pembahasan[i]) console.warn("Mismatch soal "+(i+1));
-});
-
 // RANDOM
+
 questions=questions.sort(()=>Math.random()-0.5);
 
 let current=0,answers=[],lockStatus={},doubt=[];
 
 // START
+
 function mulai(){
+
 document.getElementById("start").style.display="none";
+
 document.getElementById("quiz").style.display="flex";
+
 init();
+
 }
 
 // INIT
+
 function init(){
+
 let nav=document.getElementById("nav");
+
 questions.forEach((_,i)=>{
+
 let b=document.createElement("button");
+
 b.innerText=i+1;
+
 b.onclick=()=>{current=i;render()};
+
 nav.appendChild(b);
+
 });
+
 render();
+
 timer();
-clock();
+
 }
 
 // RENDER
+
 function render(){
+
 let q=questions[current];
 
-let html=`
-<div style="color:#6b7280">Soal ${current+1} dari ${questions.length}</div>
-<p><b>${current+1}. ${q.q}</b></p>
-`;
+let html=`<p><b>${current+1}. ${q.q}</b></p>`;
 
 q.options.forEach((o,i)=>{
+
 html+=`
+
 <label class="option">
+
 <input type="radio" ${answers[current]==i?"checked":""}
+
 onchange="pilih(${i})"> ${o}
+
 </label>`;
+
 });
 
-  document.querySelectorAll("#nav button").forEach((b,i)=>{
-  b.classList.remove("active","answered","doubt");
+document.querySelectorAll("#nav button").forEach((b,i)=>{
 
-  if(i===current) b.classList.add("active");
-  if(answers[i] !== undefined) b.classList.add("answered");
-  if(doubt[i]) b.classList.add("doubt");
+b.classList.remove("active","answered","doubt");
+
+if(i===current) b.classList.add("active");
+
+if(answers[i]!=undefined) b.classList.add("answered");
+
+if(doubt[i]) b.classList.add("doubt");
+
 });
 
 let box=document.getElementById("box");
+
 box.innerHTML=html;
 
-if(lockStatus[current]) box.classList.add("locked");
-else box.classList.remove("locked");
 }
 
 // PILIH
+
 function pilih(i){
+
 answers[current]=i;
+
 lockStatus[current]=true;
+
 render();
 
-setTimeout(()=>{
-lockStatus[current]=false;
-render();
-},10000);
+setTimeout(()=>{lockStatus[current]=false;render()},10000);
+
 }
 
 // NAV
+
 function next(){if(current<questions.length-1){current++;render()}}
+
 function prev(){if(current>0){current--;render()}}
 
 // RAGU
+
 function ragu(){doubt[current]=true;alert("Ditandai ragu")}
 
 // TIMER
-let dur=75*60,start=Date.now(),notif=0;
+
+let dur=75*60,start=Date.now();
+
 function timer(){
+
 setInterval(()=>{
+
 let s=Math.floor((Date.now()-start)/1000);
+
 let r=dur-s;
 
 let m=Math.floor(r/60),sec=r%60;
+
 document.getElementById("timer").innerText=`⏱ ${m}:${sec<10?"0":""}${sec}`;
 
-let pass=Math.floor(s/600);
-if(pass>notif){
-notif=pass;
-alert(`${pass*10} menit berlalu, sisa ${m} menit`);
-}
-
 if(r<=0) submit();
-},1000);
-}
 
-// CLOCK
-function clock(){
-setInterval(()=>{
-document.getElementById("clock").innerText=
-new Date().toLocaleTimeString();
 },1000);
+
 }
 
 // SUBMIT
+
 function submit(){
+
 let score=0;
 
 questions.forEach((q,i)=>{
-  if(answers[i]===q.answer) score++;
+
+if(answers[i]===q.answer) score++;
+
 });
 
 let nilai=(score/questions.length)*100;
 
-// simpan nilai (tidak langsung ditampilkan)
 window.nilaiAkhir = nilai;
 
-// tampil pertanyaan dulu
 document.getElementById("hasil").style.display="block";
-document.getElementById("hasil").innerHTML = `
-<h3>Terima kasih sudah mengerjakan 🙌</h3>
 
-<p>Sebelum melihat nilai, jawab dulu ya:</p>
+document.getElementById("hasil").innerHTML=`
 
-<input id="feedback" placeholder="Bagaimana tingkat kesulitan soal?" 
-style="width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc">
+<h3>Nilai kamu siap 👇</h3>
 
 <button onclick="lihatNilai()">Lihat Nilai</button>
+
 `;
+
 }
 
-let nilai=(score/questions.length)*100;
+// LIHAT NILAI + AUTO KIRIM
 
-html=`<h2>Nilai: ${nilai.toFixed(0)}</h2>`+html+
-`<a href="https://forms.gle/vXp4zsKaW8PW6vtEA" target="_blank">Upload Hasil</a>`;
+function lihatNilai(){
 
-document.getElementById("hasil").innerHTML=html;
-document.getElementById("hasil").style.display="block";
-}
-  function lihatNilai(){
-let html = `<h2>Nilai: ${window.nilaiAkhir.toFixed(0)}</h2><h3>Pembahasan</h3>`;
+let html=`<h2>Nilai: ${window.nilaiAkhir.toFixed(0)}</h2><h3>Pembahasan</h3>`;
 
 questions.forEach((q,i)=>{
-let benar = answers[i]===q.answer;
 
-html += `
-<p><b>Soal ${i+1}</b></p>
-<p style="color:${benar?'green':'red'}">
-${benar?'Benar':'Salah'}
-</p>
-<p>${q.exp}</p><hr>
+let benar=answers[i]===q.answer;
+
+html+=`
+
+<p>${benar?"✅":"❌"} ${q.exp}</p>
+
 `;
+
 });
 
-html += `
-<button onclick="uploadHasil()" style="background:#16a34a;margin-top:10px">
-📤 Upload Hasil
-</button>
-`;
+document.getElementById("hasil").innerHTML=html;
 
-document.getElementById("hasil").innerHTML = html;
+// AUTO KIRIM
+
+uploadHasil();
+
 }
 
-  function uploadHasil(){
-let nama = document.getElementById("nama").value;
-let absen = document.getElementById("absen").value;
-let kelas = document.getElementById("kelas").value;
+// ================= AUTO KIRIM =================
 
-let pesan = `Nama: ${nama}
-Absen: ${absen}
-Kelas: ${kelas}
-Nilai: ${window.nilaiAkhir.toFixed(0)}`;
+function uploadHasil(){
 
-alert("Silakan upload hasil ke Google Form");
+let nama=document.getElementById("nama").value;
 
-window.open("https://forms.gle/vXp4zsKaW8PW6vtEA","_blank");
+let absen=document.getElementById("absen").value;
+
+let kelas=document.getElementById("kelas").value;
+
+let nilai=window.nilaiAkhir.toFixed(0);
+
+let url=`https://docs.google.com/forms/d/e/${FORM_ID}/formResponse?`+
+
+`${ENTRY_NAMA}=${encodeURIComponent(nama)}`+
+
+`&${ENTRY_ABSEN}=${encodeURIComponent(absen)}`+
+
+`&${ENTRY_KELAS}=${encodeURIComponent(kelas)}`+
+
+`&${ENTRY_NILAI}=${encodeURIComponent(nilai)}`;
+
+fetch(url,{mode:"no-cors"})
+
+.then(()=>console.log("Terkirim"))
+
+.catch(()=>console.log("Gagal"));
+
 }
 
 </script>
 
 </body>
+
 </html>
