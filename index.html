@@ -1,205 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ANBK Informatika</title>
 
 <style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  margin:0;
-  background:#f0f4f8;
-}
+body{font-family:'Segoe UI';margin:0;background:#f0f4f8}
 
-/* ===== HALAMAN AWAL ===== */
-.start-screen {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
+/* LOGIN */
+.start{display:flex;justify-content:center;align-items:center;height:100vh}
+.card{background:#fff;padding:25px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,.1);width:90%;max-width:380px}
+input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc}
 
-.start-card {
-  background:white;
-  padding:30px;
-  border-radius:15px;
-  width:350px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.1);
-}
+/* LAYOUT */
+.container{display:flex}
+.sidebar{width:90px;background:#fff;padding:10px;height:100vh;overflow:auto}
+.sidebar button{width:38px;height:38px;margin:5px;border:none;border-radius:50%;background:#e0e7ff}
+.sidebar button.active{background:#6366f1;color:#fff}
+.main{flex:1;padding:20px}
 
-.start-card input {
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
+/* SOAL */
+.option{display:block;padding:12px;margin:10px 0;border:2px solid #ddd;border-radius:10px;cursor:pointer}
+.option:hover{background:#eef2ff}
+.locked{opacity:.6;pointer-events:none}
 
-/* ===== LAYOUT ===== */
-.container {
-  display:flex;
-}
+/* BUTTON */
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+button{flex:1;padding:10px;border:none;border-radius:10px;background:#6366f1;color:#fff}
+.ragu{background:orange}
 
-.sidebar {
-  width:100px;
-  background:#fff;
-  padding:10px;
-  height:100vh;
-  overflow:auto;
-}
+/* TIMER */
+.timer{position:fixed;top:10px;right:10px;background:#111;color:#fff;padding:10px;border-radius:10px;text-align:center;font-size:14px}
 
-.sidebar button {
-  width:40px;
-  height:40px;
-  margin:5px;
-  border:none;
-  border-radius:50%;
-  background:#e0e7ff;
+@media(max-width:768px){
+.container{flex-direction:column}
+.sidebar{width:100%;height:auto;display:flex;flex-wrap:wrap}
 }
-
-.sidebar button.active {
-  background:#6366f1;
-  color:white;
-}
-
-.main {
-  flex:1;
-  padding:30px;
-}
-
-.card {
-  background:white;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.08);
-}
-
-/* ===== SOAL ===== */
-.option {
-  display:block;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
-  border:2px solid #e5e7eb;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.option:hover {
-  background:#eef2ff;
-}
-
-.option input {
-  margin-right:10px;
-}
-
-/* ===== TIMER ===== */
-.timer {
-  position:fixed;
-  top:15px;
-  right:20px;
-  background:#111827;
-  color:white;
-  padding:10px 15px;
-  border-radius:10px;
-}
-
-.alert {
-  position:fixed;
-  top:60px;
-  right:20px;
-  background:red;
-  color:white;
-  padding:10px;
-  border-radius:8px;
-  animation:fade 3s;
-}
-
-@keyframes fade {
-  0%{opacity:0}
-  20%{opacity:1}
-  80%{opacity:1}
-  100%{opacity:0}
-}
-
-button {
-  padding:10px 15px;
-  border:none;
-  border-radius:8px;
-  background:#6366f1;
-  color:white;
-  cursor:pointer;
-}
-
-.ragu {
-  background:orange;
-}
-
-.locked {
-  opacity:0.6;
-  pointer-events:none;
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- ===== HALAMAN AWAL ===== -->
-<div class="start-screen" id="startScreen">
-  <div class="start-card">
-    <h3 id="greeting"></h3>
-    <input id="nama" placeholder="Nama">
-    <input id="absen" placeholder="No Absen">
-    <input id="kelas" placeholder="Kelas">
+<!-- LOGIN -->
+<div class="start" id="start">
+<div class="card">
+<h3 id="greet"></h3>
+<input id="nama" placeholder="Nama">
+<input id="absen" placeholder="No Absen">
+<input id="kelas" placeholder="Kelas">
 
-    <p style="font-size:13px;">
-      Petunjuk:
-      <br>• Waktu 75 menit
-      <br>• Jawaban terkunci 10 detik
-      <br>• Klik ragu jika belum yakin
-      <br><br>
-      Setelah selesai WAJIB upload:
-      <br>
-      <a href="https://forms.gle/vXp4zsKaW8PW6vtEA" target="_blank">
-      Google Form</a>
-    </p>
+<p style="font-size:13px">
+• Waktu 75 menit<br>
+• Jawaban terkunci 10 detik<br>
+• Upload hasil ke Google Form<br>
+<a href="https://forms.gle/vXp4zsKaW8PW6vtEA" target="_blank">Link Form</a>
+</p>
 
-    <button onclick="start()">Mulai</button>
-  </div>
+<button onclick="mulai()">Mulai</button>
+</div>
 </div>
 
-<!-- ===== QUIZ ===== -->
-<div class="container" id="quiz" style="display:none;">
-  <div class="sidebar" id="nav"></div>
+<!-- QUIZ -->
+<div class="container" id="quiz" style="display:none">
+<div class="sidebar" id="nav"></div>
 
-  <div class="main">
-    <h2>ANBK Informatika</h2>
+<div class="main">
+<h2>ANBK Informatika</h2>
 
-    <div id="questionBox" class="card"></div>
+<div id="box" class="card"></div>
 
-    <button onclick="prev()">Prev</button>
-    <button onclick="next()">Next</button>
-    <button class="ragu" onclick="ragu()">Ragu</button>
-    <button onclick="submitQuiz()">Submit</button>
-
-    <div id="result" class="card" style="display:none;"></div>
-  </div>
+<div class="btns">
+<button onclick="prev()">Prev</button>
+<button onclick="next()">Next</button>
+<button class="ragu" onclick="ragu()">Ragu</button>
+<button onclick="submit()">Submit</button>
 </div>
 
-<div class="timer" id="timer"></div>
+<div id="hasil" class="card" style="display:none"></div>
+</div>
+</div>
+
+<div class="timer">
+<div id="timer"></div>
+<div id="clock" style="font-size:12px"></div>
+</div>
 
 <script>
 
-// ===== GREETING =====
-let h = new Date().getHours();
-let greet = h<12?"Selamat Pagi":h<15?"Selamat Siang":h<18?"Selamat Sore":"Selamat Malam";
-document.getElementById("greeting").innerText = greet;
-
-// ===== START =====
-function start(){
-document.getElementById("startScreen").style.display="none";
-document.getElementById("quiz").style.display="flex";
-initQuiz();
-}
+// GREETING
+let h=new Date().getHours();
+document.getElementById("greet").innerText=
+h<12?"Selamat Pagi":h<15?"Selamat Siang":h<18?"Selamat Sore":"Selamat Malam";
 
   const pembahasan = [
 
@@ -364,118 +256,132 @@ let questions = [
 ];
 
 
-questions = questions.sort(()=>Math.random()-0.5);
+// VALIDASI
+questions.forEach((q,i)=>{
+if(q.exp!==pembahasan[i]) console.warn("Mismatch soal "+(i+1));
+});
 
-let current=0;
-let answers=[];
-let doubt=[];
+// RANDOM
+questions=questions.sort(()=>Math.random()-0.5);
 
-// ===== INIT =====
-function initQuiz(){
+let current=0,answers=[],lockStatus={},doubt=[];
+
+// START
+function mulai(){
+document.getElementById("start").style.display="none";
+document.getElementById("quiz").style.display="flex";
+init();
+}
+
+// INIT
+function init(){
 let nav=document.getElementById("nav");
 questions.forEach((_,i)=>{
 let b=document.createElement("button");
 b.innerText=i+1;
-b.onclick=()=>{current=i; render();};
+b.onclick=()=>{current=i;render()};
 nav.appendChild(b);
 });
 render();
-startTimer();
+timer();
+clock();
 }
 
-// ===== RENDER =====
+// RENDER
 function render(){
 let q=questions[current];
 
-let html=`<h3>${current+1}. ${q.q}</h3>`;
+let html=`
+<div style="color:#6b7280">Soal ${current+1} dari ${questions.length}</div>
+<p><b>${current+1}. ${q.q}</b></p>
+`;
 
 q.options.forEach((o,i)=>{
 html+=`
 <label class="option">
-<input type="radio" name="q"
-${answers[current]==i?"checked":""}
-onchange="selectAnswer(${i})">
-${o}
+<input type="radio" ${answers[current]==i?"checked":""}
+onchange="pilih(${i})"> ${o}
 </label>`;
 });
 
-document.getElementById("questionBox").innerHTML=html;
+let box=document.getElementById("box");
+box.innerHTML=html;
+
+if(lockStatus[current]) box.classList.add("locked");
+else box.classList.remove("locked");
 }
 
-// ===== PILIH JAWABAN + LOCK =====
-function selectAnswer(i){
+// PILIH
+function pilih(i){
 answers[current]=i;
-
-let box=document.getElementById("questionBox");
-box.classList.add("locked");
+lockStatus[current]=true;
+render();
 
 setTimeout(()=>{
-box.classList.remove("locked");
+lockStatus[current]=false;
+render();
 },10000);
 }
 
-// ===== RAGU =====
-function ragu(){
-doubt[current]=true;
-alert("Ditandai ragu");
-}
+// NAV
+function next(){if(current<questions.length-1){current++;render()}}
+function prev(){if(current>0){current--;render()}}
 
-// ===== NAV =====
-function next(){ if(current<questions.length-1){current++;render();}}
-function prev(){ if(current>0){current--;render();}}
+// RAGU
+function ragu(){doubt[current]=true;alert("Ditandai ragu")}
 
-// ===== TIMER =====
-let duration=75*60;
-let startTime=Date.now();
-let lastNotif=0;
-
-function startTimer(){
+// TIMER
+let dur=75*60,start=Date.now(),notif=0;
+function timer(){
 setInterval(()=>{
-let s=Math.floor((Date.now()-startTime)/1000);
-let remain=duration-s;
+let s=Math.floor((Date.now()-start)/1000);
+let r=dur-s;
 
-let m=Math.floor(remain/60);
-let sec=remain%60;
+let m=Math.floor(r/60),sec=r%60;
+document.getElementById("timer").innerText=`⏱ ${m}:${sec<10?"0":""}${sec}`;
 
-document.getElementById("timer").innerText=`⏱️ ${m}:${sec<10?"0":""}${sec}`;
-
-// tiap 10 menit
-let passed=Math.floor(s/600);
-if(passed>lastNotif){
-lastNotif=passed;
-showAlert(`Breaking News 🚨\n${passed*10} menit telah berlalu\nSisa waktu ${m} menit`);
+let pass=Math.floor(s/600);
+if(pass>notif){
+notif=pass;
+alert(`${pass*10} menit berlalu, sisa ${m} menit`);
 }
 
-if(remain<=0) submitQuiz();
-
+if(r<=0) submit();
 },1000);
 }
 
-// ===== ALERT =====
-function showAlert(text){
-let div=document.createElement("div");
-div.className="alert";
-div.innerText=text;
-document.body.appendChild(div);
-
-setTimeout(()=>div.remove(),3000);
+// CLOCK
+function clock(){
+setInterval(()=>{
+document.getElementById("clock").innerText=
+new Date().toLocaleTimeString();
+},1000);
 }
 
-// ===== SUBMIT =====
-function submitQuiz(){
-let score=0;
+// SUBMIT
+function submit(){
+let score=0,html="<h3>Pembahasan</h3>";
+
 questions.forEach((q,i)=>{
-if(answers[i]===q.answer) score++;
+let benar=answers[i]===q.answer;
+if(benar) score++;
+
+html+=`
+<p><b>Soal ${i+1}</b></p>
+<p style="color:${benar?"green":"red"}">
+${benar?"Benar":"Salah"}
+</p>
+<p>${q.exp}</p><hr>
+`;
 });
 
 let nilai=(score/questions.length)*100;
 
-document.getElementById("result").style.display="block";
-document.getElementById("result").innerHTML=
-`<h2>Nilai: ${nilai.toFixed(0)}</h2>
-<p>Upload hasil ke:</p>
-<a href="https://forms.gle/vXp4zsKaW8PW6vtEA" target="_blank">
-Google Form</a>`;
+html=`<h2>Nilai: ${nilai.toFixed(0)}</h2>`+html+
+`<a href="https://forms.gle/vXp4zsKaW8PW6vtEA" target="_blank">Upload Hasil</a>`;
+
+document.getElementById("hasil").innerHTML=html;
+document.getElementById("hasil").style.display="block";
 }
 
 </script>
