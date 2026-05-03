@@ -5,24 +5,100 @@
 <title>LATIHAN SAS INFORMATIKA VII</title>
 
 <style>
-body { font-family: Arial; margin:0; display:flex; }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin:0;
+  display:flex;
+  background:#f0f4f8;
+}
+
 .sidebar {
-  width:120px; background:#f5f5f5; padding:10px;
-  height:100vh; overflow:auto;
+  width:100px;
+  background:#ffffff;
+  padding:10px;
+  height:100vh;
+  overflow:auto;
+  box-shadow:2px 0 10px rgba(0,0,0,0.05);
 }
+
 .sidebar button {
-  width:40px; height:40px; margin:5px;
+  width:40px;
+  height:40px;
+  margin:5px;
+  border:none;
+  border-radius:50%;
+  background:#e0e7ff;
+  cursor:pointer;
+  transition:0.3s;
 }
+
+.sidebar button:hover {
+  background:#6366f1;
+  color:white;
+}
+
 .main {
-  flex:1; padding:20px;
+  flex:1;
+  padding:30px;
 }
+
+.card {
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  animation:fadeIn 0.4s ease;
+}
+
 .timer {
-  position:fixed; top:10px; right:20px;
-  background:black; color:white; padding:10px;
+  position:fixed;
+  top:15px;
+  right:20px;
+  background:#111827;
+  color:white;
+  padding:10px 15px;
+  border-radius:10px;
+  font-weight:bold;
 }
-.hidden { display:none; }
+
+button.main-btn {
+  padding:10px 15px;
+  margin:10px 5px;
+  border:none;
+  border-radius:8px;
+  background:#6366f1;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button.main-btn:hover {
+  background:#4338ca;
+}
+
 .correct { color:green; }
 .wrong { color:red; }
+
+.progress {
+  height:8px;
+  background:#ddd;
+  border-radius:5px;
+  margin-bottom:20px;
+}
+
+.progress-bar {
+  height:8px;
+  background:#6366f1;
+  border-radius:5px;
+  width:0%;
+  transition:0.4s;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px);}
+  to { opacity:1; transform:translateY(0);}
+}
 </style>
 
 </head>
@@ -33,17 +109,21 @@ body { font-family: Arial; margin:0; display:flex; }
 
 <div class="main">
 <h2>ANBK Informatika</h2>
-<div id="info"></div>
-<div id="questionBox"></div>
 
-<button onclick="prev()">⬅️</button>
-<button onclick="next()">➡️</button>
-<button onclick="submitQuiz()">Submit</button>
-
-<div id="result" class="hidden"></div>
+<div class="progress">
+  <div class="progress-bar" id="progressBar"></div>
 </div>
 
-<div class="timer" id="timer"></div>
+<div id="info"></div>
+
+<div id="questionBox" class="card"></div>
+
+<button class="main-btn" onclick="prev()">⬅️ Prev</button>
+<button class="main-btn" onclick="next()">Next ➡️</button>
+<button class="main-btn" onclick="submitQuiz()">Submit</button>
+
+<div id="result" class="hidden card"></div>
+</div>
 
 <script>
 
@@ -213,6 +293,42 @@ document.getElementById("questionBox").innerHTML = html;
 function saveAnswer(val){
 answers[current]=val;
 localStorage.setItem("answers", JSON.stringify(answers));
+}
+
+  function render(){
+let q = questions[current];
+
+document.getElementById("info").innerHTML =
+`Kisi: ${q.kisi} | Level: ${q.level} | ${q.difficulty}`;
+
+// progress bar
+let percent = ((current+1)/questions.length)*100;
+document.getElementById("progressBar").style.width = percent + "%";
+
+let html = `<p><b>${current+1}. ${q.q}</b></p>`;
+
+q.options.forEach((opt,i)=>{
+html += `
+<label style="display:block; margin:10px 0; padding:10px; border-radius:8px; cursor:pointer; transition:0.2s;"
+onmouseover="this.style.background='#eef2ff'"
+onmouseout="this.style.background='white'">
+
+<input type="radio" name="q" value="${i}"
+${answers[current]==i?"checked":""}
+onchange="saveAnswer(${i})">
+
+${opt}
+</label>`;
+});
+
+// animasi reset
+let box = document.getElementById("questionBox");
+box.style.opacity = 0;
+
+setTimeout(()=>{
+box.innerHTML = html;
+box.style.opacity = 1;
+},150);
 }
 
 function next(){ if(current<questions.length-1){current++; render();}}
