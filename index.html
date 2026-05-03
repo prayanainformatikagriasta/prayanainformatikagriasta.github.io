@@ -29,6 +29,10 @@ input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #c
   color:white;
 }
 
+  .option input{
+  margin-right:8px;
+}
+
 /* SOAL */
 .option{display:block;padding:12px;margin:10px 0;border:2px solid #ddd;border-radius:10px;cursor:pointer}
 .option:hover{background:#eef2ff}
@@ -345,7 +349,10 @@ function next(){if(current<questions.length-1){current++;render()}}
 function prev(){if(current>0){current--;render()}}
 
 // RAGU
-function ragu(){doubt[current]=true;alert("Ditandai ragu")}
+function ragu(){
+doubt[current] = !doubt[current];
+render();
+}
 
 // TIMER
 let dur=75*60,start=Date.now(),notif=0;
@@ -363,8 +370,9 @@ notif=pass;
 alert(`${pass*10} menit berlalu, sisa ${m} menit`);
 }
 
-if(r<=0) submit();
-},1000);
+if(r<=0){
+  clearInterval(this);
+  submit();
 }
 
 // CLOCK
@@ -375,7 +383,6 @@ new Date().toLocaleTimeString();
 },1000);
 }
 
-// SUBMIT
 function submit(){
 let score=0;
 
@@ -384,11 +391,9 @@ questions.forEach((q,i)=>{
 });
 
 let nilai=(score/questions.length)*100;
-
-// simpan nilai (tidak langsung ditampilkan)
 window.nilaiAkhir = nilai;
 
-// tampil pertanyaan dulu
+// tampil form dulu
 document.getElementById("hasil").style.display="block";
 document.getElementById("hasil").innerHTML = `
 <h3>Terima kasih sudah mengerjakan 🙌</h3>
@@ -398,7 +403,10 @@ document.getElementById("hasil").innerHTML = `
 <input id="feedback" placeholder="Bagaimana tingkat kesulitan soal?" 
 style="width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc">
 
+<div class="btns">
 <button onclick="lihatNilai()">Lihat Nilai</button>
+<button onclick="uploadHasil()" style="background:#16a34a">Upload Sekarang</button>
+</div>
 `;
 }
 
