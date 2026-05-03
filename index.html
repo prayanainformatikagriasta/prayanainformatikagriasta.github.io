@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ANBK Informatika</title>
+<title>LATIHAN SUMATIF AKHIR SEMESTER INFORMATIKA VIII</title>
 
 <style>
 body{font-family:'Segoe UI';margin:0;background:#f0f4f8}
@@ -19,6 +19,15 @@ input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #c
 .sidebar button{width:38px;height:38px;margin:5px;border:none;border-radius:50%;background:#e0e7ff}
 .sidebar button.active{background:#6366f1;color:#fff}
 .main{flex:1;padding:20px}
+
+  .answered{
+  background:#22c55e !important;
+  color:white;
+}
+.doubt{
+  background:orange !important;
+  color:white;
+}
 
 /* SOAL */
 .option{display:block;padding:12px;margin:10px 0;border:2px solid #ddd;border-radius:10px;cursor:pointer}
@@ -304,6 +313,14 @@ onchange="pilih(${i})"> ${o}
 </label>`;
 });
 
+  document.querySelectorAll("#nav button").forEach((b,i)=>{
+  b.classList.remove("active","answered","doubt");
+
+  if(i===current) b.classList.add("active");
+  if(answers[i] !== undefined) b.classList.add("answered");
+  if(doubt[i]) b.classList.add("doubt");
+});
+
 let box=document.getElementById("box");
 box.innerHTML=html;
 
@@ -360,20 +377,30 @@ new Date().toLocaleTimeString();
 
 // SUBMIT
 function submit(){
-let score=0,html="<h3>Pembahasan</h3>";
+let score=0;
 
 questions.forEach((q,i)=>{
-let benar=answers[i]===q.answer;
-if(benar) score++;
-
-html+=`
-<p><b>Soal ${i+1}</b></p>
-<p style="color:${benar?"green":"red"}">
-${benar?"Benar":"Salah"}
-</p>
-<p>${q.exp}</p><hr>
-`;
+  if(answers[i]===q.answer) score++;
 });
+
+let nilai=(score/questions.length)*100;
+
+// simpan nilai (tidak langsung ditampilkan)
+window.nilaiAkhir = nilai;
+
+// tampil pertanyaan dulu
+document.getElementById("hasil").style.display="block";
+document.getElementById("hasil").innerHTML = `
+<h3>Terima kasih sudah mengerjakan 🙌</h3>
+
+<p>Sebelum melihat nilai, jawab dulu ya:</p>
+
+<input id="feedback" placeholder="Bagaimana tingkat kesulitan soal?" 
+style="width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc">
+
+<button onclick="lihatNilai()">Lihat Nilai</button>
+`;
+}
 
 let nilai=(score/questions.length)*100;
 
@@ -382,6 +409,44 @@ html=`<h2>Nilai: ${nilai.toFixed(0)}</h2>`+html+
 
 document.getElementById("hasil").innerHTML=html;
 document.getElementById("hasil").style.display="block";
+}
+  function lihatNilai(){
+let html = `<h2>Nilai: ${window.nilaiAkhir.toFixed(0)}</h2><h3>Pembahasan</h3>`;
+
+questions.forEach((q,i)=>{
+let benar = answers[i]===q.answer;
+
+html += `
+<p><b>Soal ${i+1}</b></p>
+<p style="color:${benar?'green':'red'}">
+${benar?'Benar':'Salah'}
+</p>
+<p>${q.exp}</p><hr>
+`;
+});
+
+html += `
+<button onclick="uploadHasil()" style="background:#16a34a;margin-top:10px">
+📤 Upload Hasil
+</button>
+`;
+
+document.getElementById("hasil").innerHTML = html;
+}
+
+  function uploadHasil(){
+let nama = document.getElementById("nama").value;
+let absen = document.getElementById("absen").value;
+let kelas = document.getElementById("kelas").value;
+
+let pesan = `Nama: ${nama}
+Absen: ${absen}
+Kelas: ${kelas}
+Nilai: ${window.nilaiAkhir.toFixed(0)}`;
+
+alert("Silakan upload hasil ke Google Form");
+
+window.open("https://forms.gle/vXp4zsKaW8PW6vtEA","_blank");
 }
 
 </script>
