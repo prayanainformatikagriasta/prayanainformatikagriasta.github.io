@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>LATIHAN SAS INFORMATIKA VII</title>
+<title>ANBK Informatika</title>
 
 <style>
 body {
@@ -32,7 +32,7 @@ body {
   transition:0.3s;
 }
 
-.sidebar button:hover {
+.sidebar button.active {
   background:#6366f1;
   color:white;
 }
@@ -47,7 +47,7 @@ body {
   padding:25px;
   border-radius:15px;
   box-shadow:0 10px 25px rgba(0,0,0,0.08);
-  animation:fadeIn 0.4s ease;
+  transition:0.3s;
 }
 
 .timer {
@@ -69,15 +69,7 @@ button.main-btn {
   background:#6366f1;
   color:white;
   cursor:pointer;
-  transition:0.3s;
 }
-
-button.main-btn:hover {
-  background:#4338ca;
-}
-
-.correct { color:green; }
-.wrong { color:red; }
 
 .progress {
   height:8px;
@@ -94,13 +86,10 @@ button.main-btn:hover {
   transition:0.4s;
 }
 
-/* ANIMATION */
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(10px);}
-  to { opacity:1; transform:translateY(0);}
-}
+.correct { color:green; }
+.wrong { color:red; }
+.hidden { display:none; }
 </style>
-
 </head>
 
 <body>
@@ -115,7 +104,6 @@ button.main-btn:hover {
 </div>
 
 <div id="info"></div>
-
 <div id="questionBox" class="card"></div>
 
 <button class="main-btn" onclick="prev()">⬅️ Prev</button>
@@ -125,68 +113,11 @@ button.main-btn:hover {
 <div id="result" class="hidden card"></div>
 </div>
 
+<div class="timer" id="timer"></div>
+
 <script>
 
-// ================= DATA SOAL =================
-let questions = [
-
-{q:"Data merupakan fakta mentah yang belum diolah menjadi informasi. Berdasarkan pernyataan tersebut, pengertian data adalah...", options:["Informasi","Fakta mentah","Program","Laporan"], answer:1, exp:pembahasan[0], kisi:"1", level:"C1", difficulty:"Mudah"},
-{q:"Seorang guru mencatat nilai siswa sebelum dihitung rata-rata. Data tersebut termasuk...", options:["Informasi","Kesimpulan","Data mentah","Grafik"], answer:2, exp:pembahasan[1], kisi:"2", level:"C2", difficulty:"Mudah"},
-{q:"Data dalam bentuk angka disebut data...", options:["Teks","Numerik","Visual","Audio"], answer:1, exp:pembahasan[2], kisi:"3", level:"C1", difficulty:"Mudah"},
-{q:"Nama siswa termasuk jenis data...", options:["Numerik","Teks","Audio","Video"], answer:1, exp:pembahasan[3], kisi:"4", level:"C1", difficulty:"Mudah"},
-{q:"Dalam pemrograman, langkah sistematis disebut...", options:["Program","Algoritma","Software","Hardware"], answer:1, exp:pembahasan[4], kisi:"5", level:"C2", difficulty:"Mudah"},
-{q:"Langkah pertama membuat program adalah...", options:["Coding","Testing","Analisis masalah","Output"], answer:2, exp:pembahasan[5], kisi:"6", level:"C2", difficulty:"Mudah"},
-{q:"Scratch merupakan aplikasi untuk...", options:["Edit video","Pemrograman visual","Mengetik","Menggambar"], answer:1, exp:pembahasan[6], kisi:"7", level:"C1", difficulty:"Mudah"},
-{q:"Media sosial digunakan untuk...", options:["Menghapus data","Berkomunikasi","Menghitung","Menyimpan listrik"], answer:1, exp:pembahasan[7], kisi:"8", level:"C1", difficulty:"Mudah"},
-{q:"Data yang harus dijaga adalah...", options:["Hobi","Password","Warna","Film"], answer:1, exp:pembahasan[8], kisi:"9", level:"C1", difficulty:"Mudah"},
-{q:"Produk berbasis komputer disebut...", options:["Kabel","Artefak komputasional","Buku","Meja"], answer:1, exp:pembahasan[9], kisi:"10", level:"C2", difficulty:"Mudah"},
-
-{q:"Flashdisk termasuk perangkat...", options:["Input","Output","Storage","Process"], answer:2, exp:pembahasan[10], kisi:"11", level:"C2", difficulty:"Mudah"},
-{q:"1 MB sama dengan...", options:["1024 KB","1000 KB","512 KB","2048 KB"], answer:0, exp:pembahasan[11], kisi:"12", level:"C3", difficulty:"Sedang"},
-{q:"Microsoft Excel adalah aplikasi...", options:["OS","Word","Pengolah angka","Browser"], answer:2, exp:pembahasan[12], kisi:"13", level:"C2", difficulty:"Mudah"},
-{q:"Fungsi SUM digunakan untuk...", options:["Rata-rata","Jumlah","Urut","Banding"], answer:1, exp:pembahasan[13], kisi:"14", level:"C4", difficulty:"Sedang"},
-{q:"Kesalahan dalam program disebut...", options:["Data","Bug","File","Input"], answer:1, exp:pembahasan[14], kisi:"15", level:"C1", difficulty:"Mudah"},
-{q:"Menulis kode program disebut...", options:["Delete","Coding","Testing","Running"], answer:1, exp:pembahasan[15], kisi:"16", level:"C2", difficulty:"Mudah"},
-{q:"Urutan membuat program adalah...", options:["Coding-Analisis","Analisis-Coding-Testing","Testing dulu","Langsung coding"], answer:1, exp:pembahasan[16], kisi:"17", level:"C3", difficulty:"Sedang"},
-{q:"Fungsi TI adalah...", options:["Mengolah info","Menggambar","Listrik","Buku"], answer:0, exp:pembahasan[17], kisi:"18", level:"C1", difficulty:"Mudah"},
-{q:"Contoh TI adalah...", options:["Kertas","Chat online","Buku","Pensil"], answer:1, exp:pembahasan[18], kisi:"19", level:"C2", difficulty:"Mudah"},
-{q:"Dampak negatif TI adalah...", options:["Efisien","Hoaks","Cepat","Belajar"], answer:1, exp:pembahasan[19], kisi:"20", level:"C3", difficulty:"Sedang"},
-
-{q:"Cyberbullying termasuk...", options:["Positif","Negatif","Hiburan","Belajar"], answer:1, exp:pembahasan[20], kisi:"21", level:"C4", difficulty:"Sedang"},
-{q:"Privasi penting untuk...", options:["Game","Keamanan","Hiburan","Belajar"], answer:1, exp:pembahasan[21], kisi:"22", level:"C1", difficulty:"Mudah"},
-{q:"Contoh artefak adalah...", options:["Game","Meja","Buku","Pulpen"], answer:0, exp:pembahasan[22], kisi:"23", level:"C1", difficulty:"Mudah"},
-{q:"Tujuan artefak adalah...", options:["Main","Solusi masalah","Hiasan","Gaya"], answer:1, exp:pembahasan[23], kisi:"24", level:"C2", difficulty:"Mudah"},
-{q:"Unplugged artinya...", options:["Tanpa komputer","Online","Game","Coding"], answer:0, exp:pembahasan[24], kisi:"25", level:"C2", difficulty:"Mudah"},
-{q:"AVERAGE untuk...", options:["Jumlah","Rata-rata","Max","Min"], answer:1, exp:pembahasan[25], kisi:"26", level:"C2", difficulty:"Mudah"},
-{q:"MAX digunakan untuk...", options:["Kecil","Besar","Rata-rata","Logika"], answer:1, exp:pembahasan[26], kisi:"27", level:"C2", difficulty:"Mudah"},
-{q:"Excel digunakan untuk...", options:["Game","Nilai siswa","Video","Gambar"], answer:1, exp:pembahasan[27], kisi:"28", level:"C4", difficulty:"Sedang"},
-{q:"Error program karena...", options:["Urutan salah","Keyboard","Monitor","Mouse"], answer:0, exp:pembahasan[28], kisi:"29", level:"C3", difficulty:"Sedang"},
-{q:"Debugging adalah...", options:["Tambah error","Perbaiki error","Hapus data","Close"], answer:1, exp:pembahasan[29], kisi:"30", level:"C4", difficulty:"Sedang"},
-
-{q:"Jika program salah maka...", options:["Diam","Periksa algoritma","Hapus","Restart"], answer:1, exp:pembahasan[30], kisi:"31", level:"C4", difficulty:"Sedang"},
-{q:"Loop digunakan untuk...", options:["Input","Output","Pengulangan","Cabang"], answer:2, exp:pembahasan[31], kisi:"32", level:"C3", difficulty:"Sedang"},
-{q:"Dampak medsos negatif...", options:["Edukasi","Hoaks","Info","Komunikasi"], answer:1, exp:pembahasan[32], kisi:"33", level:"C3", difficulty:"Sedang"},
-{q:"Etika medsos adalah...", options:["Hina","Hoaks","Sopan","Spam"], answer:2,exp:pembahasan[33], kisi:"34", level:"C3", difficulty:"Sedang"},
-{q:"Dampak TI lain adalah...", options:["Belajar","Kecanduan","Cepat","Luas"], answer:1, exp:pembahasan[34], kisi:"35", level:"C4", difficulty:"Sedang"},
-{q:"Artefak dibuat untuk...", options:["Main","Solusi","Gaya","Iseng"], answer:1, exp:pembahasan[35], kisi:"36", level:"C4", difficulty:"Sedang"},
-{q:"Skill penting era 4.0...", options:["Hafal","Kritis","Diam","Main"], answer:1, exp:pembahasan[36], kisi:"37", level:"C4", difficulty:"Sedang"},
-{q:"Excel membantu...", options:["Gambar","Data keuangan","Game","Tulisan"], answer:1, exp:pembahasan[37], kisi:"38", level:"C4", difficulty:"Sedang"},
-{q:"Contoh unplugged...", options:["Kartu algoritma","Coding","Online","Edit"], answer:0, exp:pembahasan[38], kisi:"39", level:"C4", difficulty:"Sedang"},
-{q:"Cara aman data adalah...", options:["Share","Password kuat","Posting","Sebar"], answer:1, exp:pembahasan[39], kisi:"40", level:"C4", difficulty:"Sedang"},
-
-{q:"Kesalahan Excel adalah...", options:["Rumus salah","Warna","Font","Layout"], answer:0, exp:pembahasan[40], kisi:"41", level:"C5", difficulty:"Sulit"},
-{q:"IF digunakan untuk...", options:["Logika","Jumlah","Urut","Hapus"], answer:0, exp:pembahasan[41], kisi:"42", level:"C5", difficulty:"Sulit"},
-{q:"Memperbaiki bug disebut...", options:["Debugging","Delete","Copy","Run"], answer:0, exp:pembahasan[42], kisi:"43", level:"C5", difficulty:"Sulit"},
-{q:"Error harus...", options:["Dibiarkan","Diperbaiki","Disimpan","Diabaikan"], answer:1, exp:pembahasan[43], kisi:"44", level:"C5", difficulty:"Sulit"},
-{q:"Artefak terbaik adalah...", options:["Mahal","Keren","Solusi","Besar"], answer:2, exp:pembahasan[44], kisi:"45", level:"C5", difficulty:"Sulit"},
-{q:"Risiko data bocor adalah...", options:["Aman","Bocor","Untung","Terkenal"], answer:1, exp:pembahasan[45], kisi:"46", level:"C5", difficulty:"Sulit"},
-{q:"Evaluasi program untuk...", options:["Cari error","Main","Copy","Hapus"], answer:0, exp:pembahasan[46], kisi:"47", level:"C5", difficulty:"Sulit"},
-{q:"Program baik adalah...", options:["Error","Sesuai tujuan","Lambat","Besar"], answer:1, exp:pembahasan[47], kisi:"48", level:"C6", difficulty:"Sulit"},
-{q:"2048 byte sama dengan...", options:["1KB","2KB","3KB","4KB"], answer:1, exp:pembahasan[48], kisi:"49", level:"C6", difficulty:"Sulit"},
-{q:"Urutan data benar adalah...", options:["Byte-KB-MB","MB-KB-Byte","KB-Byte-MB","Byte-MB-KB"], answer:0, exp:pembahasan[49], kisi:"50", level:"C6", difficulty:"Sulit"}
-
-];
-
+<script>
   const pembahasan = [
 
 "Data adalah fakta mentah yang belum mengalami proses pengolahan. Setelah diolah barulah menjadi informasi.",
@@ -246,20 +177,120 @@ let questions = [
 
 ];
 
+// ================= DATA SOAL =================
+let questions = [
+{q:"Data merupakan fakta mentah yang belum diolah menjadi informasi. Berdasarkan pernyataan tersebut, pengertian data adalah...", options:["Informasi","Fakta mentah","Program","Laporan"], answer:1, exp:pembahasan[0], kisi:"1", level:"C1", difficulty:"Mudah"},
+
+{q:"Seorang guru mencatat nilai siswa sebelum dihitung rata-rata.\n\nData tersebut termasuk...", options:["Informasi","Kesimpulan","Data mentah","Grafik"], answer:2, exp:pembahasan[1], kisi:"2", level:"C2", difficulty:"Mudah"},
+
+{q:"Data dalam bentuk angka disebut data...", options:["Teks","Numerik","Visual","Audio"], answer:1, exp:pembahasan[2], kisi:"3", level:"C1", difficulty:"Mudah"},
+
+{q:"Nama siswa termasuk jenis data...", options:["Numerik","Teks","Audio","Video"], answer:1, exp:pembahasan[3], kisi:"4", level:"C1", difficulty:"Mudah"},
+
+{q:"Dalam pemrograman, langkah-langkah sistematis untuk menyelesaikan masalah disebut...", options:["Program","Algoritma","Software","Hardware"], answer:1, exp:pembahasan[4], kisi:"5", level:"C2", difficulty:"Mudah"},
+
+{q:"Perhatikan tahapan berikut:\n(1) Coding\n(2) Testing\n(3) Analisis masalah\n\nLangkah pertama dalam membuat program adalah...", options:["Coding","Testing","Analisis masalah","Output"], answer:2, exp:pembahasan[5], kisi:"6", level:"C2", difficulty:"Mudah"},
+
+{q:"Scratch merupakan aplikasi untuk...", options:["Edit video","Pemrograman visual","Mengetik","Menggambar"], answer:1, exp:pembahasan[6], kisi:"7", level:"C1", difficulty:"Mudah"},
+
+{q:"Media sosial digunakan untuk...", options:["Menghapus data","Berkomunikasi","Menghitung","Menyimpan listrik"], answer:1, exp:pembahasan[7], kisi:"8", level:"C1", difficulty:"Mudah"},
+
+{q:"Data yang harus dijaga kerahasiaannya adalah...", options:["Hobi","Password","Warna","Film"], answer:1, exp:pembahasan[8], kisi:"9", level:"C1", difficulty:"Mudah"},
+
+{q:"Produk berbasis komputer untuk menyelesaikan masalah disebut...", options:["Kabel","Artefak komputasional","Buku","Meja"], answer:1, exp:pembahasan[9], kisi:"10", level:"C2", difficulty:"Mudah"},
+
+{q:"Flashdisk digunakan untuk menyimpan data.\n\nFlashdisk termasuk perangkat...", options:["Input","Output","Storage","Process"], answer:2, exp:pembahasan[10], kisi:"11", level:"C2", difficulty:"Mudah"},
+
+{q:"Dalam satuan penyimpanan data, 1 MB sama dengan...", options:["1024 KB","1000 KB","512 KB","2048 KB"], answer:0, exp:pembahasan[11], kisi:"12", level:"C3", difficulty:"Sedang"},
+
+{q:"Microsoft Excel digunakan untuk mengolah data angka.\n\nAplikasi tersebut termasuk...", options:["OS","Word","Pengolah angka","Browser"], answer:2, exp:pembahasan[12], kisi:"13", level:"C2", difficulty:"Mudah"},
+
+{q:"Perhatikan penggunaan fungsi pada Excel:\n=SUM(A1:A5)\n\nFungsi tersebut digunakan untuk...", options:["Rata-rata","Jumlah","Urut","Banding"], answer:1, exp:pembahasan[13], kisi:"14", level:"C4", difficulty:"Sedang"},
+
+{q:"Kesalahan dalam program disebut...", options:["Data","Bug","File","Input"], answer:1, exp:pembahasan[14], kisi:"15", level:"C1", difficulty:"Mudah"},
+
+{q:"Kegiatan menulis kode dalam pemrograman disebut...", options:["Delete","Coding","Testing","Running"], answer:1, exp:pembahasan[15], kisi:"16", level:"C2", difficulty:"Mudah"},
+
+{q:"Perhatikan urutan berikut:\nAnalisis → Coding → Testing\n\nUrutan tersebut merupakan proses...", options:["Salah","Pembuatan program","Penghapusan data","Input data"], answer:1, exp:pembahasan[16], kisi:"17", level:"C3", difficulty:"Sedang"},
+
+{q:"Fungsi utama teknologi informasi adalah...", options:["Mengolah info","Menggambar","Listrik","Buku"], answer:0, exp:pembahasan[17], kisi:"18", level:"C1", difficulty:"Mudah"},
+
+{q:"Contoh penggunaan teknologi informasi adalah...", options:["Kertas","Chat online","Buku","Pensil"], answer:1, exp:pembahasan[18], kisi:"19", level:"C2", difficulty:"Mudah"},
+
+{q:"Salah satu dampak negatif teknologi informasi adalah...", options:["Efisien","Hoaks","Cepat","Belajar"], answer:1, exp:pembahasan[19], kisi:"20", level:"C3", difficulty:"Sedang"},
+
+{q:"Cyberbullying merupakan dampak penggunaan teknologi yang bersifat...", options:["Positif","Negatif","Hiburan","Belajar"], answer:1, exp:pembahasan[20], kisi:"21", level:"C4", difficulty:"Sedang"},
+
+{q:"Privasi penting untuk menjaga...", options:["Game","Keamanan","Hiburan","Belajar"], answer:1, exp:pembahasan[21], kisi:"22", level:"C1", difficulty:"Mudah"},
+
+{q:"Contoh artefak komputasional adalah...", options:["Game","Meja","Buku","Pulpen"], answer:0, exp:pembahasan[22], kisi:"23", level:"C1", difficulty:"Mudah"},
+
+{q:"Artefak komputasional dibuat dengan tujuan untuk...", options:["Main","Solusi masalah","Hiasan","Gaya"], answer:1, exp:pembahasan[23], kisi:"24", level:"C2", difficulty:"Mudah"},
+
+{q:"Kegiatan tanpa menggunakan komputer dalam pembelajaran informatika disebut...", options:["Tanpa komputer","Online","Game","Coding"], answer:0, exp:pembahasan[24], kisi:"25", level:"C2", difficulty:"Mudah"},
+
+{q:"Fungsi AVERAGE pada Excel digunakan untuk...", options:["Jumlah","Rata-rata","Max","Min"], answer:1, exp:pembahasan[25], kisi:"26", level:"C2", difficulty:"Mudah"},
+
+{q:"Fungsi MAX digunakan untuk mencari nilai...", options:["Kecil","Besar","Rata-rata","Logika"], answer:1, exp:pembahasan[26], kisi:"27", level:"C2", difficulty:"Mudah"},
+
+{q:"Excel dapat digunakan untuk mengolah...", options:["Game","Nilai siswa","Video","Gambar"], answer:1, exp:pembahasan[27], kisi:"28", level:"C4", difficulty:"Sedang"},
+
+{q:"Kesalahan program dapat terjadi karena...", options:["Urutan salah","Keyboard","Monitor","Mouse"], answer:0, exp:pembahasan[28], kisi:"29", level:"C3", difficulty:"Sedang"},
+
+{q:"Debugging adalah proses untuk...", options:["Tambah error","Perbaiki error","Hapus data","Close"], answer:1, exp:pembahasan[29], kisi:"30", level:"C4", difficulty:"Sedang"},
+
+{q:"Jika program menghasilkan output yang salah, maka langkah yang tepat adalah...\n", options:["Diam","Periksa algoritma","Hapus","Restart"], answer:1, exp:pembahasan[30], kisi:"31", level:"C4", difficulty:"Sedang"},
+
+{q:"Loop dalam pemrograman digunakan untuk...", options:["Input","Output","Pengulangan","Cabang"], answer:2, exp:pembahasan[31], kisi:"32", level:"C3", difficulty:"Sedang"},
+
+{q:"Dampak negatif media sosial adalah...", options:["Edukasi","Hoaks","Info","Komunikasi"], answer:1, exp:pembahasan[32], kisi:"33", level:"C3", difficulty:"Sedang"},
+
+{q:"Etika dalam menggunakan media sosial adalah bersikap...", options:["Hina","Hoaks","Sopan","Spam"], answer:2, exp:pembahasan[33], kisi:"34", level:"C3", difficulty:"Sedang"},
+
+{q:"Salah satu dampak negatif lain dari teknologi adalah...", options:["Belajar","Kecanduan","Cepat","Luas"], answer:1, exp:pembahasan[34], kisi:"35", level:"C4", difficulty:"Sedang"},
+
+{q:"Artefak komputasional yang baik harus mampu memberikan...", options:["Main","Solusi","Gaya","Iseng"], answer:1, exp:pembahasan[35], kisi:"36", level:"C4", difficulty:"Sedang"},
+
+{q:"Kemampuan penting di era digital adalah berpikir...", options:["Hafal","Kritis","Diam","Main"], answer:1, exp:pembahasan[36], kisi:"37", level:"C4", difficulty:"Sedang"},
+
+{q:"Excel membantu dalam pengolahan...", options:["Gambar","Data keuangan","Game","Tulisan"], answer:1, exp:pembahasan[37], kisi:"38", level:"C4", difficulty:"Sedang"},
+
+{q:"Contoh kegiatan unplugged adalah...", options:["Kartu algoritma","Coding","Online","Edit"], answer:0, exp:pembahasan[38], kisi:"39", level:"C4", difficulty:"Sedang"},
+
+{q:"Cara menjaga keamanan data adalah dengan menggunakan...", options:["Share","Password kuat","Posting","Sebar"], answer:1, exp:pembahasan[39], kisi:"40", level:"C4", difficulty:"Sedang"},
+
+{q:"Kesalahan pada Excel biasanya terjadi karena...", options:["Rumus salah","Warna","Font","Layout"], answer:0, exp:pembahasan[40], kisi:"41", level:"C5", difficulty:"Sulit"},
+
+{q:"Perhatikan fungsi berikut:\n=IF(A1>75,\"Lulus\",\"Tidak\")\n\nFungsi IF digunakan untuk...", options:["Logika","Jumlah","Urut","Hapus"], answer:0, exp:pembahasan[41], kisi:"42", level:"C5", difficulty:"Sulit"},
+
+{q:"Memperbaiki bug dalam program disebut...", options:["Debugging","Delete","Copy","Run"], answer:0, exp:pembahasan[42], kisi:"43", level:"C5", difficulty:"Sulit"},
+
+{q:"Jika ditemukan error dalam program, maka harus...", options:["Dibiarkan","Diperbaiki","Disimpan","Diabaikan"], answer:1, exp:pembahasan[43], kisi:"44", level:"C5", difficulty:"Sulit"},
+
+{q:"Artefak komputasional terbaik adalah yang mampu memberikan...", options:["Mahal","Keren","Solusi","Besar"], answer:2, exp:pembahasan[44], kisi:"45", level:"C5", difficulty:"Sulit"},
+
+{q:"Risiko dari data yang tidak dijaga dengan baik adalah...", options:["Aman","Bocor","Untung","Terkenal"], answer:1, exp:pembahasan[45], kisi:"46", level:"C5", difficulty:"Sulit"},
+
+{q:"Evaluasi program dilakukan untuk...", options:["Cari error","Main","Copy","Hapus"], answer:0, exp:pembahasan[46], kisi:"47", level:"C5", difficulty:"Sulit"},
+
+{q:"Program yang baik adalah program yang...", options:["Error","Sesuai tujuan","Lambat","Besar"], answer:1, exp:pembahasan[47], kisi:"48", level:"C6", difficulty:"Sulit"},
+
+{q:"Dalam satuan data, 2048 byte sama dengan...", options:["1KB","2KB","3KB","4KB"], answer:1, exp:pembahasan[48], kisi:"49", level:"C6", difficulty:"Sulit"},
+
+{q:"Urutan satuan data yang benar dari kecil ke besar adalah...", options:["Byte-KB-MB","MB-KB-Byte","KB-Byte-MB","Byte-MB-KB"], answer:0, exp:pembahasan[49], kisi:"50", level:"C6", difficulty:"Sulit"}
+];
+
+
 // 👉 nanti kamu tinggal tambah sampai 50 soal
 
 // ================= RANDOM =================
-if (!localStorage.getItem("soal_random")) {
-let shuffled = questions.sort(() => Math.random()-0.5);
-localStorage.setItem("soal_random", JSON.stringify(shuffled));
-}
-questions = JSON.parse(localStorage.getItem("soal_random"));
+questions = questions.sort(() => Math.random()-0.5);
 
 // ================= STATE =================
 let current = 0;
-let answers = JSON.parse(localStorage.getItem("answers")) || [];
+let answers = [];
 
-// ================= RENDER NAV =================
+// ================= NAV =================
 let nav = document.getElementById("nav");
 questions.forEach((_,i)=>{
 let btn = document.createElement("button");
@@ -272,82 +303,68 @@ nav.appendChild(btn);
 function render(){
 let q = questions[current];
 
-document.getElementById("info").innerHTML =
-`Kisi: ${q.kisi} | Level: ${q.level} | ${q.difficulty}`;
-
-let html = `<p><b>${current+1}. ${q.q}</b></p>`;
-
-q.options.forEach((opt,i)=>{
-html += `
-<label>
-<input type="radio" name="q" value="${i}"
-${answers[current]==i?"checked":""}
-onchange="saveAnswer(${i})">
-${opt}
-</label><br>`;
+// highlight nav
+document.querySelectorAll(".sidebar button").forEach((b,i)=>{
+b.classList.toggle("active", i===current);
 });
 
-document.getElementById("questionBox").innerHTML = html;
-}
-
-function saveAnswer(val){
-answers[current]=val;
-localStorage.setItem("answers", JSON.stringify(answers));
-}
-
-  function render(){
-let q = questions[current];
-
-document.getElementById("info").innerHTML =
-`Kisi: ${q.kisi} | Level: ${q.level} | ${q.difficulty}`;
-
-// progress bar
+// progress
 let percent = ((current+1)/questions.length)*100;
 document.getElementById("progressBar").style.width = percent + "%";
 
+document.getElementById("info").innerHTML =
+`Kisi: ${q.kisi} | Level: ${q.level} | ${q.difficulty}`;
+
 let html = `<p><b>${current+1}. ${q.q}</b></p>`;
 
 q.options.forEach((opt,i)=>{
 html += `
-<label style="display:block; margin:10px 0; padding:10px; border-radius:8px; cursor:pointer; transition:0.2s;"
-onmouseover="this.style.background='#eef2ff'"
-onmouseout="this.style.background='white'">
-
-<input type="radio" name="q" value="${i}"
-${answers[current]==i?"checked":""}
+<label style="display:block; padding:10px; margin:10px 0; border-radius:8px; cursor:pointer;">
+<input type="radio" name="q" ${answers[current]==i?"checked":""}
 onchange="saveAnswer(${i})">
-
 ${opt}
 </label>`;
 });
 
-// animasi reset
+// animasi
 let box = document.getElementById("questionBox");
 box.style.opacity = 0;
+box.style.transform = "translateY(10px)";
 
 setTimeout(()=>{
 box.innerHTML = html;
 box.style.opacity = 1;
+box.style.transform = "translateY(0)";
 },150);
 }
 
-function next(){ if(current<questions.length-1){current++; render();}}
-function prev(){ if(current>0){current--; render();}}
-
-// ================= TIMER =================
-let duration = 75 * 60; // 75 menit
-let timerKey = "timer_start";
-
-if (!localStorage.getItem(timerKey)) {
-localStorage.setItem(timerKey, Date.now());
+function saveAnswer(val){
+answers[current]=val;
 }
 
+// ================= NAV BUTTON =================
+function next(){
+if(current<questions.length-1){
+current++;
+render();
+}
+}
+function prev(){
+if(current>0){
+current--;
+render();
+}
+}
+
+// ================= TIMER =================
+let duration = 75*60;
+let start = Date.now();
+
 function updateTimer(){
-let start = parseInt(localStorage.getItem(timerKey));
 let elapsed = Math.floor((Date.now()-start)/1000);
 let remaining = duration - elapsed;
 
-if (remaining <= 0) {
+if(remaining<=0){
 submitQuiz();
 return;
 }
@@ -365,39 +382,24 @@ updateTimer();
 // ================= SUBMIT =================
 function submitQuiz(){
 let score=0;
-let resultHTML="";
+let html="";
 
 questions.forEach((q,i)=>{
-let user=answers[i];
-
-if(user===q.answer){
+if(answers[i]===q.answer){
 score++;
-resultHTML += `<p class="correct">${i+1}. Benar</p>`;
+html+=`<p class="correct">${i+1}. Benar</p>`;
 }else{
-resultHTML += `<p class="wrong">${i+1}. Salah</p>`;
+html+=`<p class="wrong">${i+1}. Salah</p>`;
 }
-
-resultHTML += `
-<p>Jawaban kamu: ${q.options[user]||"-"}</p>
-<p>Jawaban benar: ${q.options[q.answer]}</p>
-<p><i>${q.exp}</i></p><hr>`;
+html+=`<p>${q.exp}</p><hr>`;
 });
 
 let nilai = (score/questions.length)*100;
-localStorage.setItem("nilai", nilai);
 
 document.getElementById("result").innerHTML =
-`<h2>Nilai: ${nilai.toFixed(0)}</h2>` + resultHTML;
+`<h2>Nilai: ${nilai.toFixed(0)}</h2>`+html;
 
 document.getElementById("result").classList.remove("hidden");
-
-// disable
-document.querySelectorAll("input").forEach(e=>e.disabled=true);
-}
-
-// ================= ANTI REFRESH =================
-if(localStorage.getItem("nilai")){
-submitQuiz();
 }
 
 // ================= START =================
