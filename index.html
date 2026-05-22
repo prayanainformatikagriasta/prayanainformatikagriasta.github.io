@@ -38,14 +38,14 @@
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent"></div>
         <div class="relative z-10 max-w-2xl mx-auto">
             <span class="bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-indigo-500/30">
-                <i class="fa-solid fa-code mr-1"></i> Kurikulum Merdeka
+                <i class="fa-solid fa-code mr-1"></i> INFORMATIKA 7 - GRIASTA
             </span>
             <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight mt-3">Portal Nilai Siswa</h1>
-            <p class="text-slate-300 text-xs sm:text-sm mt-2 max-w-md mx-auto">Akses nilai mandiri, cek persaingan kelas, atau taklukkan tantangan logika Informatika!</p>
+            <p class="text-slate-300 text-xs sm:text-sm mt-2 max-w-md mx-auto">Lihat Hasil Capaian SAS Kalian disini!</p>
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto px-4 -mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-20">
+    <div class="max-w-6xl mx-auto px-4 -mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-20 pb-12">
         
         <div class="lg:col-span-2 space-y-6">
             
@@ -53,7 +53,7 @@
                 <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2 mb-1">
                     <i class="fa-solid fa-magnifying-glass text-indigo-500"></i> Cari Nilai Kamu
                 </h2>
-                <p class="text-xs text-slate-400 mb-4">Gunakan Nama Lengkap/NIS untuk nilai pribadi, atau nama kelas (Contoh: 8.1) untuk melihat teman sekelas.</p>
+                <p class="text-xs text-slate-400 mb-4">Gunakan Nama Lengkap/NIS untuk nilai pribadi.</p>
                 
                 <div class="flex flex-col sm:flex-row gap-2.5">
                     <input type="text" id="search-input" placeholder="Ketik Nama, NIS, atau Kelas..." 
@@ -66,13 +66,19 @@
 
                 <div class="mt-5 pt-4 border-t border-dashed border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3 bg-indigo-50/50 p-3 rounded-xl">
                     <div class="text-center sm:text-left">
-                        <span class="text-xs font-bold text-slate-700 block">Ingin intip nilai satu angkatan?</span>
-                        <span class="text-[11px] text-slate-500 block">Selesaikan dulu 3 tantangan logika dari Guru!</span>
+                        <span class="text-xs font-bold text-slate-700 block">Menu Analisis & Data Paralel:</span>
+                        <span class="text-[11px] text-slate-500 block">Lihat statistik kelulusan atau buka semua lembar nilai angkatan.</span>
                     </div>
-                    <button onclick="bukaModalKuis()" id="btn-unlock-all" 
-                            class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer flex justify-center items-center gap-2 active:scale-95">
-                        <i id="lock-icon" class="fa-solid fa-lock"></i> Dobrak Semua Nilai
-                    </button>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
+                        <button onclick="toggleStatistik()" id="btn-statistik" 
+                                class="w-full sm:w-auto bg-slate-700 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer flex justify-center items-center gap-2 active:scale-95">
+                            <i class="fa-solid fa-chart-pie"></i> Lihat Statistik KKM
+                        </button>
+                        <button onclick="bukaModalKuis()" id="btn-unlock-all" 
+                                class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer flex justify-center items-center gap-2 active:scale-95">
+                            <i id="lock-icon" class="fa-solid fa-lock"></i> Dobrak Semua Nilai
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -82,7 +88,7 @@
                     <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-indigo-500/10 rounded-full border border-indigo-500/30">
                         <i class="fa-solid fa-satellite-dish text-indigo-400 text-3xl animate-pulse"></i>
                     </div>
-                    <h3 class="text-base font-mono tracking-widest text-indigo-300 font-bold uppercase mb-1">MEMINDAI ENKRIPSI NILAI</h3>
+                    <h3 class="text-base font-mono tracking-widest text-indigo-300 font-bold uppercase mb-1">MEMINDAI ENKRIPSI NILAI SAS</h3>
                     <p id="loading-status" class="text-xs text-slate-400 font-sans tracking-wide min-h-[16px]">Mengamankan koneksi jalur utama...</p>
                     
                     <div class="w-full bg-slate-800 rounded-full h-2 mt-6 max-w-xs mx-auto overflow-hidden p-[2px] border border-slate-700">
@@ -90,6 +96,9 @@
                     </div>
                 </div>
             </div>
+
+            <div id="statistics-box" class="hidden bg-white p-5 sm:p-6 rounded-2xl shadow-xl border border-slate-100 transition-all animate__animated animate__fadeIn">
+                </div>
 
             <div id="result-box" class="hidden bg-white p-5 sm:p-6 rounded-2xl shadow-xl border border-slate-100 transition-all animate__animated animate__fadeIn">
                 </div>
@@ -100,7 +109,7 @@
                 <h2 class="text-lg font-bold text-slate-800 flex justify-center items-center gap-2">
                     <i class="fa-solid fa-crown text-amber-500 animate-bounce"></i> Top 10 Angkatan
                 </h2>
-                <p class="text-[11px] text-slate-400">Peringkat nilai paralel tertinggi gabungan kelas</p>
+                <p class="text-[11px] text-slate-400">Peringkat nilai paralel tertinggi untuk Angkatan Kelas 7</p>
             </div>
             
             <div class="space-y-2 max-h-[420px] overflow-y-auto pr-1" id="leaderboard-body">
@@ -112,13 +121,13 @@
         <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] sm:max-h-[85vh] flex flex-col animate__animated animate__slideInUp sm:animate__zoomIn animate__faster">
             <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-white flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-brain animate-pulse"></i> Ujian Gerbang Logika
+                    <i class="fa-solid fa-brain animate-pulse"></i> Tantangan Berpikir Komputasional
                 </h3>
                 <button onclick="tutupModalKuis()" class="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center text-white text-lg active:scale-90"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 space-y-5 overflow-y-auto grow">
                 <div class="bg-amber-50 text-amber-800 text-xs p-3 rounded-xl border border-amber-200 font-medium">
-                    🎯 <b>Misi Khusus:</b> Jawab dengan benar minimal <b>2 dari 3 soal</b> Informatika di bawah untuk membuka data angkatan!
+                    🎯 <b>Misi Khusus:</b> Jawab dengan benar minimal <b>2 dari 3 soal</b> di bawah untuk mendobrak sistem!
                 </div>
                 <form id="quiz-form" class="space-y-5"></form>
             </div>
@@ -135,48 +144,391 @@
         // ==========================================
         // DATA MASTER (MOCKING DATA EXCEL)
         // ==========================================
+        // Contoh: "Giska Amelia" dan "Luh Sari" diset bernilai kosong/null (Ada Kendala / Belum Ikut)
         const dataSiswa = [
-            { nis: "1001", nama: "Arya Wiguna", kelas: "8.1", nilai: 98 },
-            { nis: "1002", nama: "Budi Santoso", kelas: "8.1", nilai: 70 },
-            { nis: "1003", nama: "Citra Lestari", kelas: "8.1", nilai: 85 },
-            { nis: "1004", nama: "Dewa Gede", kelas: "8.2", nilai: 95 },
-            { nis: "1005", nama: "Eka Putri", kelas: "8.2", nilai: 73 },
-            { nis: "1006", nama: "Fajar Utama", kelas: "8.2", nilai: 92 },
-            { nis: "1007", nama: "Giska Amelia", kelas: "8.3", nilai: 65 },
-            { nis: "1008", nama: "Hendra Wijaya", kelas: "8.3", nilai: 88 },
-            { nis: "1009", nama: "Indah Permata", kelas: "8.3", nilai: 74 },
-            { nis: "1010", nama: "Joko Susilo", kelas: "8.4", nilai: 99 },
-            { nis: "1011", nama: "Ketut Rai", kelas: "8.4", nilai: 80 },
-            { nis: "1012", nama: "Luh Sari", kelas: "8.4", nilai: 60 }
+            { nis: "6531", nama: "ANDREA VICTORIA KAUNANG", kelas: "7.1", nilai: 88 },
+    { nis: "6532", nama: "ANINDYA DESTYARANI SIHALOHO", kelas: "7.1", nilai: 62 },
+    { nis: "6533", nama: "ARARYA BAGUS ABHINANDYA PUTRA", kelas: "7.1", nilai: 78 },
+    { nis: "6534", nama: "AURALIANA KIMI ATHENA CANDRA", kelas: "7.1", nilai: 78 },
+    { nis: "6535", nama: "BAIQ FEMIGISYA AZ ZAHRA", kelas: "7.1", nilai: 72 },
+    { nis: "6536", nama: "BOBY SETYA MAHENDRA", kelas: "7.1", nilai: 70 },
+    { nis: "6537", nama: "DEWA GEDE RANGGA SAHITYA DALEM", kelas: "7.1", nilai: 76 },
+    { nis: "6538", nama: "FHOLAND ADITYA PRAMANA", kelas: "7.1", nilai: 60 },
+    { nis: "6539", nama: "GEDE ANGGA ARYA WARDANA", kelas: "7.1", nilai: 70 },
+    { nis: "6540", nama: "I DEWA AYU GANITA PARWATI", kelas: "7.1", nilai: 70 },
+    { nis: "6541", nama: "I MADE BAGUS PANJI ARI YASA", kelas: "7.1", nilai: 68 },
+    { nis: "6542", nama: "I PUTU ADITYA KESAWA", kelas: "7.1", nilai: null },
+    { nis: "6543", nama: "KETUT MICO PRARAMA SUPUTRA", kelas: "7.1", nilai: 62 },
+    { nis: "6544", nama: "LUSIANA SAFARA", kelas: "7.1", nilai: 74 },
+    { nis: "6545", nama: "NI KOMANG AURA DIAH GAYATRI", kelas: "7.1", nilai: 80 },
+    { nis: "6546", nama: "NI PUTU AYU CANDRA WINASAPUTRI", kelas: "7.1", nilai: 70 },
+    { nis: "6548", nama: "PUTU ARYA PRAMA WIBAWA", kelas: "7.1", nilai: 76 },
+    { nis: "6549", nama: "PUTU DENI INDRIANI", kelas: "7.1", nilai: 74 },
+    { nis: "6550", nama: "PUTU KIANDRA KIRANA PRISHA", kelas: "7.1", nilai: 84 },
+    { nis: "6551", nama: "RISKI VALERIE PUTRI", kelas: "7.1", nilai: 84 },
+    { nis: "6552", nama: "RUBBI INA PUI KENETTY", kelas: "7.1", nilai: 84 },
+    { nis: "6553", nama: "SERAFIM ADONAI WILLSON LUDJI", kelas: "7.1", nilai: 82 },
+    { nis: "6554", nama: "SHEINA ADARA YUMI ANZITA", kelas: "7.1", nilai: 76 },
+    { nis: "6807", nama: "JESLYN FELICIA VIVALONA WALELANGI", kelas: "7.1", nilai: 76 },
+    { nis: "6810", nama: "Olivia Eka Putri Aprilinda", kelas: "7.2", nilai: 46 },
+    { nis: "6556", nama: "AYU DEWI SEPTIANI", kelas: "7.2", nilai: 70 },
+    { nis: "6557", nama: "CETTA ANINDITA SARASWATI", kelas: "7.2", nilai: 92 },
+    { nis: "6558", nama: "CHIYO ANAYA TJONG", kelas: "7.2", nilai: 68 },
+    { nis: "6559", nama: "DENAYYA SYARIFAQILLA RAMADHAN", kelas: "7.2", nilai: 72 },
+    { nis: "6560", nama: "I GUSTI AYU NINDYA PUTRI KANIA", kelas: "7.2", nilai: 80 },
+    { nis: "6561", nama: "I KADEK ADITYA NAGATA", kelas: "7.2", nilai: 86 },
+    { nis: "6562", nama: "I PUTU ANGGA NARENDRA", kelas: "7.2", nilai: 94 },
+    { nis: "6563", nama: "I WAYAN GIRI SASTRA", kelas: "7.2", nilai: 66 },
+    { nis: "6564", nama: "JIMMY SETIAWAN PRASETYO", kelas: "7.2", nilai: 64 },
+    { nis: "6565", nama: "KADEK AIRA DEWINA INDAH", kelas: "7.2", nilai: 80 },
+    { nis: "6566", nama: "NI KADEK VIDYA PRAMESVARI YOGA", kelas: "7.2", nilai: 84 },
+    { nis: "6567", nama: "KEISHA AYUNDYA NUGROHO", kelas: "7.2", nilai: 84 },
+    { nis: "6568", nama: "KEVIN APRILIO ISWANTO", kelas: "7.2", nilai: 80 },
+    { nis: "6569", nama: "KOMANG WINA MELIANI", kelas: "7.2", nilai: 64 },
+    { nis: "6570", nama: "LEON ELYSIUM BASUKI", kelas: "7.2", nilai: 80 }, 
+    { nis: "6571", nama: "I MADE JATI PUTRA WIRYAWAN", kelas: "7.2", nilai: 86 },
+    { nis: "6572", nama: "NI KETUT KIRSTY KINANTI SANJAYA", kelas: "7.2", nilai: 82 },
+    { nis: "6573", nama: "NI LUH DEVINA MULIA", kelas: "7.2", nilai: 74 },
+    { nis: "6574", nama: "NI MADE AYU WIDYA ATALIA DEWI", kelas: "7.2", nilai: 74 },
+    { nis: "6575", nama: "PUTU KEANU NATHANO YODHA", kelas: "7.2", nilai: 84 },
+    { nis: "6576", nama: "RHEANANDA AMORA ILHAM", kelas: "7.2", nilai: 76 },
+    { nis: "6577", nama: "NI LUH NANDITA WIDIANTARI", kelas: "7.2", nilai: 70 },
+    { nis: "6578", nama: "THERATAMA NAGATA PRADNA DIKA PRASETYA", kelas: "7.2", nilai: 82 },
+    { nis: "6579", nama: "AGHITSNI MAULAYA", kelas: "7.3", nilai: 78 },
+    { nis: "6580", nama: "AQIYLA QADISAH FEBRIAN", kelas: "7.3", nilai: 60 },
+    { nis: "6581", nama: "CHRISTYANO ARTHANUGRAHA SUKARSA", kelas: "7.3", nilai: 76 },
+    { nis: "6582", nama: "I GEDE NARENDRA ANANDA PUTRA", kelas: "7.3", nilai: 78 },
+    { nis: "6583", nama: "I GUSTI AYU AGUNG MANIK MAS SWARIDEWI", kelas: "7.3", nilai: 80 },
+    { nis: "6584", nama: "I GUSTI PUTU RADHEYA SAGUNA NUGRAHA", kelas: "7.3", nilai: 82 },
+    { nis: "6719", nama: "PUTU GAVANA KRESNA WIDHA", kelas: "7.3", nilai: 66 },
+    { nis: "6586", nama: "I MADE DHANEZ KHADIRA PUTRA", kelas: "7.3", nilai: 82 },
+    { nis: "6587", nama: "I PUTU SATRIA PARAMARTA PUTRA", kelas: "7.3", nilai: 32 },
+    { nis: "6588", nama: "JONATHAN ELBERT IMMANUEL LIANDHY", kelas: "7.3", nilai: 68 },
+    { nis: "6589", nama: "JONATHAN IMANUEL", kelas: "7.3", nilai: 72 },
+    { nis: "6590", nama: "KADEK NOVIA ASTI DIANTARI", kelas: "7.3", nilai: 80 },
+    { nis: "6591", nama: "MADE ANINDHA OCEANIA", kelas: "7.3", nilai: 68 },
+    { nis: "6592", nama: "MADE CALLISTA FELYCIA WIBAWA", kelas: "7.3", nilai: 80 },
+    { nis: "6593", nama: "MADE YODHA RYUSANDI", kelas: "7.3", nilai: 76 },
+    { nis: "6594", nama: "NI KADEK CANDRA STITI DEWI", kelas: "7.3", nilai: 80 },
+    { nis: "6595", nama: "KADEK HIRA AMANDA PUTRI", kelas: "7.3", nilai: 76 },
+    { nis: "6596", nama: "NI PUTU DIAH PRADNYA PARAMITHA", kelas: "7.3", nilai: 46 },
+    { nis: "6597", nama: "NI PUTU MEYLIA WIRAPRAMESTI", kelas: "7.3", nilai: 82 },
+    { nis: "6598", nama: "PUTU ANGGA PRATAMA PUTRA", kelas: "7.3", nilai: 72 },
+    { nis: "6599", nama: "PUTU AYU TIRTAWATI", kelas: "7.3", nilai: 82 },
+    { nis: "6600", nama: "SANG AYU KOMANG TRISNADIA ARTIKA DEWI", kelas: "7.3", nilai: 90 },
+    { nis: "6601", nama: "SANG PUTU ANDHIKA PRADANA", kelas: "7.3", nilai: 68 },
+    { nis: "6602", nama: "ZAHRAA ASRAFUNNISSA DE NATO", kelas: "7.3", nilai: 72 },
+    { nis: "6603", nama: "A.A GEDE WEDANANDYAKSA PUTRA", kelas: "7.4", nilai: 74 },
+    { nis: "6604", nama: "A.A NGURAH AGUNG ABY PUTRA SAMIRANA", kelas: "7.4", nilai: 84 },
+    { nis: "6605", nama: "AINI SALSABILA", kelas: "7.4", nilai: 76 },
+    { nis: "6606", nama: "ALIF ISMAIL", kelas: "7.4", nilai: 64 },
+    { nis: "6607", nama: "ALVIN ANANTAKA MBURA", kelas: "7.4", nilai: 76 },
+    { nis: "6608", nama: "FARREL AQUINO DWI PUTRA ADRIANTO", kelas: "7.4", nilai: null },
+    { nis: "6609", nama: "GUSTI PUTU ANANDA ARYA PUTRA", kelas: "7.4", nilai: 52 },
+    { nis: "6610", nama: "GRACIA ANANDA KASIH", kelas: "7.4", nilai: 74 },
+    { nis: "6611", nama: "GRIFFIN ANANDA HUGO PUTRA", kelas: "7.4", nilai: 82 },
+    { nis: "6612", nama: "I GEDE EZRA PRADHIPTA RUSPIAN", kelas: "7.4", nilai: 50 },
+    { nis: "6613", nama: "I GEDE RAMA SETYAWAN", kelas: "7.4", nilai: 72 },
+    { nis: "6614", nama: "I GUSTI MADE DWI ANANDHA PUTRA", kelas: "7.4", nilai: 78 },
+    { nis: "6615", nama: "I KADEK ARDHANA DHARMA PUTRA", kelas: "7.4", nilai: 88 },
+    { nis: "6616", nama: "I KADEK ARYA DWI PUTRA", kelas: "7.4", nilai: 72 },
+    { nis: "6617", nama: "I KOMANG TRISTAN TARA PUTRA DINATA", kelas: "7.4", nilai: 82 },
+    { nis: "6618", nama: "INDRA JAYA SAPUTRA", kelas: "7.4", nilai: 26 },
+    { nis: "6619", nama: "I PUTU ERI SUWARDIVA ARTHA PRATAMA", kelas: "7.4", nilai: 76 },
+    { nis: "6620", nama: "I PUTU RADITYA YUDHI SINATRA", kelas: "7.4", nilai: 72 },
+    { nis: "6621", nama: "KADEK DWI ADI PRADITA", kelas: "7.4", nilai: 70 },
+    { nis: "6622", nama: "NI KADEK SINTYA SRININGSIH", kelas: "7.4", nilai: 74 },
+    { nis: "6623", nama: "KENRICH AMBROSIUS SUGIHARTO", kelas: "7.4", nilai: 82 },
+    { nis: "6624", nama: "KETUT ANDHINI ARDANAESWARI MAHAPARAMITHA", kelas: "7.4", nilai: 74 },
+    { nis: "6625", nama: "KOMANG NANDHA MAHESWARI", kelas: "7.4", nilai: 76 },
+    { nis: "6626", nama: "MARIA GRACIA ALICIA DAHU", kelas: "7.4", nilai: 84 },
+    { nis: "6627", nama: "MAYRSA ANINDITA PUTRI", kelas: "7.4", nilai: 72 },
+    { nis: "6628", nama: "NI LUH DEVI WULANDARI PUTRI", kelas: "7.4", nilai: 52 },
+    { nis: "6629", nama: "NI PUTU AYU MEILIKA PERMATA SARI", kelas: "7.4", nilai: 70 },
+    { nis: "6630", nama: "NI PUTU AYUTRA FEBBY SANTIANI PUTRI", kelas: "7.4", nilai: 72 },
+    { nis: "6631", nama: "NI PUTU CRISHNAYANTI PURNAMA SARI", kelas: "7.4", nilai: 74 },
+    { nis: "6632", nama: "NI PUTU GITA ARISTYA DEVI", kelas: "7.4", nilai: 78 },
+    { nis: "6633", nama: "NATASYA SABRINA SALSABILA", kelas: "7.4", nilai: 72 },
+    { nis: "6634", nama: "NUR MAULIDIA AYUNINGTYAS", kelas: "7.4", nilai: 60 },
+    { nis: "6635", nama: "PUTU AGUS SUASTIKA", kelas: "7.4", nilai: 14 },
+    { nis: "6636", nama: "PUTU ANGGUN WULANI", kelas: "7.4", nilai: 96 },
+    { nis: "6637", nama: "PUTU DENANDRA ALVI WIRAWAN", kelas: "7.4", nilai: 72 },
+    { nis: "6638", nama: "PUTU DESTA PRATAMA", kelas: "7.4", nilai: 80 },
+    { nis: "6639", nama: "PUTU DIANDRA JESSICA ANASTASYA", kelas: "7.4", nilai: 70 },
+    { nis: "6640", nama: "SAMUEL GEDE PRATAMA", kelas: "7.4", nilai: 72 },
+    { nis: "6641", nama: "THERESA RIZQY PUTRI TRISTAN", kelas: "7.4", nilai: 66 },
+    { nis: "6642", nama: "TIRTA DWI PRATAMA", kelas: "7.4", nilai: 70 },
+    { nis: "6204", nama: "MUH. MUSALLI HABIZAR", kelas: "7.4", nilai: 62 },
+    { nis: "6643", nama: "AHMAD RIWAKY HASAN", kelas: "7.5", nilai: 66 },
+    { nis: "6644", nama: "ALINE CANDRA DEWI", kelas: "7.5", nilai: 74 },
+    { nis: "6645", nama: "CALISTA AZ ZAHRA", kelas: "7.5", nilai: 74 },
+    { nis: "6646", nama: "CHRISBYAN CANDRA AMNASKA", kelas: "7.5", nilai: null },
+    { nis: "6647", nama: "DZAKANEZA ABBASY KAINDRA", kelas: "7.5", nilai: 90 },
+    { nis: "6648", nama: "ERWAN RUDI SANJAYA", kelas: "7.5", nilai: 66 },
+    { nis: "6649", nama: "FELICIA METTA JOANA", kelas: "7.5", nilai: 76 },
+    { nis: "6650", nama: "GEDE GHEO ADRIAN SAPUTRA", kelas: "7.5", nilai: 68 },
+    { nis: "6651", nama: "GLORY PERMATA PUTRI", kelas: "7.5", nilai: 68 },
+    { nis: "6652", nama: "IDA AYU PUTU AVIKA PRAMESWARI", kelas: "7.5", nilai: 66 },
+    { nis: "6653", nama: "I GEDE CHRISTIANO MARSEV PASANG", kelas: "7.5", nilai: 74 },
+    { nis: "6654", nama: "I GEDE YUDANA", kelas: "7.5", nilai: 52 },
+    { nis: "6655", nama: "I KETUT ADI DARMAWAN", kelas: "7.5", nilai: 68 },
+    { nis: "6656", nama: "I KADEK ADNYANA SUPUTRA", kelas: "7.5", nilai: 70 },
+    { nis: "6657", nama: "I MADE ADITYA ABIMANYU", kelas: "7.5", nilai: 76 },
+    { nis: "6658", nama: "I MADE JEREMI DESTA SAHDANA", kelas: "7.5", nilai: 72 },
+    { nis: "6659", nama: "I MADE RICKY NUGRAHA", kelas: "7.5", nilai: 84 },
+    { nis: "6660", nama: "I NYOMAN ADIMUKTI PUTRA YASA", kelas: "7.5", nilai: 82 },
+    { nis: "6661", nama: "I NYOMAN ADITYA WISTARA", kelas: "7.5", nilai: 68 },
+    { nis: "6662", nama: "KADEK AYU WIDIANTARI", kelas: "7.5", nilai: 68 },
+    { nis: "6663", nama: "KADEK CHALISTA DWI CAHYANI", kelas: "7.5", nilai: 68 },
+    { nis: "6664", nama: "KADEK CAHYA WIDIANTARI", kelas: "7.5", nilai: 76 },
+    { nis: "6665", nama: "MARIA ANINDYA INDAH KINARA CARBONILLA", kelas: "7.5", nilai: null },
+    { nis: "6666", nama: "MARIA GERESSIA CAROLINA SUBU", kelas: "7.5", nilai: 66 },
+    { nis: "6667", nama: "MICKO CHANDRA SANTOSA", kelas: "7.5", nilai: 76 },
+    { nis: "6668", nama: "MUCHAMMAD GABRIEL AJI ALVINO", kelas: "7.5", nilai: 82 },
+    { nis: "6669", nama: "NI LUH EKA OKTAVIANI", kelas: "7.5", nilai: 76 },
+    { nis: "6670", nama: "NI MADE AMELIA MAHESWARI", kelas: "7.5", nilai: 78 },
+    { nis: "6671", nama: "NI PUTU GISTA PRADNYANDARI", kelas: "7.5", nilai: 82 },
+    { nis: "6672", nama: "NI PUTU PRANITA CANDRA DEWI", kelas: "7.5", nilai: 70 },
+    { nis: "6673", nama: "NI PUTU TIA ANGGRAENI", kelas: "7.5", nilai: 56 },
+    { nis: "6674", nama: "PUTRI PUTU KEYSIA WIYONO", kelas: "7.5", nilai: 70 },
+    { nis: "6675", nama: "PUTU AGUS JULIANA PUTRA", kelas: "7.5", nilai: 78 },
+    { nis: "6676", nama: "PUTU AYANA PRISHAGITA ADNYANI PUTRI", kelas: "7.5", nilai: 78 },
+    { nis: "6677", nama: "PUTU CANDRA EKA NATALY", kelas: "7.5", nilai: 80 },
+    { nis: "6678", nama: "PUTU DIVINA MAHARANI", kelas: "7.5", nilai: 84 },
+    { nis: "6679", nama: "PUTU KAYLA NATANIA WIRAWAN", kelas: "7.5", nilai: 74 },
+    { nis: "6680", nama: "PUTU OKTA VIONA AYUNDA", kelas: "7.5", nilai: 72 },
+    { nis: "6681", nama: "YOHANES RAFAEL UNAB", kelas: "7.5", nilai: 58 },
+    { nis: "6682", nama: "ZEFANYA LATHISA PUTRI WIDODO", kelas: "7.5", nilai: 86 },
+    { nis: "6805", nama: "HAFIJATUN NURUL HUDA", kelas: "7.5", nilai: 84 },
+    { nis: "6684", nama: "ALAINA TIAS PUTRI AORORA", kelas: "7.6", nilai: 54 },
+    { nis: "6685", nama: "ANAK AGUNG ARY INTAN ARYA DEWI", kelas: "7.6", nilai: 72 },
+    { nis: "6686", nama: "ALMIRA TUNGGA DEWI", kelas: "7.6", nilai: 68 },
+    { nis: "6687", nama: "DAFFA RIFKY AZZUHRI", kelas: "7.6", nilai: 68 },
+    { nis: "6688", nama: "DEWA AYU PUTU SANTIKA DEWI", kelas: "7.6", nilai: 74 },
+    { nis: "6689", nama: "DYNA AGNESIA PUTRI", kelas: "7.6", nilai: 74 },
+    { nis: "6690", nama: "EARLYTA KAZUE ARDITA PUTRI", kelas: "7.6", nilai: 92 },
+    { nis: "6691", nama: "GALANG KUSUMA PUTRA", kelas: "7.6", nilai: 58 },
+    { nis: "6692", nama: "I GEDE EKA APRIANA SADEMA", kelas: "7.6", nilai: 60 },
+    { nis: "6693", nama: "I GEDE FARENDRA PUTRA DEAY", kelas: "7.6", nilai: 54 },
+    { nis: "6694", nama: "I KADEK HADI DAVINDRA PRAMANA", kelas: "7.6", nilai: 80 },
+    { nis: "6695", nama: "I KADEK KRISNA DWIPAYOGA", kelas: "7.6", nilai: 84 },
+    { nis: "6696", nama: "I KADEK WIDHIKA SATYA RAMAWAN", kelas: "7.6", nilai: 70 },
+    { nis: "6697", nama: "I KOMANG DAIVA DEVARA", kelas: "7.6", nilai: 58 },
+    { nis: "6698", nama: "I MADE DWI PUTRA SEDANA ARTHA", kelas: "7.6", nilai: 54 },
+    { nis: "6699", nama: "I PUTU BAGUS PRASETYA UTAMA", kelas: "7.6", nilai: 66 },
+    { nis: "6700", nama: "KADEK BAGUS WILLY MAHENDRAS", kelas: "7.6", nilai: 68 },
+    { nis: "6701", nama: "KADEK KALYANA PRADNYA DEWI", kelas: "7.6", nilai: 74 },
+    { nis: "6702", nama: "KADEK RENDRA PRADANA", kelas: "7.6", nilai: 64 },
+    { nis: "6703", nama: "KADEK RIRIN DIANTARI", kelas: "7.6", nilai: 70 },
+    { nis: "6704", nama: "KOMANG SINTYA SANTI", kelas: "7.6", nilai: 48 },
+    { nis: "6705", nama: "M. AMIN AL-KUTBI", kelas: "7.6", nilai: 78 },
+    { nis: "6706", nama: "MADE JUANITA", kelas: "7.6", nilai: 66 },
+    { nis: "6707", nama: "MADE SAMBUCA RADITYA PINATIH", kelas: "7.6", nilai: 76 },
+    { nis: "6708", nama: "MOCHAMAD IQBAL AL FARISYI", kelas: "7.6", nilai: 82 },
+    { nis: "6709", nama: "MUHAMMAD JA'FAR SHODIQ", kelas: "7.6", nilai: 82 },
+    { nis: "6710", nama: "NGURAH PUTU DAVID KENJI DINATA", kelas: "7.6", nilai: 50 },
+    { nis: "6711", nama: "NI KADEK ALYA APRILIA GOVARDANI", kelas: "7.6", nilai: 78 },
+    { nis: "6712", nama: "NI MADE SRI OKTAVIANI PUTRI", kelas: "7.6", nilai: null },
+    { nis: "6713", nama: "NI MADE RADHASWARI SUPUTRI", kelas: "7.6", nilai: 76 },
+    { nis: "6714", nama: "NI PUTU YURI DANISHA PUTRI", kelas: "7.6", nilai: 70 },
+    { nis: "6715", nama: "NOVAL INDRA SYAPUTRA", kelas: "7.6", nilai: 58 },
+    { nis: "6716", nama: "NOVAN RIZKI SETIAWAN", kelas: "7.6", nilai: 64 },
+    { nis: "6717", nama: "PUTRI RISTALIA ANGGRAENI", kelas: "7.6", nilai: 64 },
+    { nis: "6718", nama: "PUTU AYU MAS RATNA DEWI", kelas: "7.6", nilai: 80 },
+    { nis: "6804", nama: "BAGUS JAYA ARJUNA", kelas: "7.6", nilai: 68 },
+    { nis: "6720", nama: "PUTU VIANA PUTRI MAHARANI", kelas: "7.6", nilai: 80 },
+    { nis: "6721", nama: "RISQI PUTRA AL-FATAH", kelas: "7.6", nilai: 80 },
+    { nis: "6722", nama: "SELVIA NUR VIKY RAHAYU", kelas: "7.6", nilai: 66 },
+    { nis: "6723", nama: "WAROH", kelas: "7.6", nilai: 76 },
+        { nis: "6724", nama: "ADELIA RAGIL CLAURIZA", kelas: "7.7", nilai: 86 },
+    { nis: "6725", nama: "ALVIN SETYA PRADANA", kelas: "7.7", nilai: 62 },
+    { nis: "6726", nama: "ARCELIA FAHROTUL ULFANIA", kelas: "7.7", nilai: 58 },
+    { nis: "6727", nama: "DEWA KETUT HARI PARAMA NANDA", kelas: "7.7", nilai: 64 },
+    { nis: "6728", nama: "DEWA NGAKAN GEDE DIEGO PUTRA DARMA WISESA", kelas: "7.7", nilai: 80 },
+    { nis: "6729", nama: "GIAN FILANSKI HENDRIK", kelas: "7.7", nilai: 64 },
+    { nis: "6730", nama: "I GUSTI AYU SRI KUSUMA DEWI", kelas: "7.7", nilai: 60 },
+    { nis: "6731", nama: "I GUSTI NGURAH ARJUNA AGASTYA NATIH PUTRA", kelas: "7.7", nilai: 42 },
+    { nis: "6732", nama: "I KADEK ANANTHA ARTHA WIGUNA", kelas: "7.7", nilai: 66 },
+    { nis: "6733", nama: "I KADEK AGUS RADITYA WITAMA", kelas: "7.7", nilai: 60 },
+    { nis: "6734", nama: "I KADEK BAGUS PRAMANA PUTRA", kelas: "7.7", nilai: 84 },
+    { nis: "6735", nama: "I KOMANG DEVA PARWATA", kelas: "7.7", nilai: 76 },
+    { nis: "6736", nama: "I KOMANG SUTHA WIDYA SENA", kelas: "7.7", nilai: 74 },
+    { nis: "6737", nama: "I MADE GIO WIRA MAHATMA", kelas: "7.7", nilai: 72 },
+    { nis: "6738", nama: "I PUTU EKA ERLANGGA SAPUTRA", kelas: "7.7", nilai: 58 },
+    { nis: "6739", nama: "I PUTU YUDHA MADHUSUDANA", kelas: "7.7", nilai: 84 },
+    { nis: "6740", nama: "KADEK NINGNATA MERTAYASA", kelas: "7.7", nilai: 58 },
+    { nis: "6741", nama: "KOMANG REVAN PALENTIO", kelas: "7.7", nilai: 60 },
+    { nis: "6742", nama: "KRSNA KARUNA SHINDU", kelas: "7.7", nilai: 60 },
+    { nis: "6743", nama: "MUHAMAD ABIB FIRMANSYAH", kelas: "7.7", nilai: null },
+    { nis: "6744", nama: "MUHAMMAD FATIR RIFATULLAH", kelas: "7.7", nilai: 78 },
+    { nis: "6745", nama: "MUHAMMAD MIFATHUL HUDA", kelas: "7.7", nilai: 92 },
+    { nis: "6746", nama: "NGURAH ARYA MAHENDRA KADJAR", kelas: "7.7", nilai: 64 },
+    { nis: "6747", nama: "NI KADEK DEVI KANIA APRILIA", kelas: "7.7", nilai: 78 },
+    { nis: "6748", nama: "NI KADEK DIVA FELISHA PADMASWARI", kelas: "7.7", nilai: 64 },
+    { nis: "6749", nama: "NI KADEK REISYA RIKHA PRADITA", kelas: "7.7", nilai: 68 },
+    { nis: "6750", nama: "NI KADEK SANTHI AURELIA", kelas: "7.7", nilai: 70 },
+    { nis: "6751", nama: "NI KETUT JIA JASMINE PRADNYA PRAMESTY", kelas: "7.7", nilai: 76 },
+    { nis: "6752", nama: "NI KOMANG RIANA PUJAYANTI", kelas: "7.7", nilai: 70 },
+    { nis: "6753", nama: "NI PUTU ADISTYA CANDRA PRADITA", kelas: "7.7", nilai: 72 },
+    { nis: "6754", nama: "NI PUTU DILA NOVITA SARI", kelas: "7.7", nilai: 64 },
+    { nis: "6755", nama: "PUTRI ABIGAIL MEYSHA REANDRA", kelas: "7.7", nilai: 74 },
+    { nis: "6756", nama: "PUTU DEVI ATIKA PRATIWI", kelas: "7.7", nilai: 66 },
+    { nis: "6757", nama: "PUTU FELINA DWIJAYANTI", kelas: "7.7", nilai: 64 },
+    { nis: "6758", nama: "PUTU SUSILA ANDYANA", kelas: "7.7", nilai: 28 },
+    { nis: "6759", nama: "PUTU WIKA ANANTA PUTRA", kelas: "7.7", nilai: 78 },
+    { nis: "6760", nama: "QENZO DJAZEN JANUARTA", kelas: "7.7", nilai: 62 },
+    { nis: "6761", nama: "RIFKI YOGA SAPUTRA", kelas: "7.7", nilai: 64 },
+    { nis: "6762", nama: "SILVI AFIFATUS SHOLIHAH", kelas: "7.7", nilai: 70 },
+    { nis: "6763", nama: "UCCA KUSUMA WICITRA", kelas: "7.7", nilai: 84 },
+        { nis: "6764", nama: "A.A GEDE PANDU RAJENDRA", kelas: "7.8", nilai: null },
+    { nis: "6765", nama: "ABIZAR MISYARI WINATA", kelas: "7.8", nilai: 60 },
+    { nis: "6766", nama: "AL FURQON JOHAN PRASETYO", kelas: "7.8", nilai: 68 },
+    { nis: "6767", nama: "ALMEERA SAFIQHA MARITZA PAMI", kelas: "7.8", nilai: 74 },
+    { nis: "6768", nama: "ASSYFA NUR KHASANAH", kelas: "7.8", nilai: 62 },
+    { nis: "6769", nama: "AUN HIBATULLAH", kelas: "7.8", nilai: 78 },
+    { nis: "6770", nama: "DEWA AYU MADE INDIRA ANINDYA KUSUMA", kelas: "7.8", nilai: 82 },
+    { nis: "6771", nama: "FIRDA APRILIYANI", kelas: "7.8", nilai: 58 },
+    { nis: "6772", nama: "GEDE MARENDRA WIJAYA", kelas: "7.8", nilai: 86 },
+    { nis: "6773", nama: "I DEWA PUTU SATYA WIGUNA", kelas: "7.8", nilai: 68 },
+    { nis: "6774", nama: "I GUSTI AGUNG ISTRI GAYATRI", kelas: "7.8", nilai: 70 },
+    { nis: "6775", nama: "I GUSTI AYU SEPTIANI PUTRI", kelas: "7.8", nilai: 70 },
+    { nis: "6776", nama: "I GEDE NENGAH REYNARD ADITYA", kelas: "7.8", nilai: 64 },
+    { nis: "6777", nama: "I KADEK ADI ARYA PUTRA", kelas: "7.8", nilai: 76 },
+    { nis: "6778", nama: "I KADEK BAGUS KRISHNA DWIPA SANJAYA", kelas: "7.8", nilai: 56 },
+    { nis: "6779", nama: "I KOMANG ADITYA PUTRA", kelas: "7.8", nilai: 68 },
+    { nis: "6780", nama: "I MADE ARTA WIGUNA", kelas: "7.8", nilai: null },
+    { nis: "6781", nama: "I PUTU REHAN ARTA ERLANGGA", kelas: "7.8", nilai: 90 },
+    { nis: "6782", nama: "KADEK DWI PARAMITA", kelas: "7.8", nilai: 68 },
+    { nis: "6783", nama: "KESYA YUDYA SAKA", kelas: "7.8", nilai: null },
+    { nis: "6784", nama: "LUCKY INDRA PERDANA", kelas: "7.8", nilai: 58 },
+    { nis: "6785", nama: "NI LUH PANDE PUSPANINGSIH", kelas: "7.8", nilai: 78 },
+    { nis: "6786", nama: "MUHAMMAD ABIZAR", kelas: "7.8", nilai: 38 },
+    { nis: "6787", nama: "MOHAMAD ARYA PUTRA", kelas: "7.8", nilai: 58 },
+    { nis: "6788", nama: "NI KADEK INTAN KUSUMA DEWI", kelas: "7.8", nilai: 76 },
+    { nis: "6789", nama: "NI KADEK DINDA DIAN MAHARANI", kelas: "7.8", nilai: 76 },
+    { nis: "6790", nama: "NI KETUT KEMBAR ALITA PUTRI", kelas: "7.8", nilai: 76 },
+    { nis: "6791", nama: "NIKKEN PRITARINI WIDJAYANTI", kelas: "7.8", nilai: null },
+    { nis: "6792", nama: "NI KOMANG KEMBAR ALIKA PUTRI", kelas: "7.8", nilai: 74 },
+    { nis: "6793", nama: "NI LUH SINTYA DEWI", kelas: "7.8", nilai: 72 },
+    { nis: "6794", nama: "NI MADE ANGGITA PRAME SWARI", kelas: "7.8", nilai: 64 },
+    { nis: "6795", nama: "NI PUTU AYUDYA PARAMITHA SWARI", kelas: "7.8", nilai: null },
+    { nis: "6796", nama: "PUTU ALTAFFIAN PANJI PRANATA", kelas: "7.8", nilai: 70 },
+    { nis: "6797", nama: "PUTU DEEPIKA PURNAMA DEWI", kelas: "7.8", nilai: 82 },
+    { nis: "6798", nama: "PUTU DEVAN ADHITYA WICAKSANA", kelas: "7.8", nilai: 80 },
+    { nis: "6799", nama: "PUTU DINDA INDIRA PUTRI", kelas: "7.8", nilai: 74 },
+    { nis: "6800", nama: "PUTU YUWANDA CAHAYANIDTA", kelas: "7.8", nilai: null },
+    { nis: "6801", nama: "RAHEN ZAKYAL MAIZAN", kelas: "7.8", nilai: 66 },
+    { nis: "6802", nama: "VELYNZHA GEALOVA SWEETSHERIEN HANTON", kelas: "7.8", nilai: 82 },
+    { nis: "6803", nama: "VIOLA OCTAVIA PUTRIE", kelas: "7.8", nilai: 88 }        
         ];
-
-        const LINK_REMEDIAL = "https://forms.gle/ContohLinkRemedialAnda"; 
-        const KKM = 74;
+const LINK_REMEDIAL = "https://forms.gle/ContohLinkRemedialAnda"; 
+        const KKM = 73; // Sesuai acuan KKM standar Anda
         let kuisLolos = false;
 
+        // BANK SOAL INFORMATIKA BERPIKIR KOMPUTASIONAL & DATA SPREADSHEET
         const bankSoal = [
-            { q: "Manakah di bawah ini yang merupakan struktur data dengan prinsip LIFO (Last In First Out)?", a: ["Queue (Antrean)", "Stack (Tumpukan)", "Array", "Graph"], correct: 1 },
-            { q: "Berapakah nilai desimal dari bilangan biner 1011?", a: ["9", "10", "11", "13"], correct: 2 },
-            { q: "Langkah logis dan sistematis yang disusun untuk menyelesaikan suatu masalah disebut...", a: ["Dekomposisi", "Algoritma", "Abstraksi", "Pola"], correct: 1 },
-            { q: "Sistem bilangan yang menggunakan simbol angka 0 sampai 9 dan huruf A sampai F disebut...", a: ["Biner", "Oktal", "Desimal", "Heksadesimal"], correct: 3 }
+            { q: "Manakah struktur data yang menuruti prinsip LIFO (Last In First Out), seperti tumpukan piring?", a: ["Queue (Antrean)", "Stack (Tumpukan)", "Array (Larik)", "Graph (Graf)"], correct: 1 },
+            { q: "Berapakah nilai desimal dari bilangan biner 1011?", a: ["9", "11", "13", "15"], correct: 1 },
+            { q: "Perangkat lunak yang digunakan untuk mengolah data dalam bentuk baris dan kolom tabel disebut...", a: ["Spreadsheet", "Word Processor", "Presentation", "Database Desktop"], correct: 0 },
+            { q: "Jika sebuah fungsi memetakan Input x ke Output berupa x + 5, berapakah Outputnya jika dimasukkan x = 7?", a: ["12", "14", "10", "35"], correct: 0 }
         ];
 
-        const nilaiTertinggiAngkatan = Math.max(...dataSiswa.map(s => s.nilai));
+        const nilaiValid = dataSiswa.map(s => Number(s.nilai)).filter(n => !isNaN(n) && n > 0);
+        const nilaiTertinggiAngkatan = nilaiValid.length ? Math.max(...nilaiValid) : 0;
         const daftarKelasTerdaftar = [...new Set(dataSiswa.map(s => s.kelas.toLowerCase()))];
 
         function dapatkanNilaiTertinggiKelas(namaKelas) {
             const siswaDiKelas = dataSiswa.filter(s => s.kelas.toLowerCase() === namaKelas.toLowerCase());
-            return siswaDiKelas.length ? Math.max(...siswaDiKelas.map(s => s.nilai)) : 0;
+            const skorValid = siswaDiKelas.map(s => Number(s.nilai)).filter(n => !isNaN(n) && n > 0);
+            return skorValid.length ? Math.max(...skorValid) : 0;
         }
 
-        // ROUTER UTAMA
+        // ==========================================
+        // FITUR BARU: HITUNG & TOGGLE STATISTIK KKM
+        // ==========================================
+        function toggleStatistik() {
+            const statBox = document.getElementById('statistics-box');
+            const btnStat = document.getElementById('btn-statistik');
+            
+            // Jika sedang terbuka, maka tutup
+            if (!statBox.classList.contains('hidden')) {
+                statBox.classList.add('hidden');
+                btnStat.innerHTML = `<i class="fa-solid fa-chart-pie"></i> Lihat Statistik KKM`;
+                return;
+            }
+
+            // Jika tertutup, hitung ulang statistik lalu munculkan
+            let totalSiswaGlobal = 0;
+            let totalLolosGlobal = 0;
+            let barisKelasHTML = '';
+
+            // Ambil daftar nama kelas unik asli (Case Sensitive untuk display)
+            const listNamaKelas = [...new Set(dataSiswa.map(s => s.kelas))];
+
+            listNamaKelas.forEach(kelas => {
+                const siswaKelas = dataSiswa.filter(s => s.kelas === kelas);
+                // Hanya hitung siswa yang memiliki nilai valid (tidak kosong)
+                const siswaAdaNilai = siswaKelas.filter(s => s.nilai !== "" && s.nilai !== null && s.nilai !== undefined);
+                const lulusKelas = siswaAdaNilai.filter(s => Number(s.nilai) >= KKM).length;
+                const totalKelas = siswaAdaNilai.length;
+
+                let persentaseKelas = totalKelas > 0 ? ((lulusKelas / totalKelas) * 100).toFixed(1) : 0;
+
+                totalSiswaGlobal += totalKelas;
+                totalLolosGlobal += lulusKelas;
+
+                barisKelasHTML += `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-semibold text-slate-700">
+                            <span>Kelas ${kelas}</span>
+                            <span class="text-indigo-600">${lulusKelas}/${totalKelas} Siswa (${persentaseKelas}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div class="bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: ${persentaseKelas}%"></div>
+                        </div>
+                    </div>`;
+            });
+
+            let persentaseGlobal = totalSiswaGlobal > 0 ? ((totalLolosGlobal / totalSiswaGlobal) * 100).toFixed(1) : 0;
+
+            statBox.innerHTML = `
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                    <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-chart-bar mr-1.5 text-indigo-500"></i>Analisis Kelulusan KKM (SAS Genap)</h3>
+                    <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Batas KKM: ${KKM}</span>
+                </div>
+                
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 rounded-xl text-white mb-5 shadow-sm">
+                    <p class="text-[11px] font-bold uppercase tracking-wider opacity-80">Presentase Kelulusan Global (Angkatan)</p>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <span class="text-3xl font-black">${persentaseGlobal}%</span>
+                        <span class="text-xs opacity-90">(${totalLolosGlobal} dari ${totalSiswaGlobal} siswa berstatus tuntas)</span>
+                    </div>
+                    <div class="w-full bg-white/20 rounded-full h-2.5 mt-2.5 overflow-hidden p-[1px]">
+                        <div class="bg-amber-400 h-full rounded-full" style="width: ${persentaseGlobal}%"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-3.5">
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Rincian Per Kelas:</p>
+                    ${barisKelasHTML}
+                </div>
+            `;
+
+            statBox.classList.remove('hidden');
+            btnStat.innerHTML = `<i class="fa-solid fa-eye-slash"></i> Sembunyikan Statistik`;
+            statBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // PROSES PENCARIAN & ROUTER UTAMA
+        // ==========================================
         function prosesPencarian() {
             const input = document.getElementById('search-input').value.toLowerCase().trim();
             const resultBox = document.getElementById('result-box');
             const loadingBox = document.getElementById('loading-box');
             
             if (input === "") {
-                alert("Masukkan data pencarian terlebih dahulu!");
+                alert("Masukkan nama, NIS, atau kelas terlebih dahulu!");
                 return;
             }
 
@@ -186,12 +538,11 @@
                 tampilkanDataKelas(input);
             } else {
                 loadingBox.classList.remove('hidden');
-                document.getElementById('search-input').blur(); // Sembunyikan keyboard HP saat loading mulai
+                document.getElementById('search-input').blur(); 
                 jalankanAnimasiPenasaran(input);
             }
         }
 
-        // TIMING ANIMASI PENASARAN (10 DETIK)
         function jalankanAnimasiPenasaran(keyword) {
             const statusTxt = document.getElementById('loading-status');
             const progressBar = document.getElementById('loading-progress-bar');
@@ -201,11 +552,11 @@
 
             const listStatus = [
                 { time: 0, text: "🤖 Membuka Enkripsi Jalur Pusat..." },
-                { time: 1800, text: "📂 Menyisir Database Berkas Siswa..." },
-                { time: 3500, text: "🖥️ Mengekstrak Parameter Nilai Ujian..." },
+                { time: 1800, text: "📂 Menyisir Berkas Lembar Jawaban Komputasional..." },
+                { time: 3500, text: "🖥️ Mengekstrak Bobot Nilai Siswa..." },
                 { time: 5500, text: "📊 Melakukan Komparasi Batas Ambang KKM..." },
-                { time: 7500, text: "⚡ Mengunci Status Kelulusan Akhir..." },
-                { time: 9000, text: "✨ Menyusun Lembar Hasil Hasil..." }
+                { time: 7500, text: "⚡ Mengunci Status Akhir Lembar Ujian..." },
+                { time: 9000, text: "✨ Menyusun Visualisasi Hasil Akhir..." }
             ];
 
             const intervalProgress = setInterval(() => {
@@ -224,7 +575,6 @@
             }, 10000);
         }
 
-        // RENDER HASIL PRIBADI
         function tampilkanDataSiswaPribadi(keyword) {
             const resultBox = document.getElementById('result-box');
             const hasil = dataSiswa.find(s => s.nama.toLowerCase().includes(keyword) || s.nis.includes(keyword));
@@ -236,32 +586,46 @@
                     <div class="text-center py-8">
                         <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-user-xmark"></i></div>
                         <p class="text-slate-600 font-semibold text-sm">Data Siswa tidak ditemukan.</p>
-                        <p class="text-xs text-slate-400 mt-1">Pastikan ejaan Nama atau NIS yang dimasukkan sudah benar.</p>
+                        <p class="text-xs text-slate-400 mt-1">Pastikan penulisan nama lengkap atau NIS sudah tepat.</p>
                     </div>`;
                 return;
             }
 
             const topKelas = dapatkanNilaiTertinggiKelas(hasil.kelas);
             let alertHTML = '';
+            let nilaiTeksTampil = hasil.nilai;
 
-            if (hasil.nilai === nilaiTertinggiAngkatan) {
+            if (hasil.nilai === "" || hasil.nilai === null || hasil.nilai === undefined) {
+                nilaiTeksTampil = `<span class="text-amber-600 text-sm font-bold">KOSONG</span>`;
+                alertHTML = `
+                    <div class="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl text-center mb-4 animate__animated animate__pulse">
+                        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-2 text-lg">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <p class="font-bold text-sm">Belum Mengikuti SAS / Ada Kendala</p>
+                        <p class="text-xs text-amber-700 mt-1 leading-relaxed">
+                            Halo <b>${hasil.nama}</b>, nilaimu belum terekam di sistem Excel utama. Silakan hubungi proktor atau Guru Informatika Anda untuk jadwal ujian susulan.
+                        </p>
+                    </div>`;
+            } 
+            else if (Number(hasil.nilai) === nilaiTertinggiAngkatan) {
                 alertHTML = `<div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 rounded-xl text-center font-bold text-xs sm:text-sm shadow-md mb-4 animate__animated animate__jackInTheBox">👑 FANTASTIS! Kamu meraih nilai TERTINGGI se-ANGKATAN! 👑</div>`;
                 efekKembangApiMeriah();
-            } else if (hasil.nilai === topKelas) {
+            } else if (Number(hasil.nilai) === topKelas) {
                 alertHTML = `<div class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white p-4 rounded-xl text-center font-bold text-xs sm:text-sm shadow-md mb-4 animate__animated animate__zoomInUp">⭐ LUAR BIASA! Kamu meraih nilai TERTINGGI di kelas ${hasil.kelas}! ⭐</div>`;
                 confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
-            } else if (hasil.nilai < KKM) {
+            } else if (Number(hasil.nilai) < KKM) {
                 alertHTML = `
                     <div class="remedial-pulse bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl text-center mb-4 animate__animated animate__shakeX">
                         <i class="fa-solid fa-circle-exclamation text-red-500 text-2xl mb-1"></i>
-                        <p class="font-bold text-sm">Nilai ${hasil.nama} di bawah KKM!</p>
-                        <p class="text-xs text-red-600 mb-3.5">Batas minimum kelulusan adalah ${KKM}. Jangan berkecil hati, yuk segera remedial!</p>
+                        <p class="font-bold text-sm">Nilai berada di bawah batas KKM!</p>
+                        <p class="text-xs text-red-600 mb-3.5">Batas minimum kelulusan adalah ${KKM}. Tekan tombol di bawah untuk remedial:</p>
                         <a href="${LINK_REMEDIAL}" target="_blank" class="inline-flex w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-5 py-3 rounded-xl justify-center items-center gap-2 shadow transition-all active:scale-95">
-                            <i class="fa-solid fa-file-pen"></i> Mulai Ujian Remedial
+                            <i class="fa-solid fa-file-pen"></i> Mulai Remedial
                         </a>
                     </div>`;
             } else {
-                alertHTML = `<div class="bg-emerald-50 border border-emerald-100 text-emerald-700 p-3 rounded-xl text-center text-xs font-bold mb-4"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> STATUS: LULUS KKM. Pertahankan Prestsimu!</div>`;
+                alertHTML = `<div class="bg-emerald-50 border border-emerald-100 text-emerald-700 p-3 rounded-xl text-center text-xs font-bold mb-4"><i class="fa-solid fa-circle-check mr-1 text-emerald-500"></i> STATUS: LULUS KKM. Kerja bagus!</div>`;
             }
 
             resultBox.innerHTML = `
@@ -276,12 +640,11 @@
                     <div class="bg-slate-50 p-3 rounded-xl"><span class="text-slate-400 text-[10px] uppercase font-bold block mb-0.5">Nama</span><span class="font-bold text-slate-700 truncate block">${hasil.nama}</span></div>
                     <div class="bg-slate-50 p-3 rounded-xl"><span class="text-slate-400 text-[10px] uppercase font-bold block mb-0.5">NIS</span><span class="font-semibold text-slate-600">${hasil.nis}</span></div>
                     <div class="bg-slate-50 p-3 rounded-xl"><span class="text-slate-400 text-[10px] uppercase font-bold block mb-0.5">Kelas</span><span class="font-bold text-indigo-600">${hasil.kelas}</span></div>
-                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100"><span class="text-indigo-400 text-[10px] uppercase font-black block mb-0.5">Nilai</span><span class="text-xl font-black text-indigo-700">${hasil.nilai}</span></div>
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100"><span class="text-indigo-400 text-[10px] uppercase font-black block mb-0.5">Nilai Akhir</span><span class="text-xl font-black text-indigo-700 flex items-center h-7">${nilaiTeksTampil}</span></div>
                 </div>`;
             resultBox.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // RENDER SATU KELAS (Dibuat Responsive List di HP, bukan Tabel Kaku)
         function tampilkanDataKelas(namaKelas) {
             const resultBox = document.getElementById('result-box');
             const siswaKelas = dataSiswa.filter(s => s.kelas.toLowerCase() === namaKelas.toLowerCase());
@@ -292,16 +655,21 @@
                 let badge = '';
                 let borderStyle = 'border-slate-100';
                 let scoreColor = 'text-indigo-600';
+                let skorTampil = s.nilai;
 
-                if (s.nilai === nilaiTertinggiAngkatan) {
+                if (s.nilai === "" || s.nilai === null || s.nilai === undefined) {
+                    badge = '<span class="bg-slate-100 text-slate-500 text-[9px] px-1.5 py-0.5 rounded font-medium ml-1">Belum Ikut / Kendala</span>';
+                    scoreColor = 'text-amber-600 font-bold';
+                    skorTampil = '--';
+                } else if (Number(s.nilai) === nilaiTertinggiAngkatan) {
                     badge = '<span class="bg-amber-500 text-white text-[9px] px-1.5 py-0.5 rounded font-bold ml-1">👑 Juara Paralel</span>';
                     borderStyle = 'border-amber-300 bg-amber-50/40';
                     scoreColor = 'text-amber-600 font-black';
-                } else if (s.nilai === topKelas) {
+                } else if (Number(s.nilai) === topKelas) {
                     badge = '<span class="bg-emerald-500 text-white text-[9px] px-1.5 py-0.5 rounded font-bold ml-1">⭐ Top Kelas</span>';
                     borderStyle = 'border-emerald-200 bg-emerald-50/20';
                     scoreColor = 'text-emerald-600 font-bold';
-                } else if (s.nilai < KKM) {
+                } else if (Number(s.nilai) < KKM) {
                     badge = '<span class="bg-red-100 text-red-700 text-[9px] px-1.5 py-0.5 rounded ml-1">Remedial</span>';
                     scoreColor = 'text-red-500 font-bold';
                 }
@@ -312,7 +680,7 @@
                             <span class="font-bold text-slate-700 block">${s.nama} ${badge}</span>
                             <span class="text-[10px] text-slate-400">NIS: ${s.nis}</span>
                         </div>
-                        <div class="text-right font-bold text-sm ${scoreColor}">${s.nilai}</div>
+                        <div class="text-right font-bold text-sm ${scoreColor}">${skorTampil}</div>
                     </div>`;
             });
 
@@ -322,9 +690,12 @@
                     <span class="text-[11px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md">Total: ${siswaKelas.length}</span>
                 </div>
                 <div class="space-y-2 max-h-[350px] overflow-y-auto pr-1">${listHTML}</div>`;
+            resultBox.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // KUIS DAN EVALUASI TANTANGAN
+        // ==========================================
+        // KUIS POPUP TANTANGAN LOGIKA
+        // ==========================================
         let soalTerpilih = [];
         function bukaModalKuis() {
             if (kuisLolos) { tampilkanSemuaNilaiAngkatan(); return; }
@@ -337,7 +708,7 @@
                 let opsiHTML = '';
                 soal.a.forEach((opsi, idx) => {
                     opsiHTML += `
-                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 active:bg-indigo-50/50 cursor-pointer transition-all text-xs">
+                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-all text-xs">
                             <input type="radio" name="soal-${i}" value="${idx}" class="accent-indigo-600 w-4 h-4 shrink-0" required>
                             <span class="text-slate-600 font-medium">${opsi}</span>
                         </label>`;
@@ -352,7 +723,7 @@
 
             const modal = document.getElementById('quiz-modal');
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Kunci scroll layar utama di HP
+            document.body.style.overflow = 'hidden'; 
         }
 
         function tutupModalKuis() {
@@ -380,7 +751,7 @@
                 efekKembangApiMeriah();
                 setTimeout(() => { tampilkanSemuaNilaiAngkatan(); }, 400);
             } else {
-                alert(`❌ Poin belum cukup! Kamu hanya benar ${skorBenar} soal. Coba lagi dengan rangkaian soal baru!`);
+                alert(`❌ Jawaban belum tepat! Anda hanya benar ${skorBenar} soal. Silakan coba susunan acak baru.`);
                 bukaModalKuis();
             }
         }
@@ -393,8 +764,14 @@
             let listHTML = '';
 
             siswaUrut.forEach(s => {
-                let valBadge = s.nilai < KKM ? `<span class="text-red-500 font-bold">${s.nilai}</span>` : `<span class="text-indigo-600 font-bold">${s.nilai}</span>`;
-                if (s.nilai === nilaiTertinggiAngkatan) valBadge = `<span class="text-amber-500 font-black">👑 ${s.nilai}</span>`;
+                let valBadge = "";
+                if (s.nilai === "" || s.nilai === null || s.nilai === undefined) {
+                    valBadge = `<span class="text-amber-600 font-semibold text-[11px]">Baru / Kosong</span>`;
+                } else if (Number(s.nilai) === nilaiTertinggiAngkatan) {
+                    valBadge = `<span class="text-amber-500 font-black">👑 ${s.nilai}</span>`;
+                } else {
+                    valBadge = Number(s.nilai) < KKM ? `<span class="text-red-500 font-bold">${s.nilai}</span>` : `<span class="text-indigo-600 font-bold">${s.nilai}</span>`;
+                }
 
                 listHTML += `
                     <div class="p-2.5 border border-slate-100 rounded-xl flex justify-between items-center text-xs">
@@ -408,16 +785,19 @@
 
             resultBox.innerHTML = `
                 <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-3.5 rounded-xl mb-4 text-center">
-                    <p class="font-bold text-xs"><i class="fa-solid fa-lock-open mr-1"></i> GATWAY ANGKATAN DIBUKA</p>
-                    <p class="text-[10px] opacity-90 mt-0.5">Data seluruh paralel angkatan sukses ditampilkan.</p>
+                    <p class="font-bold text-xs"><i class="fa-solid fa-lock-open mr-1"></i> SELURUH NILAI PARALEL</p>
                 </div>
                 <div class="space-y-1.5 max-h-[400px] overflow-y-auto pr-1">${listHTML}</div>`;
             resultBox.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // GENERATE CARD LIST LEADERBOARD
+        // AMBIL DATA TOP 10 LEADERBOARD
         function muatLeaderboard() {
-            const urutanSiswa = [...dataSiswa].sort((a, b) => b.nilai - a.nilai).slice(0, 10);
+            const urutanSiswa = [...dataSiswa]
+                .filter(s => s.nilai !== "" && s.nilai !== null && s.nilai !== undefined)
+                .sort((a, b) => b.nilai - a.nilai)
+                .slice(0, 10);
+                
             const container = document.getElementById('leaderboard-body');
             container.innerHTML = '';
 
@@ -425,19 +805,13 @@
                 let mahkota = '';
                 let bgStyle = 'bg-slate-50 border-slate-100';
                 
-                if (index === 0) {
-                    mahkota = '👑';
-                    bgStyle = 'bg-amber-50 border-amber-200';
-                } else if (index === 1) {
-                    mahkota = '🥈';
-                } else if (index === 2) {
-                    mahkota = '🥉';
-                } else {
-                    mahkota = `<span class="text-slate-400 font-bold text-xs">#${index + 1}</span>`;
-                }
+                if (index === 0) { mahkota = '👑'; bgStyle = 'bg-amber-50 border-amber-200'; }
+                else if (index === 1) { mahkota = '🥈'; }
+                else if (index === 2) { mahkota = '🥉'; }
+                else { mahkota = `<span class="text-slate-400 font-bold text-xs">#${index + 1}</span>`; }
 
                 container.innerHTML += `
-                    <div class="p-3 border rounded-xl flex justify-between items-center ${bgStyle} transition-all">
+                    <div class="p-3 border rounded-xl flex justify-between items-center ${bgStyle}">
                         <div class="flex items-center gap-2.5 truncate">
                             <div class="w-6 h-6 flex items-center justify-center shrink-0 font-bold">${mahkota}</div>
                             <div class="truncate">
