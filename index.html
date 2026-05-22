@@ -3,38 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Nilai Siswa</title>
+    <title>CEK NILAI SAS INFORMATIKA</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        @keyframes pulse-red {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes pulse-red { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        .remedial-card { animation: pulse-red 2s infinite; }
+        .glass-effect { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
+        
+        /* Animasi Keren untuk Halaman Loading Pencarian */
+        @keyframes scan {
+            0% { top: 0%; opacity: 0.8; }
+            50% { top: 100%; opacity: 0.8; }
+            100% { top: 0%; opacity: 0.8; }
         }
-        .remedial-card {
-            animation: pulse-red 2s infinite;
+        .scanner-line {
+            position: absolute;
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(to right, transparent, #6366f1, #a855f7, #6366f1, transparent);
+            animation: scan 2.5s infinite linear;
         }
     </style>
 </head>
-<body class="bg-slate-100 font-sans min-h-screen pb-12">
+<body class="bg-slate-100 font-sans min-h-screen pb-12 transition-all duration-500">
 
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-10 px-4 text-center shadow-lg mb-8">
-        <h1 class="text-3xl font-bold tracking-wide">Pusat Informasi & Cek Nilai Siswa</h1>
-        <p class="text-blue-100 mt-2">Silakan cari nilai Anda menggunakan Nama atau NIS</p>
+    <div class="bg-gradient-to-r from-violet-600 via-indigo-700 to-blue-600 text-white py-10 px-4 text-center shadow-lg mb-8 relative overflow-hidden">
+        <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-black/10 rounded-full blur-xl animate-pulse"></div>
+        
+        <h1 class="text-3xl font-bold tracking-wide flex justify-center items-center gap-3">
+            <i class="fa-solid fa-laptop-code animate-bounce"></i> Portal Nilai & Tantangan Informatika
+        </h1>
+        <p class="text-indigo-100 mt-2 text-sm sm:text-base">Cari Nilai Mandiri, Intip Nilai Sekelas, atau Dobrak Semua Nilai dengan Ujian Logika!</p>
     </div>
 
-    <div class="max-w-4xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <div class="md:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-800 mb-4">Cari Nilai Anda</h2>
-                <div class="flex gap-2">
-                    <input type="text" id="search-input" placeholder="Masukkan Nama atau NIS..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                    <button onclick="cariNilai()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md cursor-pointer">
-                        <i class="fa-solid fa-magnifying-glass mr-2"></i>Cari
+                <h2 class="text-xl font-bold text-slate-800 mb-2">Pencarian Fleksibel</h2>
+                <p class="text-xs text-slate-500 mb-4">💡 Tips: Masukkan <b>Nama / NIS</b> untuk nilai pribadi, atau masukkan nama kelas (Contoh: <b>8.1</b> atau <b>8.4</b>) untuk melihat teman sekelas!</p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="search-input" placeholder="Ketik Nama, NIS, atau Kelas..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-base">
+                    <button onclick="prosesPencarian()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md cursor-pointer flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i> Cari Data
                     </button>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-dashed border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <div class="text-center sm:text-left">
+                        <span class="text-sm font-bold text-slate-700 block">Penasaran Nilai Satu Angkatan?</span>
+                        <span class="text-xs text-slate-400 block">Selesaikan tantangan 3 soal Informatika dari Guru!</span>
+                    </div>
+                    <button onclick="bukaModalKuis()" id="btn-unlock-all" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer flex items-center gap-2">
+                        <i id="lock-icon" class="fa-solid fa-lock"></i> Buka Semua Nilai
+                    </button>
+                </div>
+            </div>
+
+            <div id="loading-box" class="hidden bg-slate-900 text-slate-200 p-8 rounded-2xl shadow-xl text-center relative overflow-hidden border border-slate-700 animate__animated animate__fadeIn">
+                <div class="scanner-line"></div>
+                <i class="fa-solid fa-circle-notch text-indigo-500 text-5xl animate-spin mb-4 block"></i>
+                <h3 class="text-lg font-bold tracking-wide text-white mb-1">MENGONTAK DATABASE PUSAT...</h3>
+                <p id="loading-status" class="text-xs text-indigo-300 font-mono tracking-widest uppercase animate-pulse">Menghubungkan enkripsi keamanan...</p>
+                
+                <div class="w-full bg-slate-800 rounded-full h-2.5 mt-6 max-w-xs mx-auto overflow-hidden border border-slate-700">
+                    <div id="loading-progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
                 </div>
             </div>
 
@@ -47,13 +84,13 @@
                 <h2 class="text-xl font-bold text-slate-800 flex justify-center items-center gap-2">
                     <i class="fa-solid fa-crown text-amber-500 animate-bounce"></i> Top 10 Angkatan
                 </h2>
-                <p class="text-xs text-slate-500">Nilai tertinggi gabungan seluruh kelas</p>
+                <p class="text-xs text-slate-500">Apresiasi khusus siswa peraih nilai tertinggi</p>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-slate-100 text-slate-400 text-xs tracking-wider uppercase">
-                            <th class="py-2 text-center">Pos</th>
+                            <th class="py-2 text-center w-12">Pos</th>
                             <th class="py-2">Nama</th>
                             <th class="py-2 text-right">Nilai</th>
                         </tr>
@@ -66,12 +103,28 @@
 
     </div>
 
+    <div id="quiz-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden animate__animated animate__fadeIn animate__faster">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden glass-effect border border-white/20 animate__animated animate__zoomIn animate__faster">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-white flex justify-between items-center">
+                <h3 class="font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-brain"></i> Mode Tantangan Guru</h3>
+                <button onclick="tutupModalKuis()" class="text-white/80 hover:text-white text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="quiz-content">
+                <p class="text-sm text-slate-600 bg-amber-50 border border-amber-200 p-3 rounded-xl">
+                    ⚠️ <b>Syarat Lolos:</b> Jawab dengan benar minimal <b>2 dari 3 soal</b> di bawah ini untuk membuka lembar nilai seluruh angkatan!
+                </p>
+                <form id="quiz-form" class="space-y-6"></form>
+                <button type="button" onclick="evaluasiKuis()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 rounded-xl shadow-lg transition-transform active:scale-95 cursor-pointer">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Jawaban Kamu
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==========================================
-        // 1. DATA EXCEL (Ubah ke JSON di bawah ini)
+        // 1. DATABASE SISWA (MOCKING EXCEL)
         // ==========================================
-        // Silakan ganti data contoh ini dengan data dari Excel Anda.
-        // Anda bisa gunakan converter online "Excel to JSON".
         const dataSiswa = [
             { nis: "1001", nama: "Arya Wiguna", kelas: "8.1", nilai: 98 },
             { nis: "1002", nama: "Budi Santoso", kelas: "8.1", nilai: 70 },
@@ -82,33 +135,323 @@
             { nis: "1007", nama: "Giska Amelia", kelas: "8.3", nilai: 65 },
             { nis: "1008", nama: "Hendra Wijaya", kelas: "8.3", nilai: 88 },
             { nis: "1009", nama: "Indah Permata", kelas: "8.3", nilai: 74 },
-            { nis: "1010", nama: "Joko Susilo", kelas: "8.4", nilai: 98 },
+            { nis: "1010", nama: "Joko Susilo", kelas: "8.4", nilai: 99 },
             { nis: "1011", nama: "Ketut Rai", kelas: "8.4", nilai: 80 },
             { nis: "1012", nama: "Luh Sari", kelas: "8.4", nilai: 60 }
         ];
 
-        // URL Link Remedial Anda
         const LINK_REMEDIAL = "https://forms.gle/ContohLinkRemedialAnda"; 
         const KKM = 74;
+        let kuisLolos = false;
 
-        // ==========================================
-        // 2. LOGIKA UTAMA SYSTEM (PROSES DATA)
-        // ==========================================
-        
-        // Cari nilai tertinggi di Angkatan
+        const bankSoal = [
+            { q: "Manakah di bawah ini yang merupakan struktur data dengan prinsip LIFO (Last In First Out)?", a: ["Queue", "Stack", "Array", "Graph"], correct: 1 },
+            { q: "Berapakah nilai desimal dari bilangan biner 1011?", a: ["9", "10", "11", "13"], correct: 2 },
+            { q: "Langkah logis dan sistematis yang disusun untuk menyelesaikan suatu masalah disebut...", a: ["Dekomposisi", "Algoritma", "Abstraksi", "Pola"], correct: 1 },
+            { q: "Sistem bilangan yang hanya menggunakan simbol angka 0 dan 1 dikenal dengan sebutan...", a: ["Oktal", "Heksadesimal", "Desimal", "Biner"], correct: 3 }
+        ];
+
         const nilaiTertinggiAngkatan = Math.max(...dataSiswa.map(s => s.nilai));
+        const daftarKelasTerdaftar = [...new Set(dataSiswa.map(s => s.kelas.toLowerCase()))];
 
-        // Fungsi untuk mencari nilai tertinggi di kelas tertentu
         function dapatkanNilaiTertinggiKelas(namaKelas) {
-            const siswaDiKelas = dataSiswa.filter(s => s.kelas === namaKelas);
-            return Math.max(...siswaDiKelas.map(s => s.nilai));
+            const siswaDiKelas = dataSiswa.filter(s => s.kelas.toLowerCase() === namaKelas.toLowerCase());
+            return siswaDiKelas.length ? Math.max(...siswaDiKelas.map(s => s.nilai)) : 0;
         }
 
         // ==========================================
-        // 3. RENDER LEADERBOARD TOP 10 ANGKATAN
+        // 2. INTI LOGIKA PENCARIAN & ROUTING UI
+        // ==========================================
+        function prosesPencarian() {
+            const input = document.getElementById('search-input').value.toLowerCase().trim();
+            const resultBox = document.getElementById('result-box');
+            const loadingBox = document.getElementById('loading-box');
+            
+            if (input === "") {
+                alert("Masukkan Nama, NIS, atau Kode Kelas!");
+                return;
+            }
+
+            // Sembunyikan hasil lama
+            resultBox.classList.add('hidden');
+
+            // --- JIKA YANG DICARI ADALAH KELAS (Tanpa Loading Efek Lama) ---
+            if (daftarKelasTerdaftar.includes(input)) {
+                tampilkanDataKelas(input);
+            } 
+            // --- JIKA YANG DICARI ADALAH NAMA PERSONAL (Berlaku Efek Menegangkan 10 Detik) ---
+            else {
+                loadingBox.classList.remove('hidden');
+                jalankanAnimasiPenasaran(input);
+            }
+        }
+
+        // ==========================================
+        // 3. TIMING TIMEOUT PENASARAN (10 DETIK)
+        // ==========================================
+        function jalankanAnimasiPenasaran(keyword) {
+            const statusTxt = document.getElementById('loading-status');
+            const progressBar = document.getElementById('loading-progress-bar');
+            
+            let progress = 0;
+            progressBar.style.width = "0%";
+
+            // Daftar teks hacker/sains untuk memicu ketegangan siswa
+            const listStatus = [
+                { time: 0, text: "🤖 Membuka Enkripsi Jalur Database..." },
+                { time: 1800, text: "📂 Mencari Baris Berkas Berdasarkan Kata Kunci..." },
+                { time: 3500, text: "🖥️ Mengekstrak Nilai Ujian Informatika..." },
+                { time: 5200, text: "📊 Membandingkan Angka KKM Komputasional..." },
+                { time: 7000, text: "⚡ Memvalidasi Nilai Tertinggi Kelas & Angkatan..." },
+                { time: 8800, text: "✨ Menyiapkan Lembar Hasil Akhir..." }
+            ];
+
+            // Interval update progres bar (tiap 100 milidetik agar smooth)
+            const intervalProgress = setInterval(() => {
+                progress += (100 / 10000) * 100; // Berjalan tepat menuju 100% dalam 10 detik
+                progressBar.style.width = `${progress}%`;
+                if(progress >= 100) clearInterval(intervalProgress);
+            }, 100);
+
+            // Ganti-ganti teks status secara real-time
+            listStatus.forEach(item => {
+                setTimeout(() => {
+                    statusTxt.innerText = item.text;
+                }, item.time);
+            });
+
+            // Tepat di detik ke-10 (10000 ms), tampilkan data aslinya!
+            setTimeout(() => {
+                document.getElementById('loading-box').classList.add('hidden');
+                tampilkanDataSiswaPribadi(keyword);
+            }, 10000);
+        }
+
+        // --- Render Data Siswa Individu ---
+        function tampilkanDataSiswaPribadi(keyword) {
+            const resultBox = document.getElementById('result-box');
+            const hasil = dataSiswa.find(s => s.nama.toLowerCase().includes(keyword) || s.nis.includes(keyword));
+
+            resultBox.classList.remove('hidden');
+
+            if (!hasil) {
+                resultBox.innerHTML = `<div class="text-center py-6"><i class="fa-solid fa-user-slash text-red-400 text-3xl mb-2"></i><p class="text-slate-500 font-medium">Data Siswa tidak ditemukan.</p></div>`;
+                return;
+            }
+
+            const topKelas = dapatkanNilaiTertinggiKelas(hasil.kelas);
+            let alertHTML = '';
+
+            if (hasil.nilai === nilaiTertinggiAngkatan) {
+                alertHTML = `<div class="bg-amber-100 border border-amber-300 text-amber-800 p-4 rounded-xl text-center font-bold mb-4 animate__animated animate__jackInTheBox">👑 FANTASTIS! Kamu mendapat nilai TERTINGGI se-ANGKATAN! 👑</div>`;
+                efekKembangApiMeriah();
+            } else if (hasil.nilai === topKelas) {
+                alertHTML = `<div class="bg-emerald-100 border border-emerald-300 text-emerald-800 p-4 rounded-xl text-center font-bold mb-4 animate__animated animate__zoomInUp">⭐ HEBAT! Kamu meraih nilai TERTINGGI di kelas ${hasil.kelas}! ⭐</div>`;
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+            } else if (hasil.nilai < KKM) {
+                alertHTML = `
+                    <div class="remedial-card bg-red-50 border-2 border-red-400 text-red-700 p-4 rounded-xl text-center mb-4 animate__animated animate__shakeX">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl text-red-500 mb-1"></i>
+                        <p class="font-bold">Nilai ${hasil.nama} berada di bawah KKM (${KKM})!</p>
+                        <p class="text-xs text-red-600 mb-3">Yuk perbaiki nilaimu dengan mengikuti ujian remedial di link berikut:</p>
+                        <a href="${LINK_REMEDIAL}" target="_blank" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-5 py-2.5 rounded-lg shadow-md transition-transform hover:scale-105">
+                            <i class="fa-solid fa-file-pen mr-2"></i> Ikut Remedial Sekarang
+                        </a>
+                    </div>
+                `;
+            } else {
+                alertHTML = `<div class="bg-blue-50 text-blue-700 p-3 rounded-xl text-center text-sm font-medium mb-4">Status: <span class="text-emerald-600 font-bold">LULUS KKM</span>. Kerja bagus! 👍</div>`;
+            }
+
+            resultBox.innerHTML = `
+                <div class="flex justify-between items-center mb-4 pb-2 border-b">
+                    <h3 class="text-base font-bold text-slate-700"><i class="fa-solid fa-id-card mr-2 text-indigo-500"></i>Kartu Hasil Nilai Mandiri</h3>
+                    <button onclick="tampilkanDataKelas('${hasil.kelas}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg transition-all font-semibold cursor-pointer">
+                        <i class="fa-solid fa-users mr-1"></i> Lihat Kelas ${hasil.kelas}
+                    </button>
+                </div>
+                ${alertHTML}
+                <div class="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+                    <div class="bg-slate-50 p-3 rounded-xl"><span class="text-slate-400 block text-[10px] uppercase">Nama</span><span class="font-bold text-slate-700">${hasil.nama}</span></div>
+                    <div class="bg-slate-50 p-3 rounded-xl"><span class="text-slate-400 block text-[10px] uppercase">NIS</span><span class="font-semibold text-slate-600">${hasil.nis}</span></div>
+                    <div class="bg-slate-50 p-3 rounded-xl"><span class="text-slate-400 block text-[10px] uppercase">Kelas</span><span class="font-bold text-indigo-600">${hasil.kelas}</span></div>
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100"><span class="text-indigo-400 block text-[10px] uppercase font-bold">Nilai Akhir</span><span class="text-xl font-black text-indigo-700">${hasil.nilai}</span></div>
+                </div>
+            `;
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Render Data Satu Kelas ---
+        function tampilkanDataKelas(namaKelas) {
+            const resultBox = document.getElementById('result-box');
+            const siswaKelas = dataSiswa.filter(s => s.kelas.toLowerCase() === namaKelas.toLowerCase());
+            const topKelas = dapatkanNilaiTertinggiKelas(namaKelas);
+
+            let barisTabel = '';
+            siswaKelas.forEach(s => {
+                let dekorasiNilai = `<span class="font-bold">${s.nilai}</span>`;
+                let badge = '';
+
+                if (s.nilai === nilaiTertinggiAngkatan) {
+                    badge = '👑 <span class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.5 rounded-md ml-1 font-bold">Juara Angkatan</span>';
+                    dekorasiNilai = `<span class="font-black text-amber-600 flex items-center justify-end gap-1">${s.nilai} <i class="fa-solid fa-crown text-amber-500"></i></span>`;
+                } else if (s.nilai === topKelas) {
+                    badge = '⭐ <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-md ml-1 font-bold">Top Kelas</span>';
+                    dekorasiNilai = `<span class="font-black text-emerald-600 flex items-center justify-end gap-1">${s.nilai} <i class="fa-solid fa-star text-emerald-400 animate-spin"></i></span>`;
+                } else if (s.nilai < KKM) {
+                    badge = `<span class="bg-red-100 text-red-700 text-[9px] px-1.5 py-0.5 rounded-md ml-1 font-medium">Remedial</span>`;
+                    dekorasiNilai = `<span class="font-bold text-red-500">${s.nilai}</span>`;
+                }
+
+                barisTabel += `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors text-xs sm:text-sm">
+                        <td class="py-3 px-2 text-slate-500">${s.nis}</td>
+                        <td class="py-3 px-2 font-medium text-slate-700">${s.nama} ${badge}</td>
+                        <td class="py-3 px-2 text-right">${dekorasiNilai}</td>
+                    </tr>
+                `;
+            });
+
+            resultBox.innerHTML = `
+                <div class="flex justify-between items-center mb-4 pb-2 border-b">
+                    <h3 class="text-base font-bold text-slate-700"><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Anggota Kelas ${namaKelas.toUpperCase()}</h3>
+                    <span class="text-xs bg-indigo-50 text-indigo-600 font-bold px-2.5 py-1 rounded-lg">Total: ${siswaKelas.length} Siswa</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-slate-400 text-xs border-b border-slate-100 uppercase font-semibold">
+                                <th class="pb-2 px-2">NIS</th>
+                                <th class="pb-2 px-2">Nama Rekan</th>
+                                <th class="pb-2 px-2 text-right">Nilai</th>
+                            </tr>
+                        </thead>
+                        <tbody>${barisTabel}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 4. LOGIKA SELEKSI GAME MODAL KUIS
+        // ==========================================
+        let soalTerpilih = [];
+
+        function bukaModalKuis() {
+            if (kuisLolos) {
+                tampilkanSemuaNilaiAngkatan();
+                return;
+            }
+            
+            soalTerpilih = [...bankSoal].sort(() => 0.5 - Math.random()).slice(0, 3);
+            const form = document.getElementById('quiz-form');
+            form.innerHTML = '';
+
+            soalTerpilih.forEach((soal, i) => {
+                let opsiHTML = '';
+                soal.a.forEach((opsi, idx) => {
+                    opsiHTML += `
+                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-all text-xs sm:text-sm">
+                            <input type="radio" name="soal-${i}" value="${idx}" class="accent-indigo-600 w-4 h-4" required>
+                            <span>${opsi}</span>
+                        </label>
+                    `;
+                });
+
+                form.innerHTML += `
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 animate__animated animate__fadeInUp">
+                        <p class="font-bold text-slate-800 text-sm mb-3">${i + 1}. ${soal.q}</p>
+                        <div class="grid grid-cols-1 gap-2">${opsiHTML}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('quiz-modal').classList.remove('hidden');
+        }
+
+        function tutupModalKuis() {
+            document.getElementById('quiz-modal').classList.add('hidden');
+        }
+
+        function evaluasiKuis() {
+            const form = document.getElementById('quiz-form');
+            if (!form.checkValidity()) {
+                alert("Selesaikan seluruh soal terlebih dahulu ya!");
+                return;
+            }
+
+            let skorBenar = 0;
+            soalTerpilih.forEach((soal, i) => {
+                const jawabanTerpilih = document.querySelector(`input[name="soal-${i}"]:checked`).value;
+                if (parseInt(jawabanTerpilih) === soal.correct) skorBenar++;
+            });
+
+            if (skorBenar >= 2) {
+                kuisLolos = true;
+                tutupModalKuis();
+                
+                const btn = document.getElementById('btn-unlock-all');
+                btn.innerHTML = `<i class="fa-solid fa-lock-open"></i> Akses Terbuka`;
+                btn.className = "bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-md cursor-pointer flex items-center gap-2";
+                
+                efekKembangApiMeriah();
+                setTimeout(() => {
+                    alert(`🎉 LUAR BIASA! Kamu menjawab ${skorBenar} soal dengan benar. Akses database angkatan telah dibuka!`);
+                    tampilkanSemuaNilaiAngkatan();
+                }, 500);
+            } else {
+                alert(`❌ Sayang sekali, kamu hanya benar ${skorBenar} soal. Minimal harus benar 2 soal ya. Coba lagi, tantangan diacak ulang!`);
+                bukaModalKuis();
+            }
+        }
+
+        function tampilkanSemuaNilaiAngkatan() {
+            const resultBox = document.getElementById('result-box');
+            resultBox.classList.remove('hidden');
+
+            const siswaUrut = [...dataSiswa].sort((a,b) => a.nama.localeCompare(b.nama));
+            let barisTabel = '';
+
+            siswaUrut.forEach(s => {
+                let badgeNilai = s.nilai < KKM ? `<span class="text-red-500 font-bold">${s.nilai}</span>` : `<span class="text-indigo-600 font-bold">${s.nilai}</span>`;
+                if (s.nilai === nilaiTertinggiAngkatan) {
+                    badgeNilai = `<span class="text-amber-500 font-black flex items-center justify-end gap-1">${s.nilai} 👑</span>`;
+                }
+
+                barisTabel += `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors text-xs">
+                        <td class="py-2.5 px-2 font-semibold text-slate-500">${s.kelas}</td>
+                        <td class="py-2.5 px-2 text-slate-700 font-medium">${s.nama}</td>
+                        <td class="py-2.5 px-2 text-right">${badgeNilai}</td>
+                    </tr>
+                `;
+            });
+
+            resultBox.innerHTML = `
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-xl mb-4 text-center animate__animated animate__pulse">
+                    <p class="font-bold text-sm">🔓 DATABASE SELURUH ANGKATAN BERHASIL DIBUKA 🔓</p>
+                    <p class="text-[11px] opacity-90">Kamu telah membuktikan kemampuan logikamu di bidang Informatika!</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-slate-400 text-xs border-b border-slate-100 uppercase font-semibold">
+                                <th class="pb-2 px-2">Kelas</th>
+                                <th class="pb-2 px-2">Nama Lengkap</th>
+                                <th class="pb-2 px-2 text-right">Nilai</th>
+                            </tr>
+                        </thead>
+                        <tbody>${barisTabel}</tbody>
+                    </table>
+                </div>
+            `;
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // 5. GENERATE LEADERBOARD UTAMA (TOP 10)
         // ==========================================
         function muatLeaderboard() {
-            // Urutkan berdasarkan nilai tertinggi
             const urutanSiswa = [...dataSiswa].sort((a, b) => b.nilai - a.nilai).slice(0, 10);
             const tbody = document.getElementById('leaderboard-body');
             tbody.innerHTML = '';
@@ -117,10 +460,9 @@
                 let mahkota = '';
                 let bgRow = '';
                 
-                // Tambah mahkota untuk peringkat 1, 2, 3
                 if (index === 0) {
-                    mahkota = '<i class="fa-solid fa-crown text-amber-500 ml-1"></i>';
-                    bgRow = 'bg-amber-50 font-bold';
+                    mahkota = '<i class="fa-solid fa-crown text-amber-500 ml-1 scale-110"></i>';
+                    bgRow = 'bg-amber-50/70 font-bold text-amber-900';
                 } else if (index === 1) {
                     mahkota = '<i class="fa-solid fa-crown text-slate-400 ml-1"></i>';
                 } else if (index === 2) {
@@ -128,136 +470,27 @@
                 }
 
                 tbody.innerHTML += `
-                    <tr class="border-b border-slate-100 ${bgRow} hover:bg-slate-50 transition-colors">
-                        <td class="py-3 text-center font-semibold text-slate-500">${index + 1}</td>
-                        <td class="py-3">${siswa.nama} ${mahkota} <span class="text-xs text-slate-400 block">${siswa.kelas}</span></td>
-                        <td class="py-3 text-right font-bold text-indigo-600">${siswa.nilai}</td>
+                    <tr class="border-b border-slate-100 ${bgRow} hover:bg-slate-50 transition-all text-xs">
+                        <td class="py-3 text-center font-bold text-slate-400">${index + 1}</td>
+                        <td class="py-3 px-1">${siswa.nama} ${mahkota} <span class="text-[10px] text-slate-400 block">${siswa.kelas}</span></td>
+                        <td class="py-3 text-right font-black text-indigo-600">${siswa.nilai}</td>
                     </tr>
                 `;
             });
         }
 
-        // ==========================================
-        // 4. FUNGSI PENCARIAN & ANIMASI
-        // ==========================================
-        function cariNilai() {
-            const input = document.getElementById('search-input').value.toLowerCase().trim();
-            const resultBox = document.getElementById('result-box');
-            
-            if (input === "") {
-                alert("Masukkan nama atau NIS terlebih dahulu!");
-                return;
-            }
-
-            // Cocokkan data berdasarkan nama atau NIS
-            const hasil = dataSiswa.find(s => s.nama.toLowerCase().includes(input) || s.nis.includes(input));
-
-            resultBox.classList.remove('hidden');
-
-            if (!hasil) {
-                resultBox.innerHTML = `
-                    <div class="text-center py-6">
-                        <i class="fa-solid fa-circle-xmark text-red-500 text-4xl mb-2"></i>
-                        <p class="text-slate-600 font-medium">Data tidak ditemukan. Periksa kembali Nama/NIS Anda.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const nilaiTertinggiKelas = dapatkanNilaiTertinggiKelas(hasil.kelas);
-            let statusHTML = '';
-            
-            // --- LOGIKA ANIMASI & KONDISI ---
-
-            // KONDISI 1: NILAI TERTINGGI ANGKATAN / KELAS
-            if (hasil.nilai === nilaiTertinggiAngkatan) {
-                statusHTML = `
-                    <div class="bg-amber-100 border border-amber-300 text-amber-800 p-4 rounded-xl text-center font-bold mb-4 animate__animated animate__jackInTheBox">
-                        👑 LUAR BIASA! ${hasil.nama} meraih nilai TERTINGGI di ANGKATAN! 👑
-                    </div>
-                `;
-                pemicuPetasanMeriah();
-            } else if (hasil.nilai === nilaiTertinggiKelas) {
-                statusHTML = `
-                    <div class="bg-green-100 border border-green-300 text-green-800 p-4 rounded-xl text-center font-bold mb-4 animate__animated animate__zoomInUp">
-                        ⭐ SELAMAT! ${hasil.nama} meraih nilai TERTINGGI di Kelas ${hasil.kelas}! ⭐
-                    </div>
-                `;
-                pemicuPetasanBiasa();
-            }
-            // KONDISI 2: DI BAWAH KKM (74)
-            else if (hasil.nilai < KKM) {
-                statusHTML = `
-                    <div class="remedial-card bg-red-50 border-2 border-red-400 text-red-700 p-5 rounded-xl text-center mb-4 animate__animated animate__shakeX">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl text-red-500 mb-2"></i>
-                        <p class="font-bold text-lg">Nilai ${hasil.nama} berada di bawah KKM!</p>
-                        <p class="text-sm text-red-600 mt-1 mb-4">Segera lakukan remedial melalui tombol di bawah ini:</p>
-                        <a href="${LINK_REMEDIAL}" target="_blank" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition-transform hover:scale-105 active:scale-95">
-                            <i class="fa-solid fa-file-pen mr-2"></i> Ikut Remedial Sekarang
-                        </a>
-                    </div>
-                `;
-            } else {
-                // Kondisi Aman (Lulus KKM tetapi bukan tertinggi)
-                statusHTML = `
-                    <div class="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-xl text-center font-medium mb-4">
-                        Status: <span class="font-bold text-green-600">LULUS KKM</span>. Pertahankan prestasimu!
-                    </div>
-                `;
-            }
-
-            // Tampilkan rincian kartu nilai siswa
-            resultBox.innerHTML = `
-                <h3 class="text-lg font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">Hasil Pencarian</h3>
-                ${statusHTML}
-                <div class="grid grid-cols-2 gap-4 mt-2">
-                    <div class="bg-slate-50 p-3 rounded-xl">
-                        <span class="text-xs text-slate-400 block">Nama Lengkap</span>
-                        <span class="font-semibold text-slate-700">${hasil.nama}</span>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-xl">
-                        <span class="text-xs text-slate-400 block">NIS</span>
-                        <span class="font-semibold text-slate-700">${hasil.nis}</span>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-xl">
-                        <span class="text-xs text-slate-400 block">Kelas</span>
-                        <span class="font-semibold text-slate-700">${hasil.kelas}</span>
-                    </div>
-                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
-                        <span class="text-xs text-indigo-400 block font-bold">Nilai Akhir</span>
-                        <span class="text-2xl font-black text-indigo-700">${hasil.nilai}</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ==========================================
-        // 5. PACK ANIMASI CONFETTI (PETASAN)
-        // ==========================================
-        function pemicuPetasanBiasa() {
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-        }
-
-        function pemicuPetasanMeriah() {
-            var duration = 3 * 1000;
+        function efekKembangApiMeriah() {
+            var duration = 3.5 * 1000;
             var end = Date.now() + duration;
-
             (function frame() {
-                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
-                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
-                if (Date.now() < end) { requestAnimationFrame(frame); }
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.7 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.7 } });
+                if (Date.now() < end) requestAnimationFrame(frame);
             }());
         }
 
-        // Jalankan leaderboard saat halaman pertama kali dibuka
         window.onload = muatLeaderboard;
-
-        // Mendukung pencarian dengan menekan tombol Enter
-        document.getElementById("search-input").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                cariNilai();
-            }
-        });
+        document.getElementById("search-input").addEventListener("keypress", function(e) { if (e.key === "Enter") prosesPencarian(); });
     </script>
 </body>
 </html>
