@@ -1,505 +1,263 @@
 <!DOCTYPE html>
-
 <html lang="id">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>LATIHAN SOAL INFORMATIKA</title>
-
-<style>
-
-body{font-family:'Segoe UI';margin:0;background:#f0f4f8}
-
-.start{display:flex;justify-content:center;align-items:center;height:100vh}
-
-.card{background:#fff;padding:25px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,.1);width:90%;max-width:380px}
-
-input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc}
-
-.container{display:flex}
-
-.sidebar{width:90px;background:#fff;padding:10px;height:100vh;overflow:auto}
-
-.sidebar button{width:38px;height:38px;margin:5px;border:none;border-radius:50%;background:#e0e7ff}
-
-.sidebar button.active{background:#6366f1;color:#fff}
-
-.answered{background:#22c55e !important;color:white}
-
-.doubt{background:orange !important;color:white}
-
-.main{flex:1;padding:20px}
-
-.option{display:block;padding:12px;margin:10px 0;border:2px solid #ddd;border-radius:10px;cursor:pointer}
-
-.option:hover{background:#eef2ff}
-
-.locked{opacity:.6;pointer-events:none}
-
-.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
-
-button{flex:1;padding:10px;border:none;border-radius:10px;background:#6366f1;color:#fff}
-
-.ragu{background:orange}
-
-.timer{position:fixed;top:10px;right:10px;background:#111;color:#fff;padding:10px;border-radius:10px}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Nilai Siswa</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .remedial-card {
+            animation: pulse-red 2s infinite;
+        }
+    </style>
 </head>
-
-<body>
-
-<div class="start" id="start">
-
-<div class="card">
-
-<h3 id="greet"></h3>
-
-<input id="nama" placeholder="Nama">
-
-<input id="absen" placeholder="No Absen">
-
-<input id="kelas" placeholder="Kelas">
-
-<button onclick="mulai()">Mulai</button>
-
-</div>
-
-</div>
-
-<div class="container" id="quiz" style="display:none">
-
-<div class="sidebar" id="nav"></div>
-
-<div class="main">
-
-<h2>SUMATIF AKHIR SEMESTER LATIHAN</h2>
-
-<div id="box" class="card"></div>
-
-<div class="btns">
-
-<button onclick="prev()">Prev</button>
-
-<button onclick="next()">Next</button>
-
-<button class="ragu" onclick="ragu()">Ragu</button>
-
-<button onclick="submit()">Submit</button>
-
-</div>
-
-<div id="hasil" class="card" style="display:none"></div>
-
-</div>
-
-</div>
-
-<div class="timer" id="timer"></div>
-
-<script>
-
-// ================= GOOGLE FORM CONFIG =================
-
-const FORM_ID = "1FAIpQLScxRpVWUsg9DGZwvYXkIqeJ";
-
-const ENTRY_NAMA = "entry.111111111";
-
-const ENTRY_ABSEN = "entry.222222222";
-
-const ENTRY_KELAS = "entry.333333333";
-
-const ENTRY_NILAI = "entry.444444444";
-
-// ================= GREETING =================
-
-let h=new Date().getHours();
-
-document.getElementById("greet").innerText=
-
-h<12?"Selamat Pagi":h<15?"Selamat Siang":h<18?"Selamat Sore":"Selamat Malam";
-  const pembahasan = [
-
-"Data adalah fakta mentah yang belum mengalami proses pengolahan. Setelah diolah barulah menjadi informasi.",
-"Data yang belum diolah seperti daftar nilai masih disebut data mentah, bukan informasi.",
-"Data numerik adalah data yang berbentuk angka dan dapat dihitung secara matematis.",
-"Nama siswa berupa huruf atau kata sehingga termasuk data teks.",
-"Algoritma adalah urutan langkah-langkah logis dan sistematis untuk menyelesaikan suatu masalah.",
-"Sebelum membuat program, kita harus memahami masalah terlebih dahulu agar solusi yang dibuat tepat.",
-"Scratch adalah aplikasi pemrograman berbasis blok visual yang memudahkan pemula belajar coding.",
-"Media sosial berfungsi sebagai sarana komunikasi dan berbagi informasi secara digital.",
-"Password termasuk data pribadi yang harus dijaga agar tidak disalahgunakan oleh orang lain.",
-"Artefak komputasional adalah produk yang dihasilkan menggunakan bantuan teknologi komputer.",
-
-"Flashdisk berfungsi untuk menyimpan data sehingga termasuk perangkat penyimpanan (storage).",
-"1 MB = 1024 KB karena sistem komputer menggunakan basis biner.",
-"Microsoft Excel adalah aplikasi yang digunakan untuk mengolah data angka.",
-"Fungsi SUM digunakan untuk menjumlahkan data secara otomatis dalam Excel.",
-"Bug adalah istilah untuk kesalahan dalam program yang menyebabkan program tidak berjalan dengan baik.",
-"Coding adalah proses menuliskan instruksi program menggunakan bahasa pemrograman.",
-"Urutan yang benar adalah analisis → coding → testing agar program berjalan sesuai tujuan.",
-"Teknologi informasi berfungsi untuk mengolah, menyimpan, dan menyebarkan informasi.",
-"Chat online merupakan contoh penggunaan teknologi informasi dalam komunikasi digital.",
-"Hoaks adalah informasi palsu sehingga termasuk dampak negatif teknologi.",
-
-"Cyberbullying adalah tindakan menyakiti orang lain secara digital sehingga termasuk dampak negatif.",
-"Privasi penting untuk menjaga keamanan data pribadi agar tidak disalahgunakan.",
-"Game adalah contoh artefak komputasional karena dibuat dengan teknologi komputer.",
-"Artefak dibuat untuk membantu menyelesaikan masalah, bukan sekadar hiburan.",
-"Unplugged adalah pembelajaran tanpa menggunakan komputer untuk memahami konsep dasar.",
-"AVERAGE digunakan untuk menghitung nilai rata-rata dari suatu data.",
-"MAX digunakan untuk mencari nilai terbesar dalam suatu data.",
-"Excel digunakan untuk mengolah data seperti nilai siswa atau laporan keuangan.",
-"Kesalahan urutan langkah (algoritma) dapat menyebabkan program error.",
-"Debugging adalah proses mencari dan memperbaiki kesalahan dalam program.",
-
-"Jika program tidak sesuai, perlu dilakukan pengecekan algoritma untuk menemukan kesalahan.",
-"Loop digunakan untuk mengulang suatu perintah berkali-kali secara otomatis.",
-"Penyebaran hoaks merupakan dampak negatif dari penggunaan media sosial.",
-"Etika dalam bermedia sosial adalah bersikap sopan dan tidak merugikan orang lain.",
-"Kecanduan gadget merupakan dampak negatif dari penggunaan teknologi yang berlebihan.",
-"Artefak komputasional dibuat untuk memberikan solusi terhadap suatu permasalahan.",
-"Berpikir kritis sangat penting di era industri 4.0 karena teknologi berkembang pesat.",
-"Excel membantu dalam pengolahan data seperti data keuangan dan nilai.",
-"Kartu algoritma adalah contoh aktivitas unplugged karena tidak menggunakan komputer.",
-"Menggunakan password yang kuat adalah cara efektif menjaga keamanan data.",
-
-"Kesalahan rumus dalam Excel akan menghasilkan output yang salah.",
-"Fungsi IF digunakan untuk membuat keputusan berdasarkan kondisi tertentu.",
-"Debugging dilakukan untuk memperbaiki bug agar program berjalan dengan benar.",
-"Error tidak boleh dibiarkan karena akan mengganggu jalannya program.",
-"Artefak terbaik adalah yang mampu menyelesaikan masalah secara efektif.",
-"Kebocoran data dapat terjadi jika data pribadi dibagikan sembarangan.",
-"Evaluasi program bertujuan untuk menemukan kesalahan dan meningkatkan kualitas program.",
-"Program yang baik adalah yang berjalan sesuai tujuan dan minim kesalahan.",
-"2048 byte = 2 KB karena 1024 byte = 1 KB.",
-"Urutan satuan data dari kecil ke besar adalah Byte → KB → MB."
-
-];
-
-// ================= DATA SOAL =================
-let questions = [
-{q:"Data merupakan fakta mentah yang belum diolah menjadi informasi. Berdasarkan pernyataan tersebut, pengertian data adalah...", options:["Informasi","Fakta mentah","Program","Laporan"], answer:1, exp:pembahasan[0], kisi:"1", level:"C1", difficulty:"Mudah"},
-
-{q:"Seorang guru mencatat nilai siswa sebelum dihitung rata-rata.\n\nData tersebut termasuk...", options:["Informasi","Kesimpulan","Data mentah","Grafik"], answer:2, exp:pembahasan[1], kisi:"2", level:"C2", difficulty:"Mudah"},
-
-{q:"Data dalam bentuk angka disebut data...", options:["Teks","Numerik","Visual","Audio"], answer:1, exp:pembahasan[2], kisi:"3", level:"C1", difficulty:"Mudah"},
-
-{q:"Nama siswa termasuk jenis data...", options:["Numerik","Teks","Audio","Video"], answer:1, exp:pembahasan[3], kisi:"4", level:"C1", difficulty:"Mudah"},
-
-{q:"Dalam pemrograman, langkah-langkah sistematis untuk menyelesaikan masalah disebut...", options:["Program","Algoritma","Software","Hardware"], answer:1, exp:pembahasan[4], kisi:"5", level:"C2", difficulty:"Mudah"},
-
-{q:"Perhatikan tahapan berikut:\n(1) Coding\n(2) Testing\n(3) Analisis masalah\n\nLangkah pertama dalam membuat program adalah...", options:["Coding","Testing","Analisis masalah","Output"], answer:2, exp:pembahasan[5], kisi:"6", level:"C2", difficulty:"Mudah"},
-
-{q:"Scratch merupakan aplikasi untuk...", options:["Edit video","Pemrograman visual","Mengetik","Menggambar"], answer:1, exp:pembahasan[6], kisi:"7", level:"C1", difficulty:"Mudah"},
-
-{q:"Media sosial digunakan untuk...", options:["Menghapus data","Berkomunikasi","Menghitung","Menyimpan listrik"], answer:1, exp:pembahasan[7], kisi:"8", level:"C1", difficulty:"Mudah"},
-
-{q:"Data yang harus dijaga kerahasiaannya adalah...", options:["Hobi","Password","Warna","Film"], answer:1, exp:pembahasan[8], kisi:"9", level:"C1", difficulty:"Mudah"},
-
-{q:"Produk berbasis komputer untuk menyelesaikan masalah disebut...", options:["Kabel","Artefak komputasional","Buku","Meja"], answer:1, exp:pembahasan[9], kisi:"10", level:"C2", difficulty:"Mudah"},
-
-{q:"Flashdisk digunakan untuk menyimpan data.\n\nFlashdisk termasuk perangkat...", options:["Input","Output","Storage","Process"], answer:2, exp:pembahasan[10], kisi:"11", level:"C2", difficulty:"Mudah"},
-
-{q:"Dalam satuan penyimpanan data, 1 MB sama dengan...", options:["1024 KB","1000 KB","512 KB","2048 KB"], answer:0, exp:pembahasan[11], kisi:"12", level:"C3", difficulty:"Sedang"},
-
-{q:"Microsoft Excel digunakan untuk mengolah data angka.\n\nAplikasi tersebut termasuk...", options:["OS","Word","Pengolah angka","Browser"], answer:2, exp:pembahasan[12], kisi:"13", level:"C2", difficulty:"Mudah"},
-
-{q:"Perhatikan penggunaan fungsi pada Excel:\n=SUM(A1:A5)\n\nFungsi tersebut digunakan untuk...", options:["Rata-rata","Jumlah","Urut","Banding"], answer:1, exp:pembahasan[13], kisi:"14", level:"C4", difficulty:"Sedang"},
-
-{q:"Kesalahan dalam program disebut...", options:["Data","Bug","File","Input"], answer:1, exp:pembahasan[14], kisi:"15", level:"C1", difficulty:"Mudah"},
-
-{q:"Kegiatan menulis kode dalam pemrograman disebut...", options:["Delete","Coding","Testing","Running"], answer:1, exp:pembahasan[15], kisi:"16", level:"C2", difficulty:"Mudah"},
-
-{q:"Perhatikan urutan berikut:\nAnalisis → Coding → Testing\n\nUrutan tersebut merupakan proses...", options:["Salah","Pembuatan program","Penghapusan data","Input data"], answer:1, exp:pembahasan[16], kisi:"17", level:"C3", difficulty:"Sedang"},
-
-{q:"Fungsi utama teknologi informasi adalah...", options:["Mengolah info","Menggambar","Listrik","Buku"], answer:0, exp:pembahasan[17], kisi:"18", level:"C1", difficulty:"Mudah"},
-
-{q:"Contoh penggunaan teknologi informasi adalah...", options:["Kertas","Chat online","Buku","Pensil"], answer:1, exp:pembahasan[18], kisi:"19", level:"C2", difficulty:"Mudah"},
-
-{q:"Salah satu dampak negatif teknologi informasi adalah...", options:["Efisien","Hoaks","Cepat","Belajar"], answer:1, exp:pembahasan[19], kisi:"20", level:"C3", difficulty:"Sedang"},
-
-{q:"Cyberbullying merupakan dampak penggunaan teknologi yang bersifat...", options:["Positif","Negatif","Hiburan","Belajar"], answer:1, exp:pembahasan[20], kisi:"21", level:"C4", difficulty:"Sedang"},
-
-{q:"Privasi penting untuk menjaga...", options:["Game","Keamanan","Hiburan","Belajar"], answer:1, exp:pembahasan[21], kisi:"22", level:"C1", difficulty:"Mudah"},
-
-{q:"Contoh artefak komputasional adalah...", options:["Game","Meja","Buku","Pulpen"], answer:0, exp:pembahasan[22], kisi:"23", level:"C1", difficulty:"Mudah"},
-
-{q:"Artefak komputasional dibuat dengan tujuan untuk...", options:["Main","Solusi masalah","Hiasan","Gaya"], answer:1, exp:pembahasan[23], kisi:"24", level:"C2", difficulty:"Mudah"},
-
-{q:"Kegiatan tanpa menggunakan komputer dalam pembelajaran informatika disebut...", options:["Tanpa komputer","Online","Game","Coding"], answer:0, exp:pembahasan[24], kisi:"25", level:"C2", difficulty:"Mudah"},
-
-{q:"Fungsi AVERAGE pada Excel digunakan untuk...", options:["Jumlah","Rata-rata","Max","Min"], answer:1, exp:pembahasan[25], kisi:"26", level:"C2", difficulty:"Mudah"},
-
-{q:"Fungsi MAX digunakan untuk mencari nilai...", options:["Kecil","Besar","Rata-rata","Logika"], answer:1, exp:pembahasan[26], kisi:"27", level:"C2", difficulty:"Mudah"},
-
-{q:"Excel dapat digunakan untuk mengolah...", options:["Game","Nilai siswa","Video","Gambar"], answer:1, exp:pembahasan[27], kisi:"28", level:"C4", difficulty:"Sedang"},
-
-{q:"Kesalahan program dapat terjadi karena...", options:["Urutan salah","Keyboard","Monitor","Mouse"], answer:0, exp:pembahasan[28], kisi:"29", level:"C3", difficulty:"Sedang"},
-
-{q:"Debugging adalah proses untuk...", options:["Tambah error","Perbaiki error","Hapus data","Close"], answer:1, exp:pembahasan[29], kisi:"30", level:"C4", difficulty:"Sedang"},
-
-{q:"Jika program menghasilkan output yang salah, maka langkah yang tepat adalah...\n", options:["Diam","Periksa algoritma","Hapus","Restart"], answer:1, exp:pembahasan[30], kisi:"31", level:"C4", difficulty:"Sedang"},
-
-{q:"Loop dalam pemrograman digunakan untuk...", options:["Input","Output","Pengulangan","Cabang"], answer:2, exp:pembahasan[31], kisi:"32", level:"C3", difficulty:"Sedang"},
-
-{q:"Dampak negatif media sosial adalah...", options:["Edukasi","Hoaks","Info","Komunikasi"], answer:1, exp:pembahasan[32], kisi:"33", level:"C3", difficulty:"Sedang"},
-
-{q:"Etika dalam menggunakan media sosial adalah bersikap...", options:["Hina","Hoaks","Sopan","Spam"], answer:2, exp:pembahasan[33], kisi:"34", level:"C3", difficulty:"Sedang"},
-
-{q:"Salah satu dampak negatif lain dari teknologi adalah...", options:["Belajar","Kecanduan","Cepat","Luas"], answer:1, exp:pembahasan[34], kisi:"35", level:"C4", difficulty:"Sedang"},
-
-{q:"Artefak komputasional yang baik harus mampu memberikan...", options:["Main","Solusi","Gaya","Iseng"], answer:1, exp:pembahasan[35], kisi:"36", level:"C4", difficulty:"Sedang"},
-
-{q:"Kemampuan penting di era digital adalah berpikir...", options:["Hafal","Kritis","Diam","Main"], answer:1, exp:pembahasan[36], kisi:"37", level:"C4", difficulty:"Sedang"},
-
-{q:"Excel membantu dalam pengolahan...", options:["Gambar","Data keuangan","Game","Tulisan"], answer:1, exp:pembahasan[37], kisi:"38", level:"C4", difficulty:"Sedang"},
-
-{q:"Contoh kegiatan unplugged adalah...", options:["Kartu algoritma","Coding","Online","Edit"], answer:0, exp:pembahasan[38], kisi:"39", level:"C4", difficulty:"Sedang"},
-
-{q:"Cara menjaga keamanan data adalah dengan menggunakan...", options:["Share","Password kuat","Posting","Sebar"], answer:1, exp:pembahasan[39], kisi:"40", level:"C4", difficulty:"Sedang"},
-
-{q:"Kesalahan pada Excel biasanya terjadi karena...", options:["Rumus salah","Warna","Font","Layout"], answer:0, exp:pembahasan[40], kisi:"41", level:"C5", difficulty:"Sulit"},
-
-{q:"Perhatikan fungsi berikut:\n=IF(A1>75,\"Lulus\",\"Tidak\")\n\nFungsi IF digunakan untuk...", options:["Logika","Jumlah","Urut","Hapus"], answer:0, exp:pembahasan[41], kisi:"42", level:"C5", difficulty:"Sulit"},
-
-{q:"Memperbaiki bug dalam program disebut...", options:["Debugging","Delete","Copy","Run"], answer:0, exp:pembahasan[42], kisi:"43", level:"C5", difficulty:"Sulit"},
-
-{q:"Jika ditemukan error dalam program, maka harus...", options:["Dibiarkan","Diperbaiki","Disimpan","Diabaikan"], answer:1, exp:pembahasan[43], kisi:"44", level:"C5", difficulty:"Sulit"},
-
-{q:"Artefak komputasional terbaik adalah yang mampu memberikan...", options:["Mahal","Keren","Solusi","Besar"], answer:2, exp:pembahasan[44], kisi:"45", level:"C5", difficulty:"Sulit"},
-
-{q:"Risiko dari data yang tidak dijaga dengan baik adalah...", options:["Aman","Bocor","Untung","Terkenal"], answer:1, exp:pembahasan[45], kisi:"46", level:"C5", difficulty:"Sulit"},
-
-{q:"Evaluasi program dilakukan untuk...", options:["Cari error","Main","Copy","Hapus"], answer:0, exp:pembahasan[46], kisi:"47", level:"C5", difficulty:"Sulit"},
-
-{q:"Program yang baik adalah program yang...", options:["Error","Sesuai tujuan","Lambat","Besar"], answer:1, exp:pembahasan[47], kisi:"48", level:"C6", difficulty:"Sulit"},
-
-{q:"Dalam satuan data, 2048 byte sama dengan...", options:["1KB","2KB","3KB","4KB"], answer:1, exp:pembahasan[48], kisi:"49", level:"C6", difficulty:"Sulit"},
-
-{q:"Urutan satuan data yang benar dari kecil ke besar adalah...", options:["Byte-KB-MB","MB-KB-Byte","KB-Byte-MB","Byte-MB-KB"], answer:0, exp:pembahasan[49], kisi:"50", level:"C6", difficulty:"Sulit"}
-];
-
-
-// RANDOM
-
-questions=questions.sort(()=>Math.random()-0.5);
-
-let current=0,answers=[],lockStatus={},doubt=[];
-
-// START
-
-function mulai(){
-
-document.getElementById("start").style.display="none";
-
-document.getElementById("quiz").style.display="flex";
-
-init();
-
-}
-
-// INIT
-
-function init(){
-
-let nav=document.getElementById("nav");
-
-questions.forEach((_,i)=>{
-
-let b=document.createElement("button");
-
-b.innerText=i+1;
-
-b.onclick=()=>{current=i;render()};
-
-nav.appendChild(b);
-
-});
-
-render();
-
-timer();
-
-}
-
-// RENDER
-
-function render(){
-
-let q=questions[current];
-
-let html=`<p><b>${current+1}. ${q.q}</b></p>`;
-
-q.options.forEach((o,i)=>{
-
-html+=`
-
-<label class="option">
-
-<input type="radio" ${answers[current]==i?"checked":""}
-
-onchange="pilih(${i})"> ${o}
-
-</label>`;
-
-});
-
-document.querySelectorAll("#nav button").forEach((b,i)=>{
-
-b.classList.remove("active","answered","doubt");
-
-if(i===current) b.classList.add("active");
-
-if(answers[i]!=undefined) b.classList.add("answered");
-
-if(doubt[i]) b.classList.add("doubt");
-
-});
-
-let box=document.getElementById("box");
-
-box.innerHTML=html;
-
-}
-
-// PILIH
-
-function pilih(i){
-
-answers[current]=i;
-
-lockStatus[current]=true;
-
-render();
-
-setTimeout(()=>{lockStatus[current]=false;render()},10000);
-
-}
-
-// NAV
-
-function next(){if(current<questions.length-1){current++;render()}}
-
-function prev(){if(current>0){current--;render()}}
-
-// RAGU
-
-function ragu(){doubt[current]=true;alert("Ditandai ragu")}
-
-// TIMER
-
-let dur=75*60,start=Date.now();
-
-function timer(){
-
-setInterval(()=>{
-
-let s=Math.floor((Date.now()-start)/1000);
-
-let r=dur-s;
-
-let m=Math.floor(r/60),sec=r%60;
-
-document.getElementById("timer").innerText=`⏱ ${m}:${sec<10?"0":""}${sec}`;
-
-if(r<=0) submit();
-
-},1000);
-
-}
-
-// SUBMIT
-
-function submit(){
-
-let score=0;
-
-questions.forEach((q,i)=>{
-
-if(answers[i]===q.answer) score++;
-
-});
-
-let nilai=(score/questions.length)*100;
-
-window.nilaiAkhir = nilai;
-
-document.getElementById("hasil").style.display="block";
-
-document.getElementById("hasil").innerHTML=`
-
-<h3>Nilai kamu siap 👇</h3>
-
-<button onclick="lihatNilai()">Lihat Nilai</button>
-
-`;
-
-}
-
-// LIHAT NILAI + AUTO KIRIM
-
-function lihatNilai(){
-
-let html=`<h2>Nilai: ${window.nilaiAkhir.toFixed(0)}</h2><h3>Pembahasan</h3>`;
-
-questions.forEach((q,i)=>{
-
-let benar=answers[i]===q.answer;
-
-html+=`
-
-<p>${benar?"✅":"❌"} ${q.exp}</p>
-
-`;
-
-});
-
-document.getElementById("hasil").innerHTML=html;
-
-// AUTO KIRIM
-
-uploadHasil();
-
-}
-
-// ================= AUTO KIRIM =================
-
-function uploadHasil(){
-
-let nama=document.getElementById("nama").value;
-
-let absen=document.getElementById("absen").value;
-
-let kelas=document.getElementById("kelas").value;
-
-let nilai=window.nilaiAkhir.toFixed(0);
-
-let url=`https://docs.google.com/forms/d/e/${FORM_ID}/formResponse?`+
-
-`${ENTRY_NAMA}=${encodeURIComponent(nama)}`+
-
-`&${ENTRY_ABSEN}=${encodeURIComponent(absen)}`+
-
-`&${ENTRY_KELAS}=${encodeURIComponent(kelas)}`+
-
-`&${ENTRY_NILAI}=${encodeURIComponent(nilai)}`;
-
-fetch(url,{mode:"no-cors"})
-
-.then(()=>console.log("Terkirim"))
-
-.catch(()=>console.log("Gagal"));
-
-}
-
-</script>
-
+<body class="bg-slate-100 font-sans min-h-screen pb-12">
+
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-10 px-4 text-center shadow-lg mb-8">
+        <h1 class="text-3xl font-bold tracking-wide">Pusat Informasi & Cek Nilai Siswa</h1>
+        <p class="text-blue-100 mt-2">Silakan cari nilai Anda menggunakan Nama atau NIS</p>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div class="md:col-span-2 space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold text-slate-800 mb-4">Cari Nilai Anda</h2>
+                <div class="flex gap-2">
+                    <input type="text" id="search-input" placeholder="Masukkan Nama atau NIS..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <button onclick="cariNilai()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md cursor-pointer">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i>Cari
+                    </button>
+                </div>
+            </div>
+
+            <div id="result-box" class="hidden bg-white p-6 rounded-2xl shadow-md border border-slate-200 transition-all">
+                </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200 h-fit">
+            <div class="text-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800 flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-crown text-amber-500 animate-bounce"></i> Top 10 Angkatan
+                </h2>
+                <p class="text-xs text-slate-500">Nilai tertinggi gabungan seluruh kelas</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-slate-400 text-xs tracking-wider uppercase">
+                            <th class="py-2 text-center">Pos</th>
+                            <th class="py-2">Nama</th>
+                            <th class="py-2 text-right">Nilai</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body" class="text-sm text-slate-700">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. DATA EXCEL (Ubah ke JSON di bawah ini)
+        // ==========================================
+        // Silakan ganti data contoh ini dengan data dari Excel Anda.
+        // Anda bisa gunakan converter online "Excel to JSON".
+        const dataSiswa = [
+            { nis: "1001", nama: "Arya Wiguna", kelas: "8.1", nilai: 98 },
+            { nis: "1002", nama: "Budi Santoso", kelas: "8.1", nilai: 70 },
+            { nis: "1003", nama: "Citra Lestari", kelas: "8.1", nilai: 85 },
+            { nis: "1004", nama: "Dewa Gede", kelas: "8.2", nilai: 95 },
+            { nis: "1005", nama: "Eka Putri", kelas: "8.2", nilai: 73 },
+            { nis: "1006", nama: "Fajar Utama", kelas: "8.2", nilai: 92 },
+            { nis: "1007", nama: "Giska Amelia", kelas: "8.3", nilai: 65 },
+            { nis: "1008", nama: "Hendra Wijaya", kelas: "8.3", nilai: 88 },
+            { nis: "1009", nama: "Indah Permata", kelas: "8.3", nilai: 74 },
+            { nis: "1010", nama: "Joko Susilo", kelas: "8.4", nilai: 98 },
+            { nis: "1011", nama: "Ketut Rai", kelas: "8.4", nilai: 80 },
+            { nis: "1012", nama: "Luh Sari", kelas: "8.4", nilai: 60 }
+        ];
+
+        // URL Link Remedial Anda
+        const LINK_REMEDIAL = "https://forms.gle/ContohLinkRemedialAnda"; 
+        const KKM = 74;
+
+        // ==========================================
+        // 2. LOGIKA UTAMA SYSTEM (PROSES DATA)
+        // ==========================================
+        
+        // Cari nilai tertinggi di Angkatan
+        const nilaiTertinggiAngkatan = Math.max(...dataSiswa.map(s => s.nilai));
+
+        // Fungsi untuk mencari nilai tertinggi di kelas tertentu
+        function dapatkanNilaiTertinggiKelas(namaKelas) {
+            const siswaDiKelas = dataSiswa.filter(s => s.kelas === namaKelas);
+            return Math.max(...siswaDiKelas.map(s => s.nilai));
+        }
+
+        // ==========================================
+        // 3. RENDER LEADERBOARD TOP 10 ANGKATAN
+        // ==========================================
+        function muatLeaderboard() {
+            // Urutkan berdasarkan nilai tertinggi
+            const urutanSiswa = [...dataSiswa].sort((a, b) => b.nilai - a.nilai).slice(0, 10);
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+
+            urutanSiswa.forEach((siswa, index) => {
+                let mahkota = '';
+                let bgRow = '';
+                
+                // Tambah mahkota untuk peringkat 1, 2, 3
+                if (index === 0) {
+                    mahkota = '<i class="fa-solid fa-crown text-amber-500 ml-1"></i>';
+                    bgRow = 'bg-amber-50 font-bold';
+                } else if (index === 1) {
+                    mahkota = '<i class="fa-solid fa-crown text-slate-400 ml-1"></i>';
+                } else if (index === 2) {
+                    mahkota = '<i class="fa-solid fa-crown text-amber-700 ml-1"></i>';
+                }
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-100 ${bgRow} hover:bg-slate-50 transition-colors">
+                        <td class="py-3 text-center font-semibold text-slate-500">${index + 1}</td>
+                        <td class="py-3">${siswa.nama} ${mahkota} <span class="text-xs text-slate-400 block">${siswa.kelas}</span></td>
+                        <td class="py-3 text-right font-bold text-indigo-600">${siswa.nilai}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // ==========================================
+        // 4. FUNGSI PENCARIAN & ANIMASI
+        // ==========================================
+        function cariNilai() {
+            const input = document.getElementById('search-input').value.toLowerCase().trim();
+            const resultBox = document.getElementById('result-box');
+            
+            if (input === "") {
+                alert("Masukkan nama atau NIS terlebih dahulu!");
+                return;
+            }
+
+            // Cocokkan data berdasarkan nama atau NIS
+            const hasil = dataSiswa.find(s => s.nama.toLowerCase().includes(input) || s.nis.includes(input));
+
+            resultBox.classList.remove('hidden');
+
+            if (!hasil) {
+                resultBox.innerHTML = `
+                    <div class="text-center py-6">
+                        <i class="fa-solid fa-circle-xmark text-red-500 text-4xl mb-2"></i>
+                        <p class="text-slate-600 font-medium">Data tidak ditemukan. Periksa kembali Nama/NIS Anda.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const nilaiTertinggiKelas = dapatkanNilaiTertinggiKelas(hasil.kelas);
+            let statusHTML = '';
+            
+            // --- LOGIKA ANIMASI & KONDISI ---
+
+            // KONDISI 1: NILAI TERTINGGI ANGKATAN / KELAS
+            if (hasil.nilai === nilaiTertinggiAngkatan) {
+                statusHTML = `
+                    <div class="bg-amber-100 border border-amber-300 text-amber-800 p-4 rounded-xl text-center font-bold mb-4 animate__animated animate__jackInTheBox">
+                        👑 LUAR BIASA! ${hasil.nama} meraih nilai TERTINGGI di ANGKATAN! 👑
+                    </div>
+                `;
+                pemicuPetasanMeriah();
+            } else if (hasil.nilai === nilaiTertinggiKelas) {
+                statusHTML = `
+                    <div class="bg-green-100 border border-green-300 text-green-800 p-4 rounded-xl text-center font-bold mb-4 animate__animated animate__zoomInUp">
+                        ⭐ SELAMAT! ${hasil.nama} meraih nilai TERTINGGI di Kelas ${hasil.kelas}! ⭐
+                    </div>
+                `;
+                pemicuPetasanBiasa();
+            }
+            // KONDISI 2: DI BAWAH KKM (74)
+            else if (hasil.nilai < KKM) {
+                statusHTML = `
+                    <div class="remedial-card bg-red-50 border-2 border-red-400 text-red-700 p-5 rounded-xl text-center mb-4 animate__animated animate__shakeX">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl text-red-500 mb-2"></i>
+                        <p class="font-bold text-lg">Nilai ${hasil.nama} berada di bawah KKM!</p>
+                        <p class="text-sm text-red-600 mt-1 mb-4">Segera lakukan remedial melalui tombol di bawah ini:</p>
+                        <a href="${LINK_REMEDIAL}" target="_blank" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition-transform hover:scale-105 active:scale-95">
+                            <i class="fa-solid fa-file-pen mr-2"></i> Ikut Remedial Sekarang
+                        </a>
+                    </div>
+                `;
+            } else {
+                // Kondisi Aman (Lulus KKM tetapi bukan tertinggi)
+                statusHTML = `
+                    <div class="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-xl text-center font-medium mb-4">
+                        Status: <span class="font-bold text-green-600">LULUS KKM</span>. Pertahankan prestasimu!
+                    </div>
+                `;
+            }
+
+            // Tampilkan rincian kartu nilai siswa
+            resultBox.innerHTML = `
+                <h3 class="text-lg font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">Hasil Pencarian</h3>
+                ${statusHTML}
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                    <div class="bg-slate-50 p-3 rounded-xl">
+                        <span class="text-xs text-slate-400 block">Nama Lengkap</span>
+                        <span class="font-semibold text-slate-700">${hasil.nama}</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl">
+                        <span class="text-xs text-slate-400 block">NIS</span>
+                        <span class="font-semibold text-slate-700">${hasil.nis}</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl">
+                        <span class="text-xs text-slate-400 block">Kelas</span>
+                        <span class="font-semibold text-slate-700">${hasil.kelas}</span>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                        <span class="text-xs text-indigo-400 block font-bold">Nilai Akhir</span>
+                        <span class="text-2xl font-black text-indigo-700">${hasil.nilai}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 5. PACK ANIMASI CONFETTI (PETASAN)
+        // ==========================================
+        function pemicuPetasanBiasa() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        function pemicuPetasanMeriah() {
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+
+        // Jalankan leaderboard saat halaman pertama kali dibuka
+        window.onload = muatLeaderboard;
+
+        // Mendukung pencarian dengan menekan tombol Enter
+        document.getElementById("search-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                cariNilai();
+            }
+        });
+    </script>
 </body>
-
 </html>
